@@ -187,6 +187,8 @@ message RoomPush {
     repeated ChatMessageRes msg = 6;
     // 选择问题列表
     repeated QuestionRes selectQuestions = 7;
+    // Mc id
+    string mcId = 8;
 }
 
 // 房间成员信息
