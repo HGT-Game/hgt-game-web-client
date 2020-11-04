@@ -1,0 +1,240 @@
+syntax = "proto3";
+
+package SoupMessage;
+option java_package = "io.github.hdfg159.game.domain.dto";
+
+option go_package = "./protobuf";
+
+// 1003 注册
+message RegisterReq {
+    string username = 1;
+    string password = 2;
+}
+
+// -1003 注册返回
+message RegisterRes {
+    string id = 1;
+    string username = 2;
+}
+
+// 1002 登录
+message LoginReq {
+    string username = 1;
+    string password = 2;
+}
+
+// -1002 登录返回
+message LoginRes {
+    string username = 1;
+    string userId = 2;
+}
+
+// 2012 读取数据
+message LoadReq {
+
+}
+
+// -2012 读取数据返回
+message LoadRes {
+    bool reconnect = 1;
+    string roomId = 2;
+    string password = 3;
+}
+
+// 2001 查询大厅房间数据
+message RoomHallReq {
+
+}
+// -2001 查询大厅房间数据 返回
+message RoomHallRes {
+    repeated RoomRes rooms = 1;
+    message RoomRes {
+        // 房间 ID
+        string id = 1;
+        // 房间名字
+        string name = 2;
+    }
+}
+
+// 2002 创建房间
+message CreateRoomReq {
+    // 密码
+    string password = 1;
+    // 最多人数
+    uint32 max = 2;
+    // 房间名
+    string name = 3;
+}
+// -2002 创建房间 返回
+message CreateRoomRes {
+    // 房间推送信息
+    RoomPush room = 1;
+}
+
+// 2003 加入房间
+message JoinRoomReq {
+    // 房间 ID
+    string roomId = 1;
+    // 房间密码
+    string password = 2;
+}
+// -2003 加入房间 返回
+message JoinRoomRes {
+    // 房间推送信息
+    RoomPush room = 1;
+}
+
+// 2004 离开房间
+message LeaveRoomReq {
+
+}
+// -2004 离开房间 返回
+message LeaveRoomRes {
+
+}
+
+// 2005 准备
+message PrepareReq {
+    // 准备:true,取消:false
+    bool ok = 1;
+}
+// -2005 准备 返回
+message PrepareRes {
+
+}
+
+// 2006 踢人
+message KickReq {
+    // 玩家 ID
+    string aid = 1;
+    // 玩家 位置(从0开始)
+    uint32 index = 2;
+}
+// -2006 踢人 返回
+message KickRes {
+
+}
+
+// 2007 换位置
+message ExchangeSeatReq {
+    // 位置(从0开始)
+    uint32 index = 1;
+}
+// -2007 换位置 返回
+message ExchangeSeatRes {
+
+}
+
+// 2008 聊天或者提问
+message ChatReq {
+    // 内容
+    string content = 1;
+}
+// -2008 聊天或者提问 返回
+message ChatRes {
+    // 距离下次发言时间（单位：秒）
+    uint64 seconds = 1;
+}
+
+// 2009 MC 选择回答
+message AnswerReq {
+    // 关联对话ID
+    string id = 1;
+    // 聊天回答 1:未回答 2:不相关 3:是 4:否 5:半对
+    uint32 answer = 2;
+}
+
+// -2009 MC 选择回答 返回
+message AnswerRes {
+}
+
+// 2010 结束游戏
+message EndReq {
+}
+// -2010 结束游戏
+message EndRes {
+}
+
+// 2011 选择问题
+message SelectQuestionReq {
+    // 问题 ID
+    string id = 1;
+}
+
+// -2011 选择问题 返回
+message SelectQuestionRes {
+
+}
+
+// 2900 大厅推送消息
+message HallPush {
+
+}
+
+// 2901 房间推送消息
+message RoomPush {
+    // 变化的座位信息
+    repeated RoomMemberSeatRes seatsChange = 1;
+    // 房间状态 1:等待中 2:选题中 3:游戏中
+    uint32 status = 2;
+    // 问题相关信息
+    QuestionRes question = 3;
+    // 房间 ID
+    string roomId = 4;
+    // 变化消息列表
+    repeated ChatMessageRes changedMsg = 5;
+    // 完整消息列表
+    repeated ChatMessageRes msg = 6;
+    // 选择问题列表
+    repeated QuestionRes selectQuestions = 7;
+}
+
+// 房间成员信息
+message RoomMemberSeatRes {
+    // 玩家 ID
+    string aid = 1;
+    // 玩家 名称
+    string avaName = 2;
+    // 玩家 头像
+    string avaHead = 3;
+    // 玩家 位置（从 0 开始）
+    uint32 index = 4;
+    // 玩家 是否房主
+    bool owner = 5;
+    // 玩家状态 1:闲置 2:在房间 3:准备中 4:游戏中
+    uint32 status = 6;
+    // 是否 MC
+    bool mc = 7;
+    // 是否离开
+    bool leave = 8;
+}
+
+message QuestionRes {
+    // 问题 ID
+    string id = 1;
+    // 标题
+    string title = 2;
+    // 问题
+    string question = 3;
+    // 答案
+    string content = 4;
+}
+
+// 聊天信息
+message ChatMessageRes {
+    // 聊天信息 ID
+    string id = 1;
+    // 聊天内容
+    string content = 2;
+    // 聊天回答 1:未回答 2:不相关 3:是 4:否 5:半对
+    uint32 answer = 3;
+
+    // 玩家 ID
+    string aid = 4;
+    // 玩家 名称
+    string avaName = 5;
+    // 玩家 头像
+    string avaHead = 6;
+    // 是否 MC
+    bool mc = 7;
+}

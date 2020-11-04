@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package GameMessage;
+
+option go_package = "./protobuf";
+
+message Message {
+	int64 protocol = 1;
+	int64 code = 2;
+	bytes data = 3;
+}
