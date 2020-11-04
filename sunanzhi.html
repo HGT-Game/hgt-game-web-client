@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket</title>
+</head>
+
+<body>
+    <button>2002 创建房间</button>
+    <button>2003 加入房间</button>
+    <button>2004 离开房间</button>
+    <button>2005 房间准备</button>
+    <button>2008 发送聊天内容</button>
+    <button>2009 mc回答内容</button>
+    <button>2010 游戏结束</button>
+    <button>2011 选题</button>
+    <button>2012 获取数据</button>
+    <button>3000 测试</button>
+    <br>
+    protocol:<input type="number" id="protocol" value="2002"> <br>
+    roomId:<input type="text" id="roomId" value=""> <br>
+    messageContent:<input type="text" id="messageContent" value=""> <br>
+    messageId:<input type="text" id="messageId" value=""> <br>
+    answer:<input type="number" id="answer" value=""> <br>
+    questionId:<input type="text" id="questionId" value="1234561"> <br>
+    <button id="sendBtn">发送</button>
+    <div id="recv"></div>
+    <script src="protobuf.js"></script>
+    <script type="text/javascript">
+        // var websocket = new WebSocket("wss://api.sunanzhi.com/wss?Authorization=9b27e5f0-c24b-472a-890b-18a84d97a139");
+        // var websocket = new WebSocket("wss://api.sunanzhi.com/game");
+        var buffer;
+        // sunanzhi
+        var websocket = new WebSocket("ws://localhost:8899/wss?Authorization=9b27e5f0-c24b-472a-890b-18a84d97a139");
+        // zengnan
+        // var websocket = new WebSocket("ws://localhost:8899/wss?Authorization=136c2fed-e912-4301-9c88-29e96e222b41");
+        // zhangshuhua
+        // var websocket = new WebSocket("ws://localhost:8899/wss?Authorization=93402bcb-8fb3-429a-a460-ffd9e25fbf0d");
+        websocket.binaryType = 'arraybuffer';
+        websocket.onopen = function () {
+            console.log("websocket open");
+            document.getElementById("recv").innerHTML = "Connected";
+        }
+        websocket.inclose = function () {
+            console.log('websocket close');
+        }
+        websocket.onmessage = function (e) {
+            var baseMessageDecode
+            var baseMessage
+            protobuf.load("protos/GameMessage.proto", function (err, root) {
+                if (err) throw err;
+                const baseMessageDecode = root.lookupType("GameMessage.Message");
+                var buf = new Uint8Array(e.data);
+                baseMessage = baseMessageDecode.decode(buf)
+                console.log(baseMessage)
+                protobuf.load("protos/SoupMessage.proto", function (err, root) {
+                    if (err) throw err;
+                    switch (baseMessage.protocol) {
+                        case -2002: // 创房返回
+                            var resChildMessage = root.lookupType("SoupMessage.CreateRoomRes");
+                            break;
+                        case -2003: // 加入房间返回
+                            var resChildMessage = root.lookupType("SoupMessage.JoinRoomRes");
+                            break;
+                        case -2004: // 离开房间
+                            var resChildMessage = root.lookupType("SoupMessage.LeaveRoomReq");
+                            break;
+                        case -2005: // 准备返回
+                            var resChildMessage = root.lookupType("SoupMessage.PrepareRes");
+                            break;
+                        case -2008: // 聊天返回
+                            var resChildMessage = root.lookupType("SoupMessage.ChatRes");
+                            break;
+                        case -2009: // mc回复返回
+                            var resChildMessage = root.lookupType("SoupMessage.AnswerRes");
+                            break;
+                        case -2010: // 游戏结束返回
+                            var resChildMessage = root.lookupType("SoupMessage.EndRes");
+                            break;
+                        case -2011: // 选题返回
+                            var resChildMessage = root.lookupType("SoupMessage.SelectQuestionRes");
+                            break;
+                        case -2012: // 获取数据返回
+                            var resChildMessage = root.lookupType("SoupMessage.LoadRes");
+                            break;
+                        case 2901: // 接收房间消息
+                            var resChildMessage = root.lookupType("SoupMessage.RoomPush");
+                            break;
+                        default:
+
+                    }
+                    resMessage = resChildMessage.decode(baseMessage.data)
+                    console.log(resMessage)
+                    // document.getElementById("recv").innerHTML = roomRes;
+                });
+            });
+        }
+        document.getElementById("sendBtn").onclick = function () {
+            protobuf.load("protos/GameMessage.proto", function (err, root) {
+                if (err) throw err;
+                var baseMessage = root.lookupType("GameMessage.Message");
+                protobuf.load("protos/SoupMessage.proto", function (err, root) {
+                    if (err) throw err;
+                    var roomId = document.getElementById("roomId").value
+                    var protocol = document.getElementById("protocol").value
+                    var messageContent = document.getElementById("messageContent").value
+                    var messageId = document.getElementById("messageId").value
+                    var answer = document.getElementById("answer").value
+                    var questionId = document.getElementById("questionId").value
+                    switch (protocol) {
+                        case "2002": // 创建房间
+                            var childMessage = root.lookupType("SoupMessage.CreateRoomReq");
+                            var childData = childMessage.fromObject({ password: "passssss", name: "dddddddddddd", max: 8 })
+                            break;
+                        case "2003": // 加入房间
+                            var childMessage = root.lookupType("SoupMessage.JoinRoomReq");
+                            var childData = childMessage.fromObject({ roomId: roomId })
+                            break;
+                        case "2004": // 离开房间
+                            var childMessage = root.lookupType("SoupMessage.LeaveRoomReq");
+                            var childData = childMessage.fromObject({})
+                            break;
+                        case "2005": // 房间准备
+                            var childMessage = root.lookupType("SoupMessage.PrepareReq");
+                            var childData = childMessage.fromObject({ ok: true })
+                            break;
+                        case "2008": // 发送内容
+                            var childMessage = root.lookupType("SoupMessage.ChatReq");
+                            var childData = childMessage.fromObject({ content: messageContent })
+                            break;
+                        case "2009": // mc回答
+                            var childMessage = root.lookupType("SoupMessage.AnswerReq");
+                            var childData = childMessage.fromObject({ id: messageId, answer: answer })
+                            break;
+                        case "2010": // 游戏结束
+                            var childMessage = root.lookupType("SoupMessage.EndReq");
+                            var childData = childMessage.fromObject({})
+                            break;
+                        case "2011": // 选择问题
+                            var childMessage = root.lookupType("SoupMessage.SelectQuestionReq");
+                            var childData = childMessage.fromObject({id: questionId})
+                            break;
+                        case "2012": // 获取数据
+                            var childMessage = root.lookupType("SoupMessage.LoadReq");
+                            var childData = childMessage.fromObject({})
+                            break;
+                        case "3000": // 测试数据
+                            var childMessage = root.lookupType("SoupMessage.CreateRoomReq");
+                            var childData = childMessage.fromObject({ password: "passssss", name: "dddddddddddd", max: 8 })
+                            break;
+                    }
+
+                    messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+
+                    console.log(messageCreate)
+                    buffer = baseMessage.encode(messageCreate).finish();
+                    websocket.send(buffer);
+                });
+            });
+        }
+
+    </script>
+</body>
+
+</html>
