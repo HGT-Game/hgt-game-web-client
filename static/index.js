@@ -172,35 +172,16 @@ function gameServer(authorization) {
                         var resChildMessage = root.lookupType("SoupMessage.RoomPush");
                         resMessage = resChildMessage.decode(baseMessage.data)
                         if (resMessage.status == 2) {
+                            // 选题
                             showQuestion(resMessage.selectQuestions)
+                        } else if (resMessage.status == 3) {
+                            // 开始游戏
                         }
                         break;
                     default:
 
                 }
                 console.log(resMessage)
-            });
-        });
-    }
-    document.getElementById("sendBtn").onclick = function () {
-        protobuf.load("protos/GameMessage.proto", function (err, root) {
-            if (err) throw err;
-            var baseMessage = root.lookupType("GameMessage.Message");
-            protobuf.load("protos/SoupMessage.proto", function (err, root) {
-                if (err) throw err;
-                var protocol = document.getElementById("protocol").value
-                switch (protocol) {
-                    case "3000": // 测试数据
-                        var childMessage = root.lookupType("SoupMessage.CreateRoomReq");
-                        var childData = childMessage.fromObject({ password: "passssss", name: "dddddddddddd", max: 8 })
-                        break;
-                }
-
-                messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
-
-                console.log(messageCreate)
-                buffer = baseMessage.encode(messageCreate).finish();
-                websocket.send(buffer);
             });
         });
     }
