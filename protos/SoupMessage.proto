@@ -5,30 +5,6 @@ option java_package = "io.github.hdfg159.game.domain.dto";
 
 option go_package = "./protobuf";
 
-// 1003 注册
-message RegisterReq {
-    string username = 1;
-    string password = 2;
-}
-
-// -1003 注册返回
-message RegisterRes {
-    string id = 1;
-    string username = 2;
-}
-
-// 1002 登录
-message LoginReq {
-    string username = 1;
-    string password = 2;
-}
-
-// -1002 登录返回
-message LoginRes {
-    string username = 1;
-    string userId = 2;
-}
-
 // 2012 读取数据
 message LoadReq {
 

@@ -45,12 +45,37 @@ function showLogin() {
     });
 }
 
+var heartCheck = {
+    timeout: 6000,//6s
+    timeoutObj: null,
+    reset: function(){
+        clearTimeout(this.timeoutObj);
+　　　　 this.start();
+    },
+    start: function(){
+        this.timeoutObj = setTimeout(function(){
+            protobuf.load("protos/GameMessage.proto", function (err, root) {
+                if (err) throw err;
+                var baseMessage = root.lookupType("GameMessage.Message");
+                var protocol = 2
+                var childMessage = root.lookupType("GameMessage.HeartBeatReq");
+                var childData = childMessage.fromObject({})
+                messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                console.log(messageCreate)
+                buffer = baseMessage.encode(messageCreate).finish();
+                websocket.send(buffer);
+            });
+        }, this.timeout)
+    }
+}
+
 // 游戏服务
 function gameServer(authorization) {
     var buffer;
     websocket = new WebSocket(WSS_DOMAIN + "?Authorization=" + authorization);
     websocket.binaryType = 'arraybuffer';
     websocket.onopen = function () {
+        heartCheck.start();
         IS_WEBSOCKET = true
         console.log("websocket open");
         // 发送获取数据
@@ -74,6 +99,7 @@ function gameServer(authorization) {
         console.log('websocket close');
     }
     websocket.onmessage = function (e) {
+        heartCheck.reset();
         var baseMessage
         protobuf.load("protos/GameMessage.proto", function (err, root) {
             if (err) throw err;
@@ -84,6 +110,9 @@ function gameServer(authorization) {
             protobuf.load("protos/SoupMessage.proto", function (err, root) {
                 if (err) throw err;
                 switch (baseMessage.protocol) {
+                    case -2: // 心跳返回
+                        console.log("心跳返回")
+                        break;
                     case -2002: // 创房返回
                         var resChildMessage = root.lookupType("SoupMessage.CreateRoomRes");
                         resMessage = resChildMessage.decode(baseMessage.data)
