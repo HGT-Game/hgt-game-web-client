@@ -69,9 +69,11 @@
     <script src="static/protobuf.js"></script>
     <script type="text/javascript">
         // api请求根
-        const API_DOMAIN = "http://localhost:8899"
+        // var API_DOMAIN = "http://localhost:8899"
+        var API_DOMAIN = getUrlParam("api_domain")
         // wss连接根
-        const WSS_DOMAIN = "ws://localhost:8899/wss"
+        // var WSS_DOMAIN = "ws://localhost:8899/wss"
+        var WSS_DOMAIN = getUrlParam("wss_domain")
         // layer 初始化
         layui.use(['layer', 'form'], function () {
             var layer = layui.layer
@@ -90,6 +92,12 @@
         var MC_ID = ""
         // websocket
         var websocket
+
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
     </script>
 </body>
 
