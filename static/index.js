@@ -109,12 +109,10 @@ function gameServer(authorization) {
                         $("#showRoomPassword").append("房间密码")
                         $("#showRoomMax").append("人数上限")
                         $("#showRoomId").append(resMessage.room.roomId)
-                        $.each(resMessage.room.seatsChange, function () {
-                            $("#showRoomContent").append('<p>名字：' + this.avaName + ' <span style="color:red;">加入房间</span>, mc：' + this.mc + '</p>')
-                        })
+                        addMember(resMessage.room.seatsChange)
                         IS_IN_ROOM = true
                         MC_ID = resMessage.room.mcId
-                        if(resMessage.room.mcId == USER_ID) {
+                        if (resMessage.room.mcId == USER_ID) {
                             IS_MC = true
                         }
                         if (resMessage.room.mcId == USER_ID && resMessage.room.status == 2) {
@@ -171,12 +169,36 @@ function gameServer(authorization) {
                     case 2901: // 接收房间消息
                         var resChildMessage = root.lookupType("SoupMessage.RoomPush");
                         resMessage = resChildMessage.decode(baseMessage.data)
-                        if (resMessage.status == 2) {
+                        if (resMessage.status == 2 && IS_MC) {
                             // 选题
                             showQuestion(resMessage.selectQuestions)
                         } else if (resMessage.status == 3) {
                             // 开始游戏
+                            $("#round").css('display', "block")
+                        } else if (resMessage.status == 1) {
+                            // 房间准备中
+                            if (resMessage.question && resMessage.question.content) {
+                                layer.alert(resMessage.question.content, {
+                                    title: '汤底',
+                                    skin: 'layui-layer-lan',
+                                    closeBtn: 0,
+                                    anim: 4 //动画类型
+                                });
+                            }
+                            $("#roundQuesitonTitle").empty()
+                            $("#roundMsgContent").empty()
+                            $("#round").hide()
                         }
+                        // 判断房间人员是否有变动
+                        if(resMessage.seatsChange && resMessage.seatsChange.length > 0) {
+                            addMember(resMessage.seatsChange)
+                        }
+
+                        // 判断是否有人发送消息
+                        if (resMessage.changedMsg && resMessage.changedMsg.length > 0) {
+                            appendAllMsg(resMessage.changedMsg)
+                        }
+
                         break;
                     default:
 
@@ -274,6 +296,12 @@ function joinRoom() {
             layer.close(index)
         }
     });
+}
+// 添加成员
+function addMember(members) {
+    $.each(members, function () {
+        $("#showRoomContent").append('<p>名字：' + this.avaName + ' <span style="color:red;">加入房间</span>, mc：' + this.mc + ',状态：'+(this.leave ? "离开" : "加入")+'</p>')
+    })
 }
 // 离开房间
 function leaveRoom() {
@@ -394,7 +422,7 @@ function showQuestion(questions) {
                 layer.msg("请正确选择")
             } else {
                 $("#selectQuestionVal").empty()
-                $("#selectQuestionVal").hide()
+                $("#select-question").hide()
                 selectQuestion(id)
                 layer.close(index)
             }
@@ -421,7 +449,7 @@ function selectQuestion(id) {
 // 呈现所有聊天内容
 function appendAllMsg(msgs) {
     $.each(msgs, function () {
-        $("#roundMsgContent").append('<p onclick="mcReply(' + "'" + this.id + "'" + ');">名字：' + this.avaName + ' , 内容：<span style="color:red;">' + this.content + '</span></p>')
+        $("#roundMsgContent").append('<p onclick="mcReply(' + "'" + this.id + "'" + ');">名字：' + this.avaName + ' , 内容：<span style="color:red;">' + this.content + '</span>，回答：' + (this.answer ? this.answer : 0) + '</p>')
     })
 }
 // mc回答
@@ -456,21 +484,21 @@ function endGame() {
     layer.confirm('是否结束游戏', {
         btn: ['是', '否'] //按钮
     }, function () {
-        layer.msg('游戏结束');
-    });
-    protobuf.load("protos/GameMessage.proto", function (err, root) {
-        if (err) throw err;
-        var baseMessage = root.lookupType("GameMessage.Message");
-        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+        protobuf.load("protos/GameMessage.proto", function (err, root) {
             if (err) throw err;
-            var protocol = 2010
-            var childMessage = root.lookupType("SoupMessage.EndReq");
-            var childData = childMessage.fromObject({})
-            messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
-            console.log(messageCreate)
-            buffer = baseMessage.encode(messageCreate).finish();
-            websocket.send(buffer);
+            var baseMessage = root.lookupType("GameMessage.Message");
+            protobuf.load("protos/SoupMessage.proto", function (err, root) {
+                if (err) throw err;
+                var protocol = 2010
+                var childMessage = root.lookupType("SoupMessage.EndReq");
+                var childData = childMessage.fromObject({})
+                messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                console.log(messageCreate)
+                buffer = baseMessage.encode(messageCreate).finish();
+                websocket.send(buffer);
+            });
         });
+        layer.msg("游戏结束")
     });
 }
 
