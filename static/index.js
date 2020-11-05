@@ -45,15 +45,19 @@ function showLogin() {
     });
 }
 
+function javaLogin() {
+    gameServer("")
+}
+
 var heartCheck = {
     timeout: 6000,//6s
     timeoutObj: null,
-    reset: function(){
+    reset: function () {
         clearTimeout(this.timeoutObj);
-　　　　 this.start();
+        this.start();
     },
-    start: function(){
-        this.timeoutObj = setTimeout(function(){
+    start: function () {
+        this.timeoutObj = setTimeout(function () {
             protobuf.load("protos/GameMessage.proto", function (err, root) {
                 if (err) throw err;
                 var baseMessage = root.lookupType("GameMessage.Message");
@@ -72,27 +76,46 @@ var heartCheck = {
 // 游戏服务
 function gameServer(authorization) {
     var buffer;
-    websocket = new WebSocket(WSS_DOMAIN + "?Authorization=" + authorization);
+    if(authorization == "") {
+        websocket = new WebSocket(WSS_DOMAIN);
+    } else {
+        websocket = new WebSocket(WSS_DOMAIN + "?Authorization=" + authorization);
+    }
     websocket.binaryType = 'arraybuffer';
     websocket.onopen = function () {
         heartCheck.start();
         IS_WEBSOCKET = true
         console.log("websocket open");
-        // 发送获取数据
-        protobuf.load("protos/GameMessage.proto", function (err, root) {
-            if (err) throw err;
-            var baseMessage = root.lookupType("GameMessage.Message");
-            protobuf.load("protos/SoupMessage.proto", function (err, root) {
+        if(authorization == "") {
+            // 发送登录
+            protobuf.load("protos/GameMessage.proto", function (err, root) {
                 if (err) throw err;
-                var protocol = 2012
-                var childMessage = root.lookupType("SoupMessage.LoadReq");
-                var childData = childMessage.fromObject({})
+                var baseMessage = root.lookupType("GameMessage.Message");
+                var protocol = 1002
+                var childMessage = root.lookupType("GameMessage.LoginReq");
+                var childData = childMessage.fromObject({username: "admin", password: "admin"})
                 messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
                 console.log(messageCreate)
                 buffer = baseMessage.encode(messageCreate).finish();
                 websocket.send(buffer);
             });
-        });
+        } else {
+            // 发送获取数据
+            protobuf.load("protos/GameMessage.proto", function (err, root) {
+                if (err) throw err;
+                var baseMessage = root.lookupType("GameMessage.Message");
+                protobuf.load("protos/SoupMessage.proto", function (err, root) {
+                    if (err) throw err;
+                    var protocol = 2012
+                    var childMessage = root.lookupType("SoupMessage.LoadReq");
+                    var childData = childMessage.fromObject({})
+                    messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                    console.log(messageCreate)
+                    buffer = baseMessage.encode(messageCreate).finish();
+                    websocket.send(buffer);
+                });
+            });
+        }
         document.getElementById("recv").innerHTML = "Connected";
     }
     websocket.inclose = function () {
@@ -107,133 +130,140 @@ function gameServer(authorization) {
             var buf = new Uint8Array(e.data);
             baseMessage = baseMessageDecode.decode(buf)
             console.log(baseMessage)
-            protobuf.load("protos/SoupMessage.proto", function (err, root) {
-                if (err) throw err;
-                switch (baseMessage.protocol) {
-                    case -2: // 心跳返回
-                        console.log("心跳返回")
-                        break;
-                    case -2002: // 创房返回
-                        var resChildMessage = root.lookupType("SoupMessage.CreateRoomRes");
-                        resMessage = resChildMessage.decode(baseMessage.data)
-                        $('#room').css('display', "block");
-                        $("#showRoomName").append("房间名")
-                        $("#showRoomPassword").append("房间密码")
-                        $("#showRoomMax").append("人数上限")
-                        $("#showRoomId").append(resMessage.room.roomId)
-                        $.each(resMessage.room.seatsChange, function () {
-                            $("#showRoomContent").append("<p>名字：" + this.avaName + ", mc：" + this.mc + "</p>")
-                        })
-                        IS_CREATE_ROOME = true
-                        IS_IN_ROOM = true
-                        IS_MC = true
-                        layer.msg("成功创建房间")
-                        console.log(resMessage.room)
-                        break;
-                    case -2003: // 加入房间返回
-                        var resChildMessage = root.lookupType("SoupMessage.JoinRoomRes");
-                        resMessage = resChildMessage.decode(baseMessage.data)
-                        $('#room').css('display', "block");
-                        $("#showRoomName").append("房间名")
-                        $("#showRoomPassword").append("房间密码")
-                        $("#showRoomMax").append("人数上限")
-                        $("#showRoomId").append(resMessage.room.roomId)
-                        addMember(resMessage.room.seatsChange)
-                        IS_IN_ROOM = true
-                        MC_ID = resMessage.room.mcId
-                        if (resMessage.room.mcId == USER_ID) {
+            if (baseMessage.protocol == -1002) {
+                var resChildMessage = root.lookupType("GameMessage.LoginRes");
+                resMessage = resChildMessage.decode(baseMessage.data)
+                USER_ID = resMessage.userId
+                USERNAME = resMessage.username
+            } else {
+                protobuf.load("protos/SoupMessage.proto", function (err, root) {
+                    if (err) throw err;
+                    switch (baseMessage.protocol) {
+                        case -2: // 心跳返回
+                            console.log("心跳返回")
+                            break;
+                        case -2002: // 创房返回
+                            var resChildMessage = root.lookupType("SoupMessage.CreateRoomRes");
+                            resMessage = resChildMessage.decode(baseMessage.data)
+                            $('#room').css('display', "block");
+                            $("#showRoomName").append("房间名")
+                            $("#showRoomPassword").append("房间密码")
+                            $("#showRoomMax").append("人数上限")
+                            $("#showRoomId").append(resMessage.room.roomId)
+                            $.each(resMessage.room.seatsChange, function () {
+                                $("#showRoomContent").append("<p>名字：" + this.avaName + ", mc：" + this.mc + "</p>")
+                            })
+                            IS_CREATE_ROOME = true
+                            IS_IN_ROOM = true
                             IS_MC = true
-                        }
-                        if (resMessage.room.mcId == USER_ID && resMessage.room.status == 2) {
-                            // 选题中
-                            layer.msg("选题中")
-                            showQuestion(resMessage.room.selectQuestions)
-                        } else if (resMessage.room.status == 3) {
-                            // 对局开始
-                            layer.msg("游戏进行中")
-                            $("#round").css('display', "block")
-                            // @todo 呈现所有信息
-                            appendAllMsg(resMessage.room.msg)
-                        } else {
-                            layer.msg("成功加入房间")
-                        }
-
-                        break;
-                    case -2004: // 离开房间
-                        var resChildMessage = root.lookupType("SoupMessage.LeaveRoomReq");
-                        resMessage = resChildMessage.decode(baseMessage.data)
-                        IS_IN_ROOM = false
-                        layer.msg("离开房间")
-                        break;
-                    case -2005: // 准备返回
-                        var resChildMessage = root.lookupType("SoupMessage.PrepareRes");
-                        resMessage = resChildMessage.decode(baseMessage.data)
-                        layer.msg("准备/取消操作完成")
-                        break;
-                    case -2008: // 聊天返回
-                        var resChildMessage = root.lookupType("SoupMessage.ChatRes");
-                        resMessage = resChildMessage.decode(baseMessage.data)
-                        layer.msg("发送成功")
-                        break;
-                    case -2009: // mc回复返回
-                        var resChildMessage = root.lookupType("SoupMessage.AnswerRes");
-                        resMessage = resChildMessage.decode(baseMessage.data)
-                        break;
-                    case -2010: // 游戏结束返回
-                        var resChildMessage = root.lookupType("SoupMessage.EndRes");
-                        resMessage = resChildMessage.decode(baseMessage.data)
-                        break;
-                    case -2011: // 选题返回
-                        var resChildMessage = root.lookupType("SoupMessage.SelectQuestionRes");
-                        resMessage = resChildMessage.decode(baseMessage.data)
-                        break;
-                    case -2012: // 获取数据返回
-                        var resChildMessage = root.lookupType("SoupMessage.LoadRes");
-                        resMessage = resChildMessage.decode(baseMessage.data)
-                        if (resMessage.reconnect == true) {
-                            // 触发重连 直接请求加入房间
-                            joinRoomInternal(resMessage.roomId, resMessage.password)
-                        }
-                        break;
-                    case 2901: // 接收房间消息
-                        var resChildMessage = root.lookupType("SoupMessage.RoomPush");
-                        resMessage = resChildMessage.decode(baseMessage.data)
-                        if (resMessage.status == 2 && IS_MC) {
-                            // 选题
-                            showQuestion(resMessage.selectQuestions)
-                        } else if (resMessage.status == 3) {
-                            // 开始游戏
-                            $("#round").css('display', "block")
-                        } else if (resMessage.status == 1) {
-                            // 房间准备中
-                            if (resMessage.question && resMessage.question.content) {
-                                layer.alert(resMessage.question.content, {
-                                    title: '汤底',
-                                    skin: 'layui-layer-lan',
-                                    closeBtn: 0,
-                                    anim: 4 //动画类型
-                                });
+                            layer.msg("成功创建房间")
+                            console.log(resMessage.room)
+                            break;
+                        case -2003: // 加入房间返回
+                            var resChildMessage = root.lookupType("SoupMessage.JoinRoomRes");
+                            resMessage = resChildMessage.decode(baseMessage.data)
+                            $('#room').css('display', "block");
+                            $("#showRoomName").append("房间名")
+                            $("#showRoomPassword").append("房间密码")
+                            $("#showRoomMax").append("人数上限")
+                            $("#showRoomId").append(resMessage.room.roomId)
+                            addMember(resMessage.room.seatsChange)
+                            IS_IN_ROOM = true
+                            MC_ID = resMessage.room.mcId
+                            if (resMessage.room.mcId == USER_ID) {
+                                IS_MC = true
                             }
-                            $("#roundQuesitonTitle").empty()
-                            $("#roundMsgContent").empty()
-                            $("#round").hide()
-                        }
-                        // 判断房间人员是否有变动
-                        if(resMessage.seatsChange && resMessage.seatsChange.length > 0) {
-                            addMember(resMessage.seatsChange)
-                        }
+                            if (resMessage.room.mcId == USER_ID && resMessage.room.status == 2) {
+                                // 选题中
+                                layer.msg("选题中")
+                                showQuestion(resMessage.room.selectQuestions)
+                            } else if (resMessage.room.status == 3) {
+                                // 对局开始
+                                layer.msg("游戏进行中")
+                                $("#round").css('display', "block")
+                                // @todo 呈现所有信息
+                                appendAllMsg(resMessage.room.msg)
+                            } else {
+                                layer.msg("成功加入房间")
+                            }
 
-                        // 判断是否有人发送消息
-                        if (resMessage.changedMsg && resMessage.changedMsg.length > 0) {
-                            appendAllMsg(resMessage.changedMsg)
-                        }
+                            break;
+                        case -2004: // 离开房间
+                            var resChildMessage = root.lookupType("SoupMessage.LeaveRoomReq");
+                            resMessage = resChildMessage.decode(baseMessage.data)
+                            IS_IN_ROOM = false
+                            layer.msg("离开房间")
+                            break;
+                        case -2005: // 准备返回
+                            var resChildMessage = root.lookupType("SoupMessage.PrepareRes");
+                            resMessage = resChildMessage.decode(baseMessage.data)
+                            layer.msg("准备/取消操作完成")
+                            break;
+                        case -2008: // 聊天返回
+                            var resChildMessage = root.lookupType("SoupMessage.ChatRes");
+                            resMessage = resChildMessage.decode(baseMessage.data)
+                            layer.msg("发送成功")
+                            break;
+                        case -2009: // mc回复返回
+                            var resChildMessage = root.lookupType("SoupMessage.AnswerRes");
+                            resMessage = resChildMessage.decode(baseMessage.data)
+                            break;
+                        case -2010: // 游戏结束返回
+                            var resChildMessage = root.lookupType("SoupMessage.EndRes");
+                            resMessage = resChildMessage.decode(baseMessage.data)
+                            break;
+                        case -2011: // 选题返回
+                            var resChildMessage = root.lookupType("SoupMessage.SelectQuestionRes");
+                            resMessage = resChildMessage.decode(baseMessage.data)
+                            break;
+                        case -2012: // 获取数据返回
+                            var resChildMessage = root.lookupType("SoupMessage.LoadRes");
+                            resMessage = resChildMessage.decode(baseMessage.data)
+                            if (resMessage.reconnect == true) {
+                                // 触发重连 直接请求加入房间
+                                joinRoomInternal(resMessage.roomId, resMessage.password)
+                            }
+                            break;
+                        case -2901: // 接收房间消息
+                            var resChildMessage = root.lookupType("SoupMessage.RoomPush");
+                            resMessage = resChildMessage.decode(baseMessage.data)
+                            if (resMessage.status == 2 && IS_MC) {
+                                // 选题
+                                showQuestion(resMessage.selectQuestions)
+                            } else if (resMessage.status == 3) {
+                                // 开始游戏
+                                $("#round").css('display', "block")
+                            } else if (resMessage.status == 1) {
+                                // 房间准备中
+                                if (resMessage.question && resMessage.question.content) {
+                                    layer.alert(resMessage.question.content, {
+                                        title: '汤底',
+                                        skin: 'layui-layer-lan',
+                                        closeBtn: 0,
+                                        anim: 4 //动画类型
+                                    });
+                                }
+                                $("#roundQuesitonTitle").empty()
+                                $("#roundMsgContent").empty()
+                                $("#round").hide()
+                            }
+                            // 判断房间人员是否有变动
+                            if (resMessage.seatsChange && resMessage.seatsChange.length > 0) {
+                                addMember(resMessage.seatsChange)
+                            }
 
-                        break;
-                    default:
+                            // 判断是否有人发送消息
+                            if (resMessage.changedMsg && resMessage.changedMsg.length > 0) {
+                                appendAllMsg(resMessage.changedMsg)
+                            }
 
-                }
-                console.log(resMessage)
-            });
+                            break;
+                        default:
+
+                    }
+                    console.log(resMessage)
+                });
+            }
         });
     }
 }
@@ -329,7 +359,7 @@ function joinRoom() {
 // 添加成员
 function addMember(members) {
     $.each(members, function () {
-        $("#showRoomContent").append('<p>名字：' + this.avaName + ' <span style="color:red;">加入房间</span>, mc：' + this.mc + ',状态：'+(this.leave ? "离开" : "加入")+'</p>')
+        $("#showRoomContent").append('<p>名字：' + this.avaName + ' <span style="color:red;">加入房间</span>, mc：' + this.mc + ',状态：' + (this.leave ? "离开" : "加入") + '</p>')
     })
 }
 // 离开房间
