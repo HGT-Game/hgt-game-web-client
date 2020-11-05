@@ -166,9 +166,9 @@ message RoomPush {
     // Mc id
     string mcId = 8;
     // 房间标题
-    string name = 9;
+    string roomName = 9;
     // 房间人数上限
-    string max = 10;
+    uint32 roomMax = 10;
 }
 
 // 房间成员信息
