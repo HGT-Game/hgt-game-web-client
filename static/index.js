@@ -135,13 +135,12 @@ function gameServer(authorization) {
                 resMessage = resChildMessage.decode(baseMessage.data)
                 USER_ID = resMessage.userId
                 USERNAME = resMessage.username
+            } else if (baseMessage.protocol == -2) {
+                console.log("心跳返回")
             } else {
                 protobuf.load("protos/SoupMessage.proto", function (err, root) {
                     if (err) throw err;
                     switch (baseMessage.protocol) {
-                        case -2: // 心跳返回
-                            console.log("心跳返回")
-                            break;
                         case -2002: // 创房返回
                             var resChildMessage = root.lookupType("SoupMessage.CreateRoomRes");
                             resMessage = resChildMessage.decode(baseMessage.data)
@@ -413,6 +412,11 @@ function prepare() {
 }
 // 准备游戏内部
 function prepareInternal(ok) {
+    if(ok) {
+        layer.msg("准备")
+    } else {
+        layer.msg("取消准备")
+    }
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
