@@ -142,12 +142,12 @@ message SelectQuestionRes {
 
 }
 
-// 2900 大厅推送消息
+// -2900 大厅推送消息
 message HallPush {
 
 }
 
-// 2901 房间推送消息
+// -2901 房间推送消息
 message RoomPush {
     // 变化的座位信息
     repeated RoomMemberSeatRes seatsChange = 1;
