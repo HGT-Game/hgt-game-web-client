@@ -15,7 +15,7 @@ codeList[20200] = "加入房间失败"
 codeList[20201] = "房间已经满人"
 codeList[20202] = "已经加入房间"
 // ---------- 房间推送相关
-codeList[20300] = "房间推送失败"
+codeList[20300] = "收到房间推送"
 // ---------- 离开房间相关
 codeList[20400] = "离开房间失败"
 codeList[20401] = "游戏中 不能离开房间"
@@ -198,7 +198,7 @@ function gameServer(authorization) {
             } else if (baseMessage.protocol == -2) {
                 console.log("心跳返回")
             } else {
-                if (baseMessage.code != 200) {
+                if (baseMessage.code != 200 && baseMessage.code != 20300) {
                     layer.msg(codeList[baseMessage.code])
                 } else {
                     protobuf.load("protos/SoupMessage.proto", function (err, root) {
