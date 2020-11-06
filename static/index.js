@@ -433,6 +433,8 @@ function addMember(members) {
     $.each(members, function () {
         $("#showRoomContent").append('<p>名字：' + this.avaName + ' <span style="color:red;">加入房间</span>, mc：' + this.mc + ',状态：' + (this.leave ? "离开" : "加入") + '</p>')
     })
+    var showRoomContent = $("#showRoomContent")[0];
+    showRoomContent.scrollTop = showRoomContent.scrollHeight;
 }
 // 离开房间
 function leaveRoom() {
@@ -587,6 +589,8 @@ function appendAllMsg(msgs) {
     $.each(msgs, function () {
         $("#roundMsgContent").append('<p onclick="mcReply(' + "'" + this.id + "'" + ');">名字：' + this.avaName + ' , 内容：<span style="color:red;">' + this.content + '</span>，回答：' + (this.answer ? this.answer : 0) + '</p>')
     })
+    var roundMsgContent = $("#roundMsgContent")[0];
+    roundMsgContent.scrollTop = roundMsgContent.scrollHeight;
 }
 // mc回答
 function mcReply(id) {
