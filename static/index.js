@@ -35,6 +35,7 @@ codeList[20700] = "交换位置失败"
 codeList[20701] = "当前座位已经有人"
 // ---------- 结束游戏相关
 codeList[20800] = "结束游戏失败"
+codeList[20801] = "游戏不在游戏中不能结束"
 // ---------- 聊天相关
 codeList[20900] = "聊天被限制"
 codeList[20901] = "聊天内容不合法"
@@ -178,8 +179,9 @@ function gameServer(authorization) {
         }
         document.getElementById("recv").innerHTML = "Connected";
     }
-    websocket.inclose = function () {
+    websocket.onclose = function () {
         console.log('websocket close');
+        layer.msg("断开连接")
     }
     websocket.onmessage = function (e) {
         heartCheck.reset();
