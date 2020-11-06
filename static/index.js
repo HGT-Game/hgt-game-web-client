@@ -87,7 +87,7 @@ function showLogin() {
                         $("#loginBtn").hide()
                         USER_ID = res._data.userInfo.userId
                         USERNAME = res._data.userInfo.username
-                        gameServer(res._data.accessToken)
+                        gameServer(res._data.accessToken, "", "")
 
                     }
                 },
@@ -108,7 +108,23 @@ function register() {
 
 // java版本登录
 function javaLogin() {
-    gameServer("")
+    layer.open({
+        title: "登录",
+        type: 1,
+        skin: 'layui-layer-demo', //样式类名
+        closeBtn: 0, //不显示关闭按钮
+        anim: 2,
+        shadeClose: true, //开启遮罩关闭
+        area: ['420px', '240px'],
+        content: $("#login-div"),
+        btn: ['确认'],
+        yes: function (index, layero) {
+            var username = $("#account").val()
+            var password = $("#password").val()
+            gameServer("", username, password)
+            layer.close(index)
+        }
+    })
 }
 
 // 心跳检测
@@ -127,7 +143,11 @@ var heartCheck = {
                 var protocol = 2
                 var childMessage = root.lookupType("GameMessage.HeartBeatReq");
                 var childData = childMessage.fromObject({})
-                messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                messageCreate = baseMessage.fromObject({
+                    protocol: protocol,
+                    code: 0,
+                    data: childMessage.encode(childData).finish()
+                });
                 buffer = baseMessage.encode(messageCreate).finish();
                 websocket.send(buffer);
             });
@@ -136,27 +156,32 @@ var heartCheck = {
 }
 
 // 游戏服务
-function gameServer(authorization) {
+function gameServer(authorization, username, password) {
     var buffer;
-    if (authorization == "") {
-        websocket = new WebSocket(WSS_DOMAIN);
-    } else {
-        websocket = new WebSocket(WSS_DOMAIN + "?Authorization=" + authorization);
+    let url = WSS_DOMAIN;
+    if (authorization !== "") {
+        url = WSS_DOMAIN + "?Authorization=" + authorization
     }
+    
+    websocket = new WebSocket(url);
     websocket.binaryType = 'arraybuffer';
     websocket.onopen = function () {
         heartCheck.start();
         IS_WEBSOCKET = true
         console.log("websocket open");
-        if (authorization == "") {
+        if (authorization === "") {
             // 发送登录
             protobuf.load("protos/GameMessage.proto", function (err, root) {
                 if (err) throw err;
                 var baseMessage = root.lookupType("GameMessage.Message");
                 var protocol = 1002
                 var childMessage = root.lookupType("GameMessage.LoginReq");
-                var childData = childMessage.fromObject({ username: "admin", password: "admin" })
-                messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                var childData = childMessage.fromObject({username: username, password: password})
+                messageCreate = baseMessage.fromObject({
+                    protocol: protocol,
+                    code: 0,
+                    data: childMessage.encode(childData).finish()
+                });
                 console.log(messageCreate)
                 buffer = baseMessage.encode(messageCreate).finish();
                 websocket.send(buffer);
@@ -171,18 +196,23 @@ function gameServer(authorization) {
                     var protocol = 2012
                     var childMessage = root.lookupType("SoupMessage.LoadReq");
                     var childData = childMessage.fromObject({})
-                    messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                    messageCreate = baseMessage.fromObject({
+                        protocol: protocol,
+                        code: 0,
+                        data: childMessage.encode(childData).finish()
+                    });
                     console.log(messageCreate)
                     buffer = baseMessage.encode(messageCreate).finish();
                     websocket.send(buffer);
                 });
             });
         }
-        document.getElementById("recv").innerHTML = "Connected";
+        document.getElementById("recv").innerHTML = "已经登录";
     }
     websocket.onclose = function () {
         console.log('websocket close');
         layer.msg("断开连接")
+        document.getElementById("recv").innerHTML = "断开连接，请重新登录";
     }
     websocket.onmessage = function (e) {
         heartCheck.reset();
@@ -207,6 +237,9 @@ function gameServer(authorization) {
                     protobuf.load("protos/SoupMessage.proto", function (err, root) {
                         if (err) throw err;
                         switch (baseMessage.protocol) {
+                            case -1002:
+                                document.getElementById("recv").innerHTML = "已经登录";
+                                break;
                             case -2002: // 创房返回
                                 var resChildMessage = root.lookupType("SoupMessage.CreateRoomRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
@@ -371,8 +404,12 @@ function createRoom() {
                     var roomPassword = $("#roomPassword").val()
                     var protocol = 2002
                     var childMessage = root.lookupType("SoupMessage.CreateRoomReq");
-                    var childData = childMessage.fromObject({ password: roomPassword, name: roomName, max: roomMax })
-                    messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                    var childData = childMessage.fromObject({password: roomPassword, name: roomName, max: roomMax})
+                    messageCreate = baseMessage.fromObject({
+                        protocol: protocol,
+                        code: 0,
+                        data: childMessage.encode(childData).finish()
+                    });
                     console.log(messageCreate)
                     buffer = baseMessage.encode(messageCreate).finish();
                     websocket.send(buffer);
@@ -383,6 +420,7 @@ function createRoom() {
         }
     });
 }
+
 // 加入房间
 function joinRoomInternal(roomId, password) {
     protobuf.load("protos/GameMessage.proto", function (err, root) {
@@ -392,14 +430,19 @@ function joinRoomInternal(roomId, password) {
             if (err) throw err;
             var protocol = 2003
             var childMessage = root.lookupType("SoupMessage.JoinRoomReq");
-            var childData = childMessage.fromObject({ roomId: roomId, password: password })
-            messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+            var childData = childMessage.fromObject({roomId: roomId, password: password})
+            messageCreate = baseMessage.fromObject({
+                protocol: protocol,
+                code: 0,
+                data: childMessage.encode(childData).finish()
+            });
             console.log(messageCreate)
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
         });
     });
 }
+
 // 加入房间
 function joinRoom() {
     if (!IS_WEBSOCKET) {
@@ -428,6 +471,7 @@ function joinRoom() {
         }
     });
 }
+
 // 添加成员
 function addMember(members) {
     $.each(members, function () {
@@ -436,6 +480,7 @@ function addMember(members) {
     var showRoomContent = $("#showRoomContent")[0];
     showRoomContent.scrollTop = showRoomContent.scrollHeight;
 }
+
 // 离开房间
 function leaveRoom() {
     if (!IS_WEBSOCKET) {
@@ -457,7 +502,11 @@ function leaveRoom() {
                 var protocol = 2004
                 var childMessage = root.lookupType("SoupMessage.LeaveRoomReq");
                 var childData = childMessage.fromObject({})
-                messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                messageCreate = baseMessage.fromObject({
+                    protocol: protocol,
+                    code: 0,
+                    data: childMessage.encode(childData).finish()
+                });
                 console.log(messageCreate)
                 buffer = baseMessage.encode(messageCreate).finish();
                 websocket.send(buffer);
@@ -466,6 +515,7 @@ function leaveRoom() {
         layer.close(index)
     });
 }
+
 // 准备游戏
 function prepare() {
     if (!IS_WEBSOCKET) {
@@ -485,6 +535,7 @@ function prepare() {
         prepareInternal(false)
     });
 }
+
 // 准备游戏内部
 function prepareInternal(ok) {
     if (ok) {
@@ -499,14 +550,19 @@ function prepareInternal(ok) {
             if (err) throw err;
             var protocol = 2005
             var childMessage = root.lookupType("SoupMessage.PrepareReq");
-            var childData = childMessage.fromObject({ ok: ok })
-            messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+            var childData = childMessage.fromObject({ok: ok})
+            messageCreate = baseMessage.fromObject({
+                protocol: protocol,
+                code: 0,
+                data: childMessage.encode(childData).finish()
+            });
             console.log(messageCreate)
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
         });
     });
 }
+
 // 发送内容
 function sendMessage() {
     if (!IS_WEBSOCKET) {
@@ -528,8 +584,12 @@ function sendMessage() {
                 if (err) throw err;
                 var protocol = 2008
                 var childMessage = root.lookupType("SoupMessage.ChatReq");
-                var childData = childMessage.fromObject({ content: content })
-                messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                var childData = childMessage.fromObject({content: content})
+                messageCreate = baseMessage.fromObject({
+                    protocol: protocol,
+                    code: 0,
+                    data: childMessage.encode(childData).finish()
+                });
                 console.log(messageCreate)
                 buffer = baseMessage.encode(messageCreate).finish();
                 websocket.send(buffer);
@@ -537,6 +597,7 @@ function sendMessage() {
         });
     }
 }
+
 // 呈现汤普
 function showQuestion(questions) {
     // 选题中
@@ -567,6 +628,7 @@ function showQuestion(questions) {
         }
     });
 }
+
 // 选择汤普
 function selectQuestion(id) {
     protobuf.load("protos/GameMessage.proto", function (err, root) {
@@ -576,14 +638,19 @@ function selectQuestion(id) {
             if (err) throw err;
             var protocol = 2011
             var childMessage = root.lookupType("SoupMessage.SelectQuestionReq");
-            var childData = childMessage.fromObject({ id: id })
-            messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+            var childData = childMessage.fromObject({id: id})
+            messageCreate = baseMessage.fromObject({
+                protocol: protocol,
+                code: 0,
+                data: childMessage.encode(childData).finish()
+            });
             console.log(messageCreate)
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
         });
     });
 }
+
 // 呈现所有聊天内容
 function appendAllMsg(msgs) {
     $.each(msgs, function () {
@@ -592,12 +659,13 @@ function appendAllMsg(msgs) {
     var roundMsgContent = $("#roundMsgContent")[0];
     roundMsgContent.scrollTop = roundMsgContent.scrollHeight;
 }
+
 // mc回答
 function mcReply(id) {
     if (!IS_MC) {
         return
     }
-    layer.prompt({ title: '回答：1:未回答 2:不相关 3:是 4:否 5:半对', formType: 3 }, function (answer, index) {
+    layer.prompt({title: '回答：1:未回答 2:不相关 3:是 4:否 5:半对', formType: 3}, function (answer, index) {
         layer.close(index);
         console.log(id)
         protobuf.load("protos/GameMessage.proto", function (err, root) {
@@ -607,8 +675,12 @@ function mcReply(id) {
                 if (err) throw err;
                 var protocol = 2009
                 var childMessage = root.lookupType("SoupMessage.AnswerReq");
-                var childData = childMessage.fromObject({ id: id, answer: answer })
-                messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                var childData = childMessage.fromObject({id: id, answer: answer})
+                messageCreate = baseMessage.fromObject({
+                    protocol: protocol,
+                    code: 0,
+                    data: childMessage.encode(childData).finish()
+                });
                 console.log(messageCreate)
                 buffer = baseMessage.encode(messageCreate).finish();
                 websocket.send(buffer);
@@ -616,6 +688,7 @@ function mcReply(id) {
         });
     });
 }
+
 // 游戏结束
 function endGame() {
     if (!IS_MC) {
@@ -632,7 +705,11 @@ function endGame() {
                 var protocol = 2010
                 var childMessage = root.lookupType("SoupMessage.EndReq");
                 var childData = childMessage.fromObject({})
-                messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+                messageCreate = baseMessage.fromObject({
+                    protocol: protocol,
+                    code: 0,
+                    data: childMessage.encode(childData).finish()
+                });
                 console.log(messageCreate)
                 buffer = baseMessage.encode(messageCreate).finish();
                 websocket.send(buffer);
@@ -652,7 +729,11 @@ function test() {
             var protocol = 3000
             var childMessage = root.lookupType("SoupMessage.CreateRoomReq");
             var childData = childMessage.fromObject({})
-            messageCreate = baseMessage.fromObject({ protocol: protocol, code: 0, data: childMessage.encode(childData).finish() });
+            messageCreate = baseMessage.fromObject({
+                protocol: protocol,
+                code: 0,
+                data: childMessage.encode(childData).finish()
+            });
             console.log(messageCreate)
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
