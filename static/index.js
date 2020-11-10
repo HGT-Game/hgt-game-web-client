@@ -240,6 +240,10 @@ function gameServer(authorization, username, password) {
                             case -1002:
                                 document.getElementById("recv").innerHTML = "已经登录";
                                 break;
+                            case -2001:
+                                var resChildMessage = root.lookupType("SoupMessage.RoomHallRes");
+                                resMessage = resChildMessage.decode(baseMessage.data)
+                                break;
                             case -2002: // 创房返回
                                 var resChildMessage = root.lookupType("SoupMessage.CreateRoomRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
@@ -371,6 +375,28 @@ function gameServer(authorization, username, password) {
             }
         });
     }
+}
+
+// 获取大厅数据
+function roomHall() {
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+            if (err) throw err;
+            var protocol = 2001
+            var childMessage = root.lookupType("SoupMessage.RoomHallReq");
+            var childData = childMessage.fromObject({})
+            messageCreate = baseMessage.fromObject({
+                protocol: protocol,
+                code: 0,
+                data: childMessage.encode(childData).finish()
+            });
+            console.log(messageCreate)
+            buffer = baseMessage.encode(messageCreate).finish();
+            websocket.send(buffer);
+        });
+    });
 }
 
 // 创建房间
