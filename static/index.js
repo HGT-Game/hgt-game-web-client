@@ -339,6 +339,8 @@ function gameServer(authorization, username, password) {
                                     // 选题
                                     showQuestion(resMessage.selectQuestions)
                                 } else if (resMessage.status == 3) {
+                                    $("#select-question").hide()
+                                    layer.closeAll()
                                     // 开始游戏
                                     $("#round").css('display', "block")
                                 } else if (resMessage.status == 1) {
