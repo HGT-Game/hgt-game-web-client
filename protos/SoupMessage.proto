@@ -1,8 +1,8 @@
 syntax = "proto3";
 
 package SoupMessage;
-option java_package = "io.github.hdfg159.game.domain.dto";
 
+option java_package = "io.github.hdfg159.game.domain.dto";
 option go_package = "./protobuf";
 
 // 2012 读取数据
@@ -23,13 +23,7 @@ message RoomHallReq {
 }
 // -2001 查询大厅房间数据 返回
 message RoomHallRes {
-    repeated RoomRes rooms = 1;
-    message RoomRes {
-        // 房间 ID
-        string id = 1;
-        // 房间名字
-        string name = 2;
-    }
+    repeated RoomPush rooms = 1;
 }
 
 // 2002 创建房间
@@ -149,26 +143,34 @@ message HallPush {
 
 // -2901 房间推送消息
 message RoomPush {
-    // 变化的座位信息
-    repeated RoomMemberSeatRes seatsChange = 1;
-    // 房间状态 1:等待中 2:选题中 3:游戏中
-    uint32 status = 2;
-    // 问题相关信息
-    QuestionRes question = 3;
     // 房间 ID
-    string roomId = 4;
-    // 变化消息列表
-    repeated ChatMessageRes changedMsg = 5;
-    // 完整消息列表
-    repeated ChatMessageRes msg = 6;
-    // 选择问题列表
-    repeated QuestionRes selectQuestions = 7;
-    // Mc id
-    string mcId = 8;
+    string roomId = 1;
     // 房间标题
-    string roomName = 9;
+    string roomName = 2;
     // 房间人数上限
-    uint32 roomMax = 10;
+    uint32 roomMax = 3;
+    // 当前房间人数
+    uint32 roomMemberNum = 4;
+    // 是否有密码
+    bool hasPassword = 5;
+
+    // 变化的座位信息
+    repeated RoomMemberSeatRes seatsChange = 6;
+    // 房间状态 1:等待中 2:选题中 3:游戏中
+    uint32 status = 7;
+
+    // 选择问题列表
+    repeated QuestionRes selectQuestions = 8;
+    // 问题相关信息
+    QuestionRes question = 9;
+
+    // 变化消息列表
+    repeated ChatMessageRes changedMsg = 10;
+    // 完整消息列表
+    repeated ChatMessageRes msg = 11;
+
+    // MC ID
+    string mcId = 12;
 }
 
 // 房间成员信息
