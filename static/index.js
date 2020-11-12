@@ -77,17 +77,17 @@ function showLogin() {
                 },
                 success: function (res) {
                     console.log(res)
-                    if (res._code != 0) {
-                        layer.msg(res._message)
+                    if (res.code != 0) {
+                        layer.msg(res.message)
                     } else {
                         $("#login-div").hide()
                         layer.close(index)
                         // 确认登录
                         IS_LOGIN = true
                         $("#loginBtn").hide()
-                        USER_ID = res._data.userInfo.userId
-                        USERNAME = res._data.userInfo.username
-                        gameServer(res._data.accessToken, "", "")
+                        USER_ID = res.data.userInfo.userId
+                        USERNAME = res.data.userInfo.username
+                        gameServer(res.data.accessToken, "", "")
 
                     }
                 },
