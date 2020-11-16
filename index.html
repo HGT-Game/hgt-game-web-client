@@ -56,8 +56,8 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#intro">创建房间</a></li>
-                    <li><a href="#work">加入房间</a></li>
+                    <li><a href="#create-room">创建房间</a></li>
+                    <li><a href="#join-room">加入房间</a></li>
                     <li><a href="#about">关于我们</a></li>
                     <li><a href="#contact">联系我们</a></li>
                     <!--<li><a href="#elements">Elements</a></li>-->
@@ -110,6 +110,7 @@
                     dolor sit amet.</p>
             </article>
 
+            <!-- 大厅房间列表 -->
             <article id="room-hall">
                 <h3 class="major">房间列表</h3>
                 <div class="table-wrapper">
@@ -118,17 +119,58 @@
                             <tr>
                                 <th>房名</th>
                                 <th>人数</th>
+                                <th>房号</th>
                             </tr>
                         </thead>
                         <tbody id="room-hall-content">
                             <tr>
                                 <td>我是房间名</td>
                                 <td>1</td>
-                                <td style="text-align: right;"><a href="javascript:void(0)" class="button small">加入房间</a></td>
+                                <td style="text-align: right;"><a href="javascript:void(0)"
+                                        class="button small">加入房间</a></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+            </article>
+            <!-- 加入房间 -->
+            <article id="join-room">
+                <h2 class="major">加入房间</h2>
+                <form action="#" id="join-room-form">
+                    <div class="fields">
+                        <div class="field">
+                            <label>房间号</label>
+                            <input type="text" id="join-room-id" placeholder="请输入房号" />
+                        </div>
+                        <div class="field">
+                            <label>密码</label>
+                            <input type="text" id="join-room-password" placeholder="请输入房间密码" />
+                        </div>
+                    </div>
+                    <ul class="actions">
+                        <li><input type="button" value="加入房间" class="primary" onclick="confirmJoinRoom();" /></li>
+                    </ul>
+                </form>
+            </article>
+
+            <!-- 创建房间 -->
+            <article id="create-room">
+                <h2 class="major">创建房间</h2>
+                <form action="#" id="join-room-form">
+                    <div class="fields">
+                        <div class="field">
+                            <label>房间名</label>
+                            <input type="text" id="create-room-name" placeholder="请输入房间名" />
+                        </div>
+                        <div class="field">
+                            <label>密码</label>
+                            <input type="text" id="create-room-password" placeholder="请输入房间密码（可选）" />
+                        </div>
+                    </div>
+                    <ul class="actions">
+                        <li><input type="button" value="创建房间" class="primary" onclick="createRoom();" /></li>
+                    </ul>
+                </form>
             </article>
 
             <!-- Contact -->
@@ -475,8 +517,8 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 <script src="static/protobuf.js"></script>
 <script>
     // 监听页面刷新
-    window.onload = function(event) {
-        if(window.location.hash != ""){
+    window.onload = function (event) {
+        if (window.location.hash != "") {
             window.location = "/index.html"
         }
     }

@@ -135,11 +135,11 @@ function gameServer(authorization, username, password) {
                                 var resChildMessage = root.lookupType("SoupMessage.RoomHallRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
                                 $.each(resMessage.rooms, function () {
-                                    let tr = "<tr><td>"+this.roomName+"</td><td>"+this.roomMax+"</td>"
+                                    let tr = "<tr><td>"+this.roomName+"</td><td>"+this.roomMax+"</td><td>"+this.roomId+"</td>"
                                     if(this.hasPassword) {
-                                        tr += '<td style="text-align: right;"><a href="javascript:void(0)" class="button small" onclick="joinRoom('+this.hasPassword+', '+"'"+this.roomId+"'" + ')"><span class="icon solid fa-lock"></span>加入房间</a></td>'
+                                        tr += '<td style="text-align: right;"><a href="javascript:void(0)" class="button small" onclick="joinRoom('+this.hasPassword+', '+"'"+this.roomId+"'" + ')"><span class="icon solid fa-lock"></span></a></td>'
                                     } else {
-                                        tr += '<td style="text-align: right;"><a href="javascript:void(0)" class="button small" onclick="joinRoom('+this.hasPassword+', '+"'"+this.roomId+"'" + ')">加入房间</a></td>'
+                                        tr += '<td style="text-align: right;"><a href="javascript:void(0)" class="button small" onclick="joinRoom('+this.hasPassword+', '+"'"+this.roomId+"'" + ')">加入</a></td>'
                                     }
                                     tr += '</tr>'
                                     $("#room-hall-content").append(tr)
@@ -304,45 +304,33 @@ function roomHall() {
 
 // 创建房间
 function createRoom() {
-    if (!WEBSOCKET_CONNECT) {
-        layer.msg("请先登录")
+    if (!checkServer()) {
         return
     }
-    layer.open({
-        title: "创建房间",
-        type: 1,
-        skin: 'layui-layer-demo', //样式类名
-        closeBtn: 0, //不显示关闭按钮
-        anim: 2,
-        shadeClose: true, //开启遮罩关闭
-        area: ['420px', '240px'],
-        content: $("#create-room"),
-        btn: ['确认'],
-        yes: function (index, layero) {
-            protobuf.load("protos/GameMessage.proto", function (err, root) {
-                if (err) throw err;
-                var baseMessage = root.lookupType("GameMessage.Message");
-                protobuf.load("protos/SoupMessage.proto", function (err, root) {
-                    if (err) throw err;
-                    var roomName = $("#roomName").val()
-                    var roomMax = $("#roomMax").val()
-                    var roomPassword = $("#roomPassword").val()
-                    var protocol = 2002
-                    var childMessage = root.lookupType("SoupMessage.CreateRoomReq");
-                    var childData = childMessage.fromObject({password: roomPassword, name: roomName, max: roomMax})
-                    messageCreate = baseMessage.fromObject({
-                        protocol: protocol,
-                        code: 0,
-                        data: childMessage.encode(childData).finish()
-                    });
-                    console.log(messageCreate)
-                    buffer = baseMessage.encode(messageCreate).finish();
-                    websocket.send(buffer);
-                    $("#create-room").hide()
-                    layer.close(index)
-                });
+    let roomName = $("#create-room-name").val()
+    if(roomName == "") {
+        layer.msg("请填写房间名称")
+        return
+    }
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+            if (err) throw err;
+            let roomMax = 10
+            let roomPassword = $("#create-room-password").val()
+            var protocol = 2002
+            var childMessage = root.lookupType("SoupMessage.CreateRoomReq");
+            var childData = childMessage.fromObject({password: roomPassword, name: roomName, max: roomMax})
+            messageCreate = baseMessage.fromObject({
+                protocol: protocol,
+                code: 0,
+                data: childMessage.encode(childData).finish()
             });
-        }
+            console.log(messageCreate)
+            buffer = baseMessage.encode(messageCreate).finish();
+            websocket.send(buffer);
+        });
     });
 }
 
@@ -369,28 +357,28 @@ function joinRoomInternal(roomId, password) {
 }
 
 // 加入房间
-function joinRoom() {
-    if (!WEBSOCKET_CONNECT) {
-        layer.msg("请先登录")
+function joinRoom(hasPassword, roomId) {
+    if (!checkServer()) {
         return
     }
-    layer.open({
-        title: "加入房间",
-        type: 1,
-        skin: 'layui-layer-demo', //样式类名
-        closeBtn: 0, //不显示关闭按钮
-        anim: 2,
-        shadeClose: true, //开启遮罩关闭
-        area: ['420px', '240px'],
-        content: $("#join-room"),
-        btn: ['确认'],
-        yes: function (index, layero) {
-            var roomId = $("#joinRoomId").val()
-            var password = $("#joinRoomPassword").val()
-            joinRoomInternal(roomId, password)
-            layer.close(index)
-        }
-    });
+    if(!hasPassword) {
+        $("#join-room-password").attr("disabled", true)
+    } else {
+        $("#join-room-password").removeAttr("disabled")
+    }
+    $("#join-room-id").val(roomId)
+    window.location = "#join-room"
+}
+
+// 确认加入房间
+function confirmJoinRoom() {
+    var roomId = $("#join-room-id").val()
+    var password = $("#join-room-password").val()
+    if(roomId == "") {
+        layer.msg("请填写房号")
+        return
+    }
+    joinRoomInternal(roomId, password)
 }
 
 // 添加成员
