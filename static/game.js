@@ -1,10 +1,10 @@
 function checkServer() {
-    if(!sessionStorage.getItem("token")) {
+    if (!sessionStorage.getItem("token")) {
         window.location = "#login"
         return false
     }
     // 判断weboskcet是否连接
-    if(!WEBSOCKET_CONNECT) {
+    if (!WEBSOCKET_CONNECT) {
         window.location = "#login"
         return false
     }
@@ -48,7 +48,7 @@ function gameServer(authorization, username, password) {
     if (authorization !== "") {
         url = WSS_DOMAIN + "?Authorization=" + authorization
     }
-    
+
     websocket = new WebSocket(url);
     websocket.binaryType = 'arraybuffer';
     websocket.onopen = function () {
@@ -62,7 +62,7 @@ function gameServer(authorization, username, password) {
                 var baseMessage = root.lookupType("GameMessage.Message");
                 var protocol = 1002
                 var childMessage = root.lookupType("GameMessage.LoginReq");
-                var childData = childMessage.fromObject({username: username, password: password})
+                var childData = childMessage.fromObject({ username: username, password: password })
                 messageCreate = baseMessage.fromObject({
                     protocol: protocol,
                     code: 0,
@@ -95,7 +95,7 @@ function gameServer(authorization, username, password) {
         }
         console.log("weboskcet 登录成功")
     }
-    websocket.error = function() {
+    websocket.error = function () {
         console.log('websocket 连接错误')
         WEBSOCKET_CONNECT = false
         // 清空sessionStorage
@@ -135,11 +135,11 @@ function gameServer(authorization, username, password) {
                                 var resChildMessage = root.lookupType("SoupMessage.RoomHallRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
                                 $.each(resMessage.rooms, function () {
-                                    let tr = "<tr><td>"+this.roomName+"</td><td>"+this.roomMax+"</td><td>"+this.roomId+"</td>"
-                                    if(this.hasPassword) {
-                                        tr += '<td style="text-align: right;"><a href="javascript:void(0)" class="button small" onclick="joinRoom('+this.hasPassword+', '+"'"+this.roomId+"'" + ')"><span class="icon solid fa-lock"></span></a></td>'
+                                    let tr = "<tr><td>" + this.roomName + "</td><td>" + this.roomMax + "</td><td>" + this.roomId + "</td>"
+                                    if (this.hasPassword) {
+                                        tr += '<td style="text-align: right;"><a href="javascript:void(0)" class="button small" onclick="joinRoom(' + this.hasPassword + ', ' + "'" + this.roomId + "'" + ')"><span class="icon solid fa-lock"></span></a></td>'
                                     } else {
-                                        tr += '<td style="text-align: right;"><a href="javascript:void(0)" class="button small" onclick="joinRoom('+this.hasPassword+', '+"'"+this.roomId+"'" + ')">加入</a></td>'
+                                        tr += '<td style="text-align: right;"><a href="javascript:void(0)" class="button small" onclick="joinRoom(' + this.hasPassword + ', ' + "'" + this.roomId + "'" + ')">加入</a></td>'
                                     }
                                     tr += '</tr>'
                                     $("#room-hall-content").append(tr)
@@ -278,7 +278,7 @@ function gameServer(authorization, username, password) {
 
 // 获取大厅数据
 function roomHall() {
-    if(!checkServer()) {
+    if (!checkServer()) {
         return
     }
     $("#room-hall-content").empty()
@@ -308,7 +308,7 @@ function createRoom() {
         return
     }
     let roomName = $("#create-room-name").val()
-    if(roomName == "") {
+    if (roomName == "") {
         layer.msg("请填写房间名称")
         return
     }
@@ -321,7 +321,7 @@ function createRoom() {
             let roomPassword = $("#create-room-password").val()
             var protocol = 2002
             var childMessage = root.lookupType("SoupMessage.CreateRoomReq");
-            var childData = childMessage.fromObject({password: roomPassword, name: roomName, max: roomMax})
+            var childData = childMessage.fromObject({ password: roomPassword, name: roomName, max: roomMax })
             messageCreate = baseMessage.fromObject({
                 protocol: protocol,
                 code: 0,
@@ -343,7 +343,7 @@ function joinRoomInternal(roomId, password) {
             if (err) throw err;
             var protocol = 2003
             var childMessage = root.lookupType("SoupMessage.JoinRoomReq");
-            var childData = childMessage.fromObject({roomId: roomId, password: password})
+            var childData = childMessage.fromObject({ roomId: roomId, password: password })
             messageCreate = baseMessage.fromObject({
                 protocol: protocol,
                 code: 0,
@@ -361,7 +361,7 @@ function joinRoom(hasPassword, roomId) {
     if (!checkServer()) {
         return
     }
-    if(!hasPassword) {
+    if (!hasPassword) {
         $("#join-room-password").attr("disabled", true)
     } else {
         $("#join-room-password").removeAttr("disabled")
@@ -374,7 +374,7 @@ function joinRoom(hasPassword, roomId) {
 function confirmJoinRoom() {
     var roomId = $("#join-room-id").val()
     var password = $("#join-room-password").val()
-    if(roomId == "") {
+    if (roomId == "") {
         layer.msg("请填写房号")
         return
     }
@@ -451,7 +451,7 @@ function prepareInternal(ok) {
             if (err) throw err;
             var protocol = 2005
             var childMessage = root.lookupType("SoupMessage.PrepareReq");
-            var childData = childMessage.fromObject({ok: ok})
+            var childData = childMessage.fromObject({ ok: ok })
             messageCreate = baseMessage.fromObject({
                 protocol: protocol,
                 code: 0,
@@ -481,7 +481,7 @@ function sendMessage() {
                 if (err) throw err;
                 var protocol = 2008
                 var childMessage = root.lookupType("SoupMessage.ChatReq");
-                var childData = childMessage.fromObject({content: content})
+                var childData = childMessage.fromObject({ content: content })
                 messageCreate = baseMessage.fromObject({
                     protocol: protocol,
                     code: 0,
@@ -535,7 +535,7 @@ function selectQuestion(id) {
             if (err) throw err;
             var protocol = 2011
             var childMessage = root.lookupType("SoupMessage.SelectQuestionReq");
-            var childData = childMessage.fromObject({id: id})
+            var childData = childMessage.fromObject({ id: id })
             messageCreate = baseMessage.fromObject({
                 protocol: protocol,
                 code: 0,
@@ -562,7 +562,7 @@ function mcReply(id) {
     if (!IS_MC) {
         return
     }
-    layer.prompt({title: '回答：1:未回答 2:不相关 3:是 4:否 5:半对', formType: 3}, function (answer, index) {
+    layer.prompt({ title: '回答：1:未回答 2:不相关 3:是 4:否 5:半对', formType: 3 }, function (answer, index) {
         layer.close(index);
         console.log(id)
         protobuf.load("protos/GameMessage.proto", function (err, root) {
@@ -572,7 +572,7 @@ function mcReply(id) {
                 if (err) throw err;
                 var protocol = 2009
                 var childMessage = root.lookupType("SoupMessage.AnswerReq");
-                var childData = childMessage.fromObject({id: id, answer: answer})
+                var childData = childMessage.fromObject({ id: id, answer: answer })
                 messageCreate = baseMessage.fromObject({
                     protocol: protocol,
                     code: 0,
@@ -635,5 +635,19 @@ function test() {
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
         });
+    });
+}
+
+function buhuo() {
+    layer.open({
+        type: 1,
+        shade: false,
+        title: false, 
+        closeBtn: 0,
+        area: ['80%', 'auto'],
+        content: $("#room-prepare"), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+        cancel: function () {
+            layer.msg('捕获就是从页面已经存在的元素上，包裹layer的结构', { time: 5000, icon: 6 });
+        }
     });
 }
