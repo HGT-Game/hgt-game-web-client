@@ -134,6 +134,17 @@ function gameServer(authorization, username, password) {
                             case -2001:
                                 var resChildMessage = root.lookupType("SoupMessage.RoomHallRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
+                                $.each(resMessage.rooms, function () {
+                                    let tr = "<tr><td>"+this.roomName+"</td><td>"+this.roomMax+"</td>"
+                                    if(this.hasPassword) {
+                                        tr += '<td style="text-align: right;"><a href="javascript:void(0)" class="button small" onclick="joinRoom('+this.hasPassword+', '+"'"+this.roomId+"'" + ')"><span class="icon solid fa-lock"></span>加入房间</a></td>'
+                                    } else {
+                                        tr += '<td style="text-align: right;"><a href="javascript:void(0)" class="button small" onclick="joinRoom('+this.hasPassword+', '+"'"+this.roomId+"'" + ')">加入房间</a></td>'
+                                    }
+                                    tr += '</tr>'
+                                    $("#room-hall-content").append(tr)
+                                })
+                                window.location = "#room-hall"
                                 break;
                             case -2002: // 创房返回
                                 var resChildMessage = root.lookupType("SoupMessage.CreateRoomRes");
@@ -267,9 +278,10 @@ function gameServer(authorization, username, password) {
 
 // 获取大厅数据
 function roomHall() {
-    if(!checkServer) {
+    if(!checkServer()) {
         return
     }
+    $("#room-hall-content").empty()
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");

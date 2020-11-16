@@ -110,89 +110,25 @@
                     dolor sit amet.</p>
             </article>
 
-            <article id="login">
-                <h2 class="major">LOGIN</h2>
-                <form action="#" id="login-form">
-                    <div class="fields">
-                        <div class="field">
-                            <label>账号</label>
-                            <input type="text" id="account" placeholder="邮箱/手机号" />
-                        </div>
-                        <div class="field">
-                            <label>密码</label>
-                            <input type="password" id="password" placeholder="请输入密码" />
-                        </div>
-                    </div>
-                    <ul class="actions">
-                        <li><input type="button" value="登录" class="primary" onclick="login('login');" /></li>
-                    </ul>
-                    <div class="fields">
-                        <div class="field">
-                            <label for="name" style="display: contents;"><a href="#login-by-code"
-                                    style="font-size: 14px;">验证码登录</a></label>
-                            <label for="name" style="display: contents;"><a href="#register"
-                                    style="font-size: 14px; float: right;">没有账号？点我注册</a></label>
-                        </div>
-                    </div>
-                </form>
-            </article>
-
-            <article id="login-by-code">
-                <h2 class="major">LOGIN</h2>
-                <form action="#" id="login-by-code-form">
-                    <div class="fields">
-                        <div class="field">
-                            <label for="email">账号</label>
-                            <input type="text" id="login-account" placeholder="邮箱/手机号" />
-                        </div>
-                        <div class="field">
-                            <label for="name">验证码</label>
-                            <input type="text" id="login-code" placeholder="请输入收到的验证码" />
-                        </div>
-                    </div>
-                    <ul class="actions">
-                        <li><input type="button" value="发送验证码" onclick="sendCode('login');" /></li>
-                        <li><input type="button" value="登录" class="primary" onclick="login('code')" /></li>
-                    </ul>
-                    <div class="fields">
-                        <div class="field">
-                            <label for="name" style="display: contents;"><a href="#login"
-                                    style="font-size: 14px;">账号密码登录</a></label>
-                            <label for="name" style="display: contents;"><a href="#register"
-                                    style="font-size: 14px; float: right;">没有账号？点我注册</a></label>
-                        </div>
-                    </div>
-                </form>
-            </article>
-
-            <article id="register">
-                <h2 class="major">REGISTER</h2>
-                <form action="#" id=register-form">
-                    <div class="fields">
-                        <div class="field">
-                            <label>昵称</label>
-                            <input type="text" id="register-username" placeholder="昵称" />
-                        </div>
-                        <div class="field">
-                            <label>账号</label>
-                            <input type="text" id="register-account" placeholder="邮箱/手机号" />
-                        </div>
-                        <div class="field">
-                            <label>密码</label>
-                            <input type="password" id="register-password"
-                                placeholder="请输入密码" />
-                        </div>
-                        <div class="field">
-                            <label>验证码</label>
-                            <input type="text" id="register-code" placeholder="请输入收到的验证码" />
-                        </div>
-                    </div>
-                    <ul class="actions">
-                        <li><input type="button" value="发送验证码" onclick="sendCode('register');"/></li>
-                        <li><input type="button" value="注册" class="primary" onclick="register();" /></li>
-                    </ul>
-                    <a href="#login" style="font-size: 14px;">已有账号？点我登录</a>
-                </form>
+            <article id="room-hall">
+                <h3 class="major">房间列表</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>房名</th>
+                                <th>人数</th>
+                            </tr>
+                        </thead>
+                        <tbody id="room-hall-content">
+                            <tr>
+                                <td>我是房间名</td>
+                                <td>1</td>
+                                <td style="text-align: right;"><a href="javascript:void(0)" class="button small">加入房间</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </article>
 
             <!-- Contact -->
@@ -307,53 +243,6 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
                 </section>
 
                 <section>
-                    <h3 class="major">Table</h3>
-                    <h4>Default</h4>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Item One</td>
-                                    <td>Ante turpis integer aliquet porttitor.</td>
-                                    <td>29.99</td>
-                                </tr>
-                                <tr>
-                                    <td>Item Two</td>
-                                    <td>Vis ac commodo adipiscing arcu aliquet.</td>
-                                    <td>19.99</td>
-                                </tr>
-                                <tr>
-                                    <td>Item Three</td>
-                                    <td> Morbi faucibus arcu accumsan lorem.</td>
-                                    <td>29.99</td>
-                                </tr>
-                                <tr>
-                                    <td>Item Four</td>
-                                    <td>Vitae integer tempus condimentum.</td>
-                                    <td>19.99</td>
-                                </tr>
-                                <tr>
-                                    <td>Item Five</td>
-                                    <td>Ante turpis integer aliquet porttitor.</td>
-                                    <td>29.99</td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="2"></td>
-                                    <td>100.00</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-
                     <h4>Alternate</h4>
                     <div class="table-wrapper">
                         <table class="alt">
@@ -475,6 +364,91 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
             </article>
 
+            <!-- 账号密码登录 -->
+            <article id="login">
+                <h2 class="major">LOGIN</h2>
+                <form action="#" id="login-form">
+                    <div class="fields">
+                        <div class="field">
+                            <label>账号</label>
+                            <input type="text" id="account" placeholder="邮箱/手机号" />
+                        </div>
+                        <div class="field">
+                            <label>密码</label>
+                            <input type="password" id="password" placeholder="请输入密码" />
+                        </div>
+                    </div>
+                    <ul class="actions">
+                        <li><input type="button" value="登录" class="primary" onclick="login('login');" /></li>
+                    </ul>
+                    <div class="fields">
+                        <div class="field">
+                            <label for="name" style="display: contents;"><a href="#login-by-code"
+                                    style="font-size: 14px;">验证码登录</a></label>
+                            <label for="name" style="display: contents;"><a href="#register"
+                                    style="font-size: 14px; float: right;">没有账号？点我注册</a></label>
+                        </div>
+                    </div>
+                </form>
+            </article>
+            <!-- 验证码登录 -->
+            <article id="login-by-code">
+                <h2 class="major">LOGIN</h2>
+                <form action="#" id="login-by-code-form">
+                    <div class="fields">
+                        <div class="field">
+                            <label for="email">账号</label>
+                            <input type="text" id="login-account" placeholder="邮箱/手机号" />
+                        </div>
+                        <div class="field">
+                            <label for="name">验证码</label>
+                            <input type="text" id="login-code" placeholder="请输入收到的验证码" />
+                        </div>
+                    </div>
+                    <ul class="actions">
+                        <li><input type="button" value="发送验证码" onclick="sendCode('login');" /></li>
+                        <li><input type="button" value="登录" class="primary" onclick="login('code')" /></li>
+                    </ul>
+                    <div class="fields">
+                        <div class="field">
+                            <label for="name" style="display: contents;"><a href="#login"
+                                    style="font-size: 14px;">账号密码登录</a></label>
+                            <label for="name" style="display: contents;"><a href="#register"
+                                    style="font-size: 14px; float: right;">没有账号？点我注册</a></label>
+                        </div>
+                    </div>
+                </form>
+            </article>
+            <!-- 注册 -->
+            <article id="register">
+                <h2 class="major">REGISTER</h2>
+                <form action="#" id=register-form">
+                    <div class="fields">
+                        <div class="field">
+                            <label>昵称</label>
+                            <input type="text" id="register-username" placeholder="昵称" />
+                        </div>
+                        <div class="field">
+                            <label>账号</label>
+                            <input type="text" id="register-account" placeholder="邮箱/手机号" />
+                        </div>
+                        <div class="field">
+                            <label>密码</label>
+                            <input type="password" id="register-password" placeholder="请输入密码" />
+                        </div>
+                        <div class="field">
+                            <label>验证码</label>
+                            <input type="text" id="register-code" placeholder="请输入收到的验证码" />
+                        </div>
+                    </div>
+                    <ul class="actions">
+                        <li><input type="button" value="发送验证码" onclick="sendCode('register');" /></li>
+                        <li><input type="button" value="注册" class="primary" onclick="register();" /></li>
+                    </ul>
+                    <a href="#login" style="font-size: 14px;">已有账号？点我登录</a>
+                </form>
+            </article>
+
         </div>
 
         <!-- Footer -->
@@ -500,6 +474,12 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 <script src="static/layui/layui.js"></script>
 <script src="static/protobuf.js"></script>
 <script>
+    // 监听页面刷新
+    window.onload = function(event) {
+        if(window.location.hash != ""){
+            window.location = "/index.html"
+        }
+    }
     var API_DOMAIN = "http://localhost:8899"
     // var API_DOMAIN = getUrlParam("api_domain")
     // wss连接根
@@ -522,7 +502,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
         if (r != null) return unescape(r[2]); return null; //返回参数值
     }
 
-    if(sessionStorage.getItem("token") && WEBSOCKET_CONNECT == false) {
+    if (sessionStorage.getItem("token") && WEBSOCKET_CONNECT == false) {
         gameServer(sessionStorage.getItem("token"))
     }
 </script>
