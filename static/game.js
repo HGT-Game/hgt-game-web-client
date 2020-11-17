@@ -343,6 +343,9 @@ function createRoom() {
 
 // 加入房间
 function joinRoomInternal(roomId, password) {
+    if (!checkServer()) {
+        return
+    }
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
@@ -379,6 +382,9 @@ function joinRoom(hasPassword, roomId) {
 
 // 确认加入房间
 function confirmJoinRoom() {
+    if (!checkServer()) {
+        return
+    }
     var roomId = $("#join-room-id").val()
     var password = $("#join-room-password").val()
     if (roomId == "") {
@@ -390,6 +396,9 @@ function confirmJoinRoom() {
 
 // 添加成员
 function addMember(members) {
+    if (!checkServer()) {
+        return
+    }
     $.each(members, function () {
         if (this.leave) {
             $("#room-prepare-" + this.aid).remove()
@@ -432,6 +441,9 @@ function addMember(members) {
 
 // 离开房间选项
 function leaveRoom() {
+    if (!checkServer()) {
+        return
+    }
     layer.closeAll()
     // 加入房间弹窗
     layer.open({
@@ -523,6 +535,9 @@ function sendMessage() {
 
 // 呈现汤普
 function showQuestion(questions) {
+    if (!checkServer()) {
+        return
+    }
     $("#question-list").empty()
     // 选题中
     $.each(questions, function () {
@@ -541,6 +556,9 @@ function showQuestion(questions) {
 
 // 选择汤普
 function selectQuestion(id) {
+    if (!checkServer()) {
+        return
+    }
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
@@ -562,6 +580,9 @@ function selectQuestion(id) {
 
 // 呈现所有聊天内容
 function appendAllMsg(msgs) {
+    if (!checkServer()) {
+        return
+    }
     $.each(msgs, function () {
         // 回答转换
         let answer = ''
@@ -745,6 +766,9 @@ function beforeRoomPrepare() {
 
 // 加入房间弹窗
 function roomPrepare() {
+    if (!checkServer()) {
+        return
+    }
     layer.closeAll()
     layer.open({
         type: 1,
