@@ -263,6 +263,7 @@ function gameServer(authorization, username, password) {
                             default:
 
                         }
+                        console.log(resMessage)
                     });
                 }
             }
@@ -696,7 +697,7 @@ function endGameConfirm() {
 }
 
 function test() {
-    layer.msg("查看控制台")
+    console.log("查看控制台")
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
