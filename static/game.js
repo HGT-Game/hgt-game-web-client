@@ -53,7 +53,6 @@ function gameServer(authorization, username, password) {
     websocket.onopen = function () {
         heartCheck.start();
         WEBSOCKET_CONNECT = true
-        console.log("websocket open");
         if (authorization === "") {
             // 发送登录
             protobuf.load("protos/GameMessage.proto", function (err, root) {
@@ -67,7 +66,6 @@ function gameServer(authorization, username, password) {
                     code: 0,
                     data: childMessage.encode(childData).finish()
                 });
-                console.log(messageCreate)
                 buffer = baseMessage.encode(messageCreate).finish();
                 websocket.send(buffer);
             });
@@ -86,22 +84,20 @@ function gameServer(authorization, username, password) {
                         code: 0,
                         data: childMessage.encode(childData).finish()
                     });
-                    console.log(messageCreate)
                     buffer = baseMessage.encode(messageCreate).finish();
                     websocket.send(buffer);
                 });
             });
         }
-        console.log("weboskcet 登录成功")
     }
     websocket.error = function () {
-        console.log('websocket 连接错误')
+        console.log('连接错误')
         WEBSOCKET_CONNECT = false
         // 清空sessionStorage
         sessionStorage.clear()
     }
     websocket.onclose = function () {
-        console.log('websocket 断开');
+        console.log('断开');
         WEBSOCKET_CONNECT = false
         // 清空sessionStorage
         sessionStorage.clear()
@@ -119,7 +115,6 @@ function gameServer(authorization, username, password) {
                 var resChildMessage = root.lookupType("GameMessage.LoginRes");
                 resMessage = resChildMessage.decode(baseMessage.data)
             } else if (baseMessage.protocol == -2) {
-                console.log("心跳返回")
             } else {
                 if (baseMessage.code != 200 && baseMessage.code != 20300) {
                     layer.msg(codeList[baseMessage.code])
@@ -268,7 +263,6 @@ function gameServer(authorization, username, password) {
                             default:
 
                         }
-                        console.log(resMessage)
                     });
                 }
             }
@@ -350,7 +344,6 @@ function joinRoomInternal(roomId, password) {
                 code: 0,
                 data: childMessage.encode(childData).finish()
             });
-            console.log(messageCreate)
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
         });
@@ -717,7 +710,6 @@ function test() {
                 code: 0,
                 data: childMessage.encode(childData).finish()
             });
-            console.log(messageCreate)
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
         });
