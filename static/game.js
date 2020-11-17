@@ -779,3 +779,17 @@ function roomPrepare() {
         content: $("#room-prepare"),
     });
 }
+
+function menuCreateRoom() {
+    if (!checkServer()) {
+        return
+    }
+    window.location = "#create-room"
+}
+
+function menuJoinRoom() {
+    if (!checkServer()) {
+        return
+    }
+    window.location = "#join-room"
+}
