@@ -42,27 +42,11 @@
     .fixed-pop-ups {
         background-color: rgb(72 0 0 / 40%);
         width: 100%;
-        padding-top: 15px;
-        padding-bottom: 20px;
+        padding: 15px 15px 20px 0;
         display: none;
-        padding-right: 15px;
-    }
-
-    .fixed-pop-ups h2 {
-        margin: 0 0 0 20px;
-    }
-
-    .fixed-pop-ups p {
-        margin: 10px 0 0 20px;
-    }
-
-    .fixed-pop-ups hr {
-        margin-left: 20px;
-        margin-right: 20px;
     }
 
     .fixed-pop-ups ul {
-        padding-left: 20px;
         padding-right: 20px;
     }
 
@@ -91,10 +75,6 @@
 
     .dialogue-actions li {
         padding: 15px 15px 0 0;
-    }
-
-    #question-list blockquote {
-        padding-bottom: 0px;
     }
 
     #question-list hr {
@@ -134,7 +114,7 @@
     .message-list-content p {
         text-align: left;
         margin-left: 0px;
-        color: #420000;
+        color: #ffc000;
         font-size: 14px;
     }
 </style>
@@ -147,12 +127,12 @@
             <div class="logo">
                 <span class="icon fa-play-circle" style="color: #670000c9;" title="快速加入游戏" onclick="roomHall();"></span>
             </div>
-            <div class="content">
+            <!-- <div class="content">
                 <div class="inner">
                     <h1>海龟汤游戏</h1>
                     <p>其玩法系由出题者提出一个难以理解的事件，参与猜题者可以提出任何问题以试图缩小范围并找出事件背后真正的原因，但出题者仅能则以“是（对）”、“不是（不对）”或“没有关系”来回答问题。</p>
                 </div>
-            </div>
+            </div> -->
             <nav>
                 <ul>
                     <li><a href="javascript:void(0)" onclick="menuCreateRoom();">创建房间</a></li>
@@ -162,101 +142,10 @@
                 </ul>
             </nav>
         </header>
-        <!-- 房间 -->
-        <div id="room-prepare" class="fixed-pop-ups">
-            <h2 class="major" id="room-prepare-name">房间名</h2>
-            <p>房号：<span id="room-prepare-id"></span></p>
-            <p>上限：<span id="room-prepare-max"></span>人</p>
-            <hr>
-            <ul class="icons" id="room-prepare-member">
-                <li><span>MC&房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
-                <li><span>MC</span><a href="javascript:void(0)" class="icon solid fa-times-circle"></a>name</li>
-                <li><span>房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
-                <li><span>-</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
-            </ul>
-            <ul class="actions dialogue-actions">
-                <li><input type="button" value="离开房间" class="primary" onclick="leaveRoom();" /></li>
-                <li><input type="button" value="准备/取消" onclick="prepare();" /></li>
-            </ul>
-        </div>
-        <!-- 退出房间 / 准备/取消 -->
-        <div id="leave-room" class="fixed-pop-ups">
-            <h2 class="major">退出房间</h2>
-            <ul class="actions dialogue-actions">
-                <li><input type="button" value="确认离开" class="primary" onclick="leaveRoomConfirm();" /></li>
-                <li><input type="button" value="取消" onclick="roomPrepare();" /></li>
-            </ul>
-        </div>
-        <!-- 选题 -->
-        <div id="select-question" class="fixed-pop-ups">
-            <h2 class="major">选汤普</h2>
-            <div id="question-list" style="padding: 20px;">
-                <div onclick="selectQuestion('id');">
-                    <h4>Blockquote</h4>
-                    <blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget tempus
-                        euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis
-                        iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus lorem
-                        ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
-                    <hr>
-                </div>
-            </div>
-        </div>
-        <!-- 游戏页面 -->
-        <div id="game-round" class="fixed-pop-ups">
-            <h2 class="major" id="game-round-title">汤标题</h2>
-            <p id="game-round-question-description">汤面</p>
-            <hr>
-            <div style="width: 100%; height: 390px; overflow: auto;" id="game-round-message-div">
-                <ul class="icons" id="game-round-message-list">
-                    <!-- <li>
-                        <p><a href="javascript:void(0)" class="icon solid fa-user"></a><span>usernmae</span></p>
-                        <div class="message-list-content">
-                            说话内容
-                            <p><i>是</i></p>
-                        </div>
-                    </li> -->
-                    <br>
-                </ul>
-            </div>
-            <hr>
-            <form method="post" action="#">
-                <ul class="actions dialogue-actions">
-                    <li>
-                        <input type="text" id="game-round-message" placeholder="提问的内容" />
-                    </li>
-                    <li><input type="button" value="发送" class="primary" onclick="sendMessage();" /></li>
-                    <li><input type="reset" value="重置" /></li>
-                    <li id="end-game-button" style="display: none;"><input type="button" value="结束游戏" onclick="endGame();" /></li>
-                </ul>
-            </form>
-        </div>
-        <!-- 回答问题 -->
-        <div id="answer-message" class="fixed-pop-ups">
-            <h2 class="major">回答</h2>
-            <input type="hidden" id="answer-message-id" value="" />
-            <ul class="actions dialogue-actions">
-                <li><input type="button" value="取消回答" class="primary" onclick="replyMessage(1);" /></li>
-                <li><input type="button" value="不相关" onclick="replyMessage(2);" /></li>
-                <li><input type="button" value="是" class="primary" onclick="replyMessage(3);" /></li>
-                <li><input type="button" value="不是" onclick="replyMessage(4);" /></li>
-                <li><input type="button" value="是或不是" class="primary" onclick="replyMessage(5);" /></li>
-            </ul>
-        </div>
-        <!-- 结束游戏 -->
-        <div id="end-game" class="fixed-pop-ups">
-            <h2 class="major">结束游戏</h2>
-            <ul class="actions dialogue-actions">
-                <li><input type="button" value="确认" class="primary" onclick="endGameConfirm();" /></li>
-            </ul>
-        </div>
-        <!-- 呈现汤底 -->
-        <div id="game-question-content" class="fixed-pop-ups">
-            <h2 class="major">汤底</h2>
-            <p></p>
-        </div>
+
         <!-- Main -->
         <div id="main">
-            <!-- About -->
+            <!-- 关于我们 -->
             <article id="about">
                 <h2 class="major">关于我们</h2>
                 <p></p>
@@ -323,6 +212,103 @@
                     </ul>
                 </form>
             </article>
+            <!-- 房间 -->
+            <article id="room-prepare" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major" id="room-prepare-name">房间名</h2>
+                <p>房号：<span id="room-prepare-id"></span></p>
+                <p>上限：<span id="room-prepare-max"></span>人</p>
+                <hr>
+                <ul class="icons" id="room-prepare-member">
+                    <li><span>MC&房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
+                    <li><span>MC</span><a href="javascript:void(0)" class="icon solid fa-times-circle"></a>name</li>
+                    <li><span>房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
+                    <li><span>-</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
+                </ul>
+                <ul class="actions dialogue-actions">
+                    <li><input type="button" value="离开房间" class="primary" onclick="leaveRoom();" /></li>
+                    <li><input type="button" value="准备/取消" onclick="prepare();" /></li>
+                </ul>
+            </article>
+            <!-- 退出房间-->
+            <article id="leave-room" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major">退出房间</h2>
+                <ul class="actions dialogue-actions">
+                    <li><input type="button" value="确认离开" class="primary" onclick="leaveRoomConfirm();" /></li>
+                    <li><input type="button" value="取消" onclick="cancelLeaveRoom();" /></li>
+                </ul>
+            </article>
+            <!-- 选题 -->
+            <article id="select-question" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major">选汤普</h2>
+                <div id="question-list">
+                    <div onclick="selectQuestion('id');">
+                        <h4>Blockquote</h4>
+                        <blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget
+                            tempus
+                            euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis
+                            iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus
+                            lorem
+                            ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
+                        <hr>
+                    </div>
+                </div>
+            </article>
+            <!-- 游戏页面 -->
+            <article id="game-round" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major" id="game-round-title">汤标题</h2>
+                <p id="game-round-question-description">汤面</p>
+                <hr>
+                <div style="width: 100%; height: 390px; overflow: auto;" id="game-round-message-div">
+                    <ul class="icons" id="game-round-message-list">
+                        <!-- <li>
+                            <p><a href="javascript:void(0)" class="icon solid fa-user"></a><span>usernmae</span></p>
+                            <div class="message-list-content">
+                                说话内容
+                                <p><i>是</i></p>
+                            </div>
+                        </li> -->
+                        <br>
+                    </ul>
+                </div>
+                <hr>
+                <ul class="actions dialogue-actions">
+                    <li>
+                        <input type="text" id="game-round-message" placeholder="提问的内容" />
+                    </li>
+                    <li><input type="button" value="发送" class="primary" onclick="sendMessage();" /></li>
+                    <li><input type="reset" value="重置" /></li>
+                    <li id="end-game-button" style="display: none;"><input type="button" value="结束游戏"
+                            onclick="endGame();" /></li>
+                </ul>
+            </article>
+            <!-- 回答问题 -->
+            <article id="answer-message" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major">回答</h2>
+                <input type="hidden" id="answer-message-id" value="" />
+                <ul class="actions dialogue-actions">
+                    <li><input type="button" value="取消回答" class="primary" onclick="replyMessage(1);" /></li>
+                    <li><input type="button" value="不相关" onclick="replyMessage(2);" /></li>
+                    <li><input type="button" value="是" class="primary" onclick="replyMessage(3);" /></li>
+                    <li><input type="button" value="不是" onclick="replyMessage(4);" /></li>
+                    <li><input type="button" value="是或不是" class="primary" onclick="replyMessage(5);" /></li>
+                </ul>
+            </article>
+            <!-- 结束游戏 -->
+            <article id="end-game" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major">结束游戏</h2>
+                <ul class="actions dialogue-actions">
+                    <li><input type="button" value="确认" class="primary" onclick="endGameConfirm();" /></li>
+                    <li><input type="button" value="取消" onclick="cancelEndGame();" /></li>
+                </ul>
+            </article>
+            <!-- 呈现汤底 -->
+            <article id="game-question-content" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major">汤底</h2>
+                <p></p>
+                <ul class="actions dialogue-actions">
+                    <li><input type="button" value="关闭" class="primary" onclick="roomPrepare();" /></li>
+                </ul>
+            </article>
             <!-- 联系我们 -->
             <article id="contact">
                 <h2 class="major">Contact</h2>
@@ -353,7 +339,6 @@
                     <li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
                 </ul>
             </article>
-
             <!-- 账号密码登录 -->
             <article id="login">
                 <h2 class="major">LOGIN</h2>
@@ -438,7 +423,6 @@
                     <a href="#login" style="font-size: 14px;">已有账号？点我登录</a>
                 </form>
             </article>
-
         </div>
 
         <!-- Footer -->

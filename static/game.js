@@ -197,6 +197,7 @@ function gameServer(authorization, username, password) {
                                 // 是否房主
                                 IS_OWNER = false
                                 layer.msg("离开房间")
+                                window.location = "#"
                                 break;
                             case -2005: // 准备返回
                                 var resChildMessage = root.lookupType("SoupMessage.PrepareRes");
@@ -215,11 +216,12 @@ function gameServer(authorization, username, password) {
                             case -2008: // 聊天返回
                                 var resChildMessage = root.lookupType("SoupMessage.ChatRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
-                                $("#game-round-message").value = ""
+                                $("#game-round-message").val("")
                                 break;
                             case -2009: // mc回复返回
                                 var resChildMessage = root.lookupType("SoupMessage.AnswerRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
+                                window.location = "#game-round"
                                 break;
                             case -2010: // 游戏结束返回
                                 var resChildMessage = root.lookupType("SoupMessage.EndRes");
@@ -258,19 +260,8 @@ function gameServer(authorization, username, password) {
                                     // 房间准备中
                                     if (resMessage.question && resMessage.question.content) {
                                         $("#game-question-content").find("p").html(resMessage.question.content)
-                                        layer.open({
-                                            type: 1,
-                                            shade: false,
-                                            title: false,
-                                            closeBtn: 1,
-                                            area: ['50%', 'auto'],
-                                            content: $("#game-question-content"),
-                                            cancel: function (index, layero) {
-                                                layer.close(index)
-                                                roomPrepare()
-                                                return false;
-                                            }
-                                        });
+                                        $("#game-question-content").find(".close").remove()
+                                        window.location = "#game-question-content"
                                     }
                                 }
                                 break;
@@ -444,16 +435,13 @@ function leaveRoom() {
     if (!checkServer()) {
         return
     }
-    layer.closeAll()
-    // 加入房间弹窗
-    layer.open({
-        type: 1,
-        shade: false,
-        title: false,
-        closeBtn: 0,
-        area: ['50%', 'auto'],
-        content: $("#leave-room"), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
-    });
+    $("#leave-room").find(".close").remove();
+    window.location = "#leave-room"
+}
+
+// 取消离开房间
+function cancelLeaveRoom() {
+    window.location = "#room-prepare"
 }
 
 // 确认离开房间
@@ -544,14 +532,8 @@ function showQuestion(questions) {
         let question = '<div onclick="selectQuestion(' + "'" + this.id + "'" + ');"><h4>' + this.title + '</h4><blockquote>' + this.question + '</blockquote></div><hr>'
         $("#question-list").append(question)
     })
-    layer.open({
-        type: 1,
-        shade: false,
-        title: false,
-        closeBtn: 0,
-        area: ['80%', '80%'],
-        content: $("#select-question"),
-    });
+    $("#select-question").find(".close").remove()
+    window.location = "#select-question"
 }
 
 // 选择汤普
@@ -629,14 +611,16 @@ function answerMessage(id) {
         return
     }
     $("#answer-message-id").val(id)
-    layer.open({
-        type: 1,
-        shade: false,
-        title: false,
-        closeBtn: 1,
-        area: ['80%', 'auto'],
-        content: $("#answer-message"),
-    });
+    // layer.open({
+    //     type: 1,
+    //     shade: false,
+    //     title: false,
+    //     closeBtn: 1,
+    //     area: ['80%', 'auto'],
+    //     content: $("#answer-message"),
+    // });
+    $("#answer-message").find(".close").remove()
+    window.location = "#answer-message"
 }
 
 // mc回答
@@ -677,15 +661,8 @@ function start(room) {
     if (IS_MC) {
         $("#end-game-button").css('display', "block")
     }
-    // 游戏开始
-    layer.open({
-        type: 1,
-        shade: false,
-        title: false,
-        closeBtn: 0,
-        area: ['80%', '80%'],
-        content: $("#game-round"), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
-    });
+    $("#game-round").find(".close").remove()
+    window.location = "#game-round"
 }
 
 // 游戏结束
@@ -696,14 +673,13 @@ function endGame() {
     if (!IS_MC) {
         return
     }
-    layer.open({
-        type: 1,
-        shade: false,
-        title: false,
-        closeBtn: 1,
-        area: ['50%', 'auto'],
-        content: $("#end-game"), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
-    });
+    $("#end-game").find(".close").remove()
+    window.location = "#end-game"
+}
+
+// 取消结束游戏
+function cancelEndGame() {
+    window.location = "#game-round"
 }
 
 // 确认结束游戏
@@ -769,17 +745,11 @@ function roomPrepare() {
     if (!checkServer()) {
         return
     }
-    layer.closeAll()
-    layer.open({
-        type: 1,
-        shade: false,
-        title: false,
-        closeBtn: 0,
-        area: ['80%', 'auto'],
-        content: $("#room-prepare"),
-    });
+    $("#room-prepare").find(".close").remove()
+    window.location = "#room-prepare"
 }
 
+// 菜单创建房间
 function menuCreateRoom() {
     if (!checkServer()) {
         return
@@ -787,6 +757,7 @@ function menuCreateRoom() {
     window.location = "#create-room"
 }
 
+// 菜单加入房间
 function menuJoinRoom() {
     if (!checkServer()) {
         return
