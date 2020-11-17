@@ -583,13 +583,13 @@ function appendAllMsg(msgs) {
             // 修改
             $("#message-" + this.id).find("div").find("p").find("i").html(answer)
         } else {
-            let li = '<li onclick="answerMessage(' + "'" + this.id + "'" + ');" id="message-' + this.id + '">'
-            // 用户信息
-            li += '<p><a href="javascript:void(0)" class="icon solid fa-user"></a><span>' + this.avaName + '</span></p>'
+            let li = '<li onclick="answerMessage(' + "'" + this.id + "'" + ');" id="message-' + this.id + '"><div>'
+            // 用户头像
+            li += '<div class="message-list-avatar"><a href="javascript:void(0)" class="icon solid fa-user"></a></div>'
             // 内容 + 回答
-            li += '<div class="message-list-content">' + this.content + '<p><i>' + answer + '</i></p></div>'
+            li += '<div class="message-list-content" style="float: left;"><p class="message-list-username">'+this.avaName+'</p>' + this.content + '<p class="message-list-answer"><i>'+answer+'</i></p></div>'
             // 结尾
-            li += '</li><br>'
+            li += '</div></li><br>'
             $("#game-round-message-list").append(li)
         }
     })

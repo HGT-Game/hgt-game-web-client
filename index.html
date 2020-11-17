@@ -46,7 +46,7 @@
     }
 
     .fixed-pop-ups .icons li {
-        margin: 10px;
+        /* margin: 10px; */
         display: inline-grid;
         padding: 0;
         text-align: center;
@@ -79,6 +79,7 @@
 
     #game-round-message-list li p {
         text-align: left;
+        margin-bottom: 6px;
     }
 
     #game-round-message-list li p span {
@@ -99,18 +100,31 @@
     }
 
     .message-list-content {
-        float: right;
         width: 76%;
-        margin-left: 11%;
+        margin-left: 20px;
         position: inherit;
         text-align: left;
+        font-size: 20px;
     }
 
-    .message-list-content p {
+    .message-list-avatar {
+        float: left;
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .message-list-answer {
         text-align: left;
         margin-left: 0px;
-        color: #ffc000;
-        font-size: 14px;
+        color: #ffc0007a;
+        margin-top: 2px;
+        font-size: 12px;
+    }
+
+    .message-list-username {
+        color: #ffffff80;
+        line-height: 2.25rem;
+        font-size: 18px;
     }
 </style>
 
@@ -252,18 +266,23 @@
             <!-- 游戏页面 -->
             <article id="game-round" class="fixed-pop-ups" style="padding: 20px;">
                 <h2 class="major" id="game-round-title">汤标题</h2>
-                <p id="game-round-question-description">汤面</p>
-                <hr>
+                <p id="game-round-question-description" style="margin-bottom: 0;">汤面</p>
+                <hr style="margin: 20px 0 20px 0;">
                 <div style="width: 100%; height: 390px; overflow: auto;" id="game-round-message-div">
                     <ul class="icons" id="game-round-message-list">
                         <!-- <li>
-                            <p><a href="javascript:void(0)" class="icon solid fa-user"></a><span>usernmae</span></p>
-                            <div class="message-list-content">
-                                说话内容
-                                <p><i>是</i></p>
+                            <div>
+                                <div class="message-list-avatar">
+                                    <a href="javascript:void(0)" class="icon solid fa-user"></a>
+                                </div>
+                                <div class="message-list-content" style="float: left;">
+                                    <p class="message-list-username">username</p>
+                                    说话内容
+                                    <p class="message-list-answer"><i>是</i></p>
+                                </div>
                             </div>
-                        </li> -->
-                        <br>
+                        </li>
+                        <br> -->
                     </ul>
                 </div>
                 <hr>
