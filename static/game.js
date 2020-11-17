@@ -256,7 +256,7 @@ function gameServer(authorization, username, password) {
                                 } else if (resMessage.status == 3) {
                                     start(resMessage)
                                 } else if (resMessage.status == 1) {
-                                    layer.closeAll()
+                                    $("#game-round-message-list").empty()
                                     // 房间准备中
                                     if (resMessage.question && resMessage.question.content) {
                                         $("#game-question-content").find("p").html(resMessage.question.content)
@@ -611,14 +611,6 @@ function answerMessage(id) {
         return
     }
     $("#answer-message-id").val(id)
-    // layer.open({
-    //     type: 1,
-    //     shade: false,
-    //     title: false,
-    //     closeBtn: 1,
-    //     area: ['80%', 'auto'],
-    //     content: $("#answer-message"),
-    // });
     $("#answer-message").find(".close").remove()
     window.location = "#answer-message"
 }
