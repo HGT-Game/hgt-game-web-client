@@ -14,8 +14,7 @@ function checkServer() {
 
 // 心跳检测
 var heartCheck = {
-    // timeout: 30000,//ms
-    timeout: 2000,//ms
+    timeout: 30000,//ms
     timeoutObj: null,
     reset: function () {
         clearTimeout(this.timeoutObj);
@@ -149,65 +148,74 @@ function gameServer(authorization, username, password) {
                             case -2002: // 创房返回
                                 var resChildMessage = root.lookupType("SoupMessage.CreateRoomRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
-                                $('#room').css('display', "block");
-                                $("#showRoomName").append("房间名")
-                                $("#showRoomPassword").append("房间密码")
-                                $("#showRoomMax").append("人数上限")
-                                $("#showRoomId").append(resMessage.room.roomId)
+                                beforeRoomPrepare()
+                                $("#room-prepare-name").append(resMessage.room.roomName)
+                                $("#room-prepare-max").append(resMessage.room.roomMax)
+                                $("#room-prepare-id").append(resMessage.room.roomId)
                                 $.each(resMessage.room.seatsChange, function () {
-                                    $("#showRoomContent").append("<p>名字：" + this.avaName + ", mc：" + this.mc + "</p>")
+                                    $("#room-prepare-member").append('<li id="room-prepare-' + this.aid + '"><span>MC&房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>' + this.avaName + '</li>')
                                 })
-                                IS_MC = true
                                 layer.msg("成功创建房间")
-                                console.log(resMessage.room)
+                                // 默认准备
+                                IS_PREPARE = true
+                                // 默认mc
+                                IS_MC = true
+                                // 默认房主
+                                IS_OWNER = true
+                                // 展现房间窗
+                                roomPrepare()
                                 break;
                             case -2003: // 加入房间返回
                                 var resChildMessage = root.lookupType("SoupMessage.JoinRoomRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
-                                $('#room').css('display', "block");
-                                $("#showRoomName").append("房间名")
-                                $("#showRoomPassword").append("房间密码")
-                                $("#showRoomMax").append("人数上限")
-                                $("#showRoomId").append(resMessage.room.roomId)
+                                beforeRoomPrepare()
+                                $("#room-prepare-name").append(resMessage.room.roomName)
+                                $("#room-prepare-max").append(resMessage.room.roomMax)
+                                $("#room-prepare-id").append(resMessage.room.roomId)
                                 addMember(resMessage.room.seatsChange)
-                                MC_ID = resMessage.room.mcId
-                                if (resMessage.room.mcId == sessionStorage.getItem("userId")) {
-                                    IS_MC = true
-                                }
                                 if (resMessage.room.mcId == sessionStorage.getItem("userId") && resMessage.room.status == 2) {
                                     // 选题中
                                     layer.msg("选题中")
                                     showQuestion(resMessage.room.selectQuestions)
                                 } else if (resMessage.room.status == 3) {
                                     // 对局开始
-                                    layer.msg("游戏进行中")
-                                    $("#round").css('display', "block")
-                                    // @todo 呈现所有信息
+                                    start(resMessage.room)
                                     appendAllMsg(resMessage.room.msg)
                                 } else {
+                                    roomPrepare()
                                     layer.msg("成功加入房间")
                                 }
                                 break;
                             case -2004: // 离开房间
                                 var resChildMessage = root.lookupType("SoupMessage.LeaveRoomReq");
                                 resMessage = resChildMessage.decode(baseMessage.data)
+                                layer.closeAll()
+                                // 是否准备
+                                IS_PREPARE = false
+                                // 是否mc
                                 IS_MC = false
-                                $('#room').hide();
-                                $("#showRoomName").html("房名：")
-                                $("#showRoomPassword").html("密码：")
-                                $("#showRoomMax").html("上限：")
-                                $("#showRoomId").html("房号：")
-                                $("#showRoomContent").empty()
+                                // 是否房主
+                                IS_OWNER = false
                                 layer.msg("离开房间")
                                 break;
                             case -2005: // 准备返回
                                 var resChildMessage = root.lookupType("SoupMessage.PrepareRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
+                                IS_PREPARE = !IS_PREPARE
+                                if (IS_PREPARE) {
+                                    layer.msg("准备")
+                                    $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').removeClass("fa-times-circle")
+                                    $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').addClass("fa-check-circle")
+                                } else {
+                                    layer.msg("取消准备")
+                                    $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').addClass("fa-times-circle")
+                                    $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').removeClass("fa-check-circle")
+                                }
                                 break;
                             case -2008: // 聊天返回
                                 var resChildMessage = root.lookupType("SoupMessage.ChatRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
-                                layer.msg("发送成功")
+                                $("#game-round-message").value = ""
                                 break;
                             case -2009: // mc回复返回
                                 var resChildMessage = root.lookupType("SoupMessage.AnswerRes");
@@ -232,38 +240,39 @@ function gameServer(authorization, username, password) {
                             case -2901: // 接收房间消息
                                 var resChildMessage = root.lookupType("SoupMessage.RoomPush");
                                 resMessage = resChildMessage.decode(baseMessage.data)
-                                if (resMessage.status == 2 && IS_MC) {
-                                    // 选题
-                                    showQuestion(resMessage.selectQuestions)
-                                } else if (resMessage.status == 3) {
-                                    $("#select-question").hide()
-                                    layer.closeAll()
-                                    // 开始游戏
-                                    $("#round").css('display', "block")
-                                } else if (resMessage.status == 1) {
-                                    // 房间准备中
-                                    if (resMessage.question && resMessage.question.content) {
-                                        layer.alert(resMessage.question.content, {
-                                            title: '汤底',
-                                            skin: 'layui-layer-lan',
-                                            closeBtn: 0,
-                                            anim: 4 //动画类型
-                                        });
-                                    }
-                                    $("#roundQuesitonTitle").empty()
-                                    $("#roundMsgContent").empty()
-                                    $("#round").hide()
-                                }
                                 // 判断房间人员是否有变动
                                 if (resMessage.seatsChange && resMessage.seatsChange.length > 0) {
                                     addMember(resMessage.seatsChange)
                                 }
-
                                 // 判断是否有人发送消息
                                 if (resMessage.changedMsg && resMessage.changedMsg.length > 0) {
                                     appendAllMsg(resMessage.changedMsg)
                                 }
-
+                                if (resMessage.status == 2) {
+                                    // 选题
+                                    showQuestion(resMessage.selectQuestions)
+                                } else if (resMessage.status == 3) {
+                                    start(resMessage)
+                                } else if (resMessage.status == 1) {
+                                    layer.closeAll()
+                                    // 房间准备中
+                                    if (resMessage.question && resMessage.question.content) {
+                                        $("#game-question-content").find("p").html(resMessage.question.content)
+                                        layer.open({
+                                            type: 1,
+                                            shade: false,
+                                            title: false,
+                                            closeBtn: 1,
+                                            area: ['50%', 'auto'],
+                                            content: $("#game-question-content"),
+                                            cancel: function (index, layero) {
+                                                layer.close(index)
+                                                roomPrepare()
+                                                return false;
+                                            }
+                                        });
+                                    }
+                                }
                                 break;
                             default:
 
@@ -295,7 +304,6 @@ function roomHall() {
                 code: 0,
                 data: childMessage.encode(childData).finish()
             });
-            console.log(messageCreate)
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
         });
@@ -327,7 +335,6 @@ function createRoom() {
                 code: 0,
                 data: childMessage.encode(childData).finish()
             });
-            console.log(messageCreate)
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
         });
@@ -356,7 +363,7 @@ function joinRoomInternal(roomId, password) {
     });
 }
 
-// 加入房间
+// 加入房间选项
 function joinRoom(hasPassword, roomId) {
     if (!checkServer()) {
         return
@@ -384,65 +391,87 @@ function confirmJoinRoom() {
 // 添加成员
 function addMember(members) {
     $.each(members, function () {
-        $("#showRoomContent").append('<p>名字：' + this.avaName + ' <span style="color:red;">加入房间</span>, mc：' + this.mc + ',状态：' + (this.leave ? "离开" : "加入") + '</p>')
+        if (this.leave) {
+            $("#room-prepare-" + this.aid).remove()
+        } else {
+            if (sessionStorage.getItem("userId") == this.aid) {
+                if (this.mc) {
+                    IS_MC = true
+                }
+                if (this.owner) {
+                    IS_OWNER = true;
+                }
+                if (this.status == 3 || this.status == 4) {
+                    IS_PREPARE = true
+                } else {
+                    IS_PREPARE = false
+                }
+            }
+            let role = "-"
+            if (this.owner && this.mc) {
+                role = "房主&MC"
+            } else {
+                if (this.owner) {
+                    role = "房主"
+                } else if (this.mc) {
+                    role = "MC"
+                }
+            }
+            let icon = "fa-check-circle"
+            // 判断准备
+            if (this.status != 3) {
+                icon = "fa-times-circle"
+            }
+            if ($("#room-prepare-" + this.aid).length > 0) {
+                $("#room-prepare-" + this.aid).remove()
+            }
+            $("#room-prepare-member").append('<li id="room-prepare-' + this.aid + '"><span>' + role + '</span><a href="javascript:void(0)" class="icon solid ' + icon + '"></a>' + this.avaName + '</li>')
+        }
     })
-    var showRoomContent = $("#showRoomContent")[0];
-    showRoomContent.scrollTop = showRoomContent.scrollHeight;
 }
 
-// 离开房间
+// 离开房间选项
 function leaveRoom() {
-    if (!WEBSOCKET_CONNECT) {
-        layer.msg("请先登录")
+    layer.closeAll()
+    // 加入房间弹窗
+    layer.open({
+        type: 1,
+        shade: false,
+        title: false,
+        closeBtn: 0,
+        area: ['50%', 'auto'],
+        content: $("#leave-room"), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+    });
+}
+
+// 确认离开房间
+function leaveRoomConfirm() {
+    if (!checkServer()) {
         return
     }
-    layer.confirm('是否离开房间', {
-        btn: ['是', '否'] //按钮
-    }, function (index) {
-        protobuf.load("protos/GameMessage.proto", function (err, root) {
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var baseMessage = root.lookupType("GameMessage.Message");
-            protobuf.load("protos/SoupMessage.proto", function (err, root) {
-                if (err) throw err;
-                var protocol = 2004
-                var childMessage = root.lookupType("SoupMessage.LeaveRoomReq");
-                var childData = childMessage.fromObject({})
-                messageCreate = baseMessage.fromObject({
-                    protocol: protocol,
-                    code: 0,
-                    data: childMessage.encode(childData).finish()
-                });
-                console.log(messageCreate)
-                buffer = baseMessage.encode(messageCreate).finish();
-                websocket.send(buffer);
+            var protocol = 2004
+            var childMessage = root.lookupType("SoupMessage.LeaveRoomReq");
+            var childData = childMessage.fromObject({})
+            messageCreate = baseMessage.fromObject({
+                protocol: protocol,
+                code: 0,
+                data: childMessage.encode(childData).finish()
             });
+            buffer = baseMessage.encode(messageCreate).finish();
+            websocket.send(buffer);
         });
-        layer.close(index)
     });
 }
 
 // 准备游戏
 function prepare() {
-    if (!WEBSOCKET_CONNECT) {
-        layer.msg("请先登录")
+    if (!checkServer()) {
         return
-    }
-    layer.confirm('是否准备/取消', {
-        btn: ['准备', '取消'] //按钮
-    }, function (index) {
-        prepareInternal(true)
-        layer.close(index)
-    }, function () {
-        prepareInternal(false)
-    });
-}
-
-// 准备游戏内部
-function prepareInternal(ok) {
-    if (ok) {
-        layer.msg("准备")
-    } else {
-        layer.msg("取消准备")
     }
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
@@ -451,13 +480,12 @@ function prepareInternal(ok) {
             if (err) throw err;
             var protocol = 2005
             var childMessage = root.lookupType("SoupMessage.PrepareReq");
-            var childData = childMessage.fromObject({ ok: ok })
+            var childData = childMessage.fromObject({ ok: !IS_PREPARE })
             messageCreate = baseMessage.fromObject({
                 protocol: protocol,
                 code: 0,
                 data: childMessage.encode(childData).finish()
             });
-            console.log(messageCreate)
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
         });
@@ -466,11 +494,10 @@ function prepareInternal(ok) {
 
 // 发送内容
 function sendMessage() {
-    if (!WEBSOCKET_CONNECT) {
-        layer.msg("请先登录")
+    if (!checkServer()) {
         return
     }
-    var content = $("#sendMessage").val()
+    var content = $("#game-round-message").val()
     if (content == "") {
         layer.msg("发送内容不能为空")
     } else {
@@ -487,7 +514,6 @@ function sendMessage() {
                     code: 0,
                     data: childMessage.encode(childData).finish()
                 });
-                console.log(messageCreate)
                 buffer = baseMessage.encode(messageCreate).finish();
                 websocket.send(buffer);
             });
@@ -497,32 +523,19 @@ function sendMessage() {
 
 // 呈现汤普
 function showQuestion(questions) {
+    $("#question-list").empty()
     // 选题中
     $.each(questions, function () {
-        // if(this.)
-        $("#selectQuestionVal").append('<option value="' + this.id + '">' + this.title + '</option>')
+        let question = '<div onclick="selectQuestion(' + "'" + this.id + "'" + ');"><h4>' + this.title + '</h4><blockquote>' + this.question + '</blockquote></div><hr>'
+        $("#question-list").append(question)
     })
     layer.open({
-        title: "选汤普",
         type: 1,
-        skin: 'layui-layer-demo', //样式类名
-        closeBtn: 0, //不显示关闭按钮
-        anim: 2,
-        shadeClose: false, //开启遮罩关闭
-        area: ['420px', '240px'],
+        shade: false,
+        title: false,
+        closeBtn: 0,
+        area: ['80%', '80%'],
         content: $("#select-question"),
-        btn: ['确认'],
-        yes: function (index, layero) {
-            var id = $("#selectQuestionVal option:selected").val();
-            if (id == "") {
-                layer.msg("请正确选择")
-            } else {
-                $("#selectQuestionVal").empty()
-                $("#select-question").hide()
-                selectQuestion(id)
-                layer.close(index)
-            }
-        }
     });
 }
 
@@ -541,7 +554,6 @@ function selectQuestion(id) {
                 code: 0,
                 data: childMessage.encode(childData).finish()
             });
-            console.log(messageCreate)
             buffer = baseMessage.encode(messageCreate).finish();
             websocket.send(buffer);
         });
@@ -551,68 +563,153 @@ function selectQuestion(id) {
 // 呈现所有聊天内容
 function appendAllMsg(msgs) {
     $.each(msgs, function () {
-        $("#roundMsgContent").append('<p onclick="mcReply(' + "'" + this.id + "'" + ');">名字：' + this.avaName + ' , 内容：<span style="color:red;">' + this.content + '</span>，回答：' + (this.answer ? this.answer : 0) + '</p>')
+        // 回答转换
+        let answer = ''
+        switch (this.answer) {
+            case 1: // 未回答
+                answer = ''
+                break;
+            case 2:
+                answer = '不相关'
+                break;
+            case 3:
+                answer = '是'
+                break;
+            case 4:
+                answer = '否'
+                break;
+            case 5:
+                answer = '是或不是'
+                break;
+        }
+        if ($("#message-" + this.id).length > 0) {
+            // 修改
+            $("#message-" + this.id).find("div").find("p").find("i").html(answer)
+        } else {
+            let li = '<li onclick="answerMessage(' + "'" + this.id + "'" + ');" id="message-' + this.id + '">'
+            // 用户信息
+            li += '<p><a href="javascript:void(0)" class="icon solid fa-user"></a><span>' + this.avaName + '</span></p>'
+            // 内容 + 回答
+            li += '<div class="message-list-content">' + this.content + '<p><i>' + answer + '</i></p></div>'
+            // 结尾
+            li += '</li><br>'
+            $("#game-round-message-list").append(li)
+        }
     })
-    var roundMsgContent = $("#roundMsgContent")[0];
+    var roundMsgContent = $("#game-round-message-div")[0];
     roundMsgContent.scrollTop = roundMsgContent.scrollHeight;
 }
 
-// mc回答
-function mcReply(id) {
+function answerMessage(id) {
+    if (!checkServer()) {
+        return
+    }
     if (!IS_MC) {
         return
     }
-    layer.prompt({ title: '回答：1:未回答 2:不相关 3:是 4:否 5:半对', formType: 3 }, function (answer, index) {
-        layer.close(index);
-        console.log(id)
-        protobuf.load("protos/GameMessage.proto", function (err, root) {
+    $("#answer-message-id").val(id)
+    layer.open({
+        type: 1,
+        shade: false,
+        title: false,
+        closeBtn: 1,
+        area: ['80%', 'auto'],
+        content: $("#answer-message"),
+    });
+}
+
+// mc回答
+function replyMessage(answer) {
+    if (!checkServer()) {
+        return
+    }
+    if (!IS_MC) {
+        return
+    }
+    let id = $("#answer-message-id").val()
+
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var baseMessage = root.lookupType("GameMessage.Message");
-            protobuf.load("protos/SoupMessage.proto", function (err, root) {
-                if (err) throw err;
-                var protocol = 2009
-                var childMessage = root.lookupType("SoupMessage.AnswerReq");
-                var childData = childMessage.fromObject({ id: id, answer: answer })
-                messageCreate = baseMessage.fromObject({
-                    protocol: protocol,
-                    code: 0,
-                    data: childMessage.encode(childData).finish()
-                });
-                console.log(messageCreate)
-                buffer = baseMessage.encode(messageCreate).finish();
-                websocket.send(buffer);
+            var protocol = 2009
+            var childMessage = root.lookupType("SoupMessage.AnswerReq");
+            var childData = childMessage.fromObject({ id: id, answer: answer })
+            messageCreate = baseMessage.fromObject({
+                protocol: protocol,
+                code: 0,
+                data: childMessage.encode(childData).finish()
             });
+            buffer = baseMessage.encode(messageCreate).finish();
+            websocket.send(buffer);
+            layer.close(layer.index);
         });
+    });
+}
+
+// 游戏开始 显示对局页面
+function start(room) {
+    layer.closeAll()
+    $("#game-round-title").html(room.question.title)
+    $("#game-round-question-description").html(room.question.question)
+    if (IS_MC) {
+        $("#end-game-button").css('display', "block")
+    }
+    // 游戏开始
+    layer.open({
+        type: 1,
+        shade: false,
+        title: false,
+        closeBtn: 0,
+        area: ['80%', '80%'],
+        content: $("#game-round"), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
     });
 }
 
 // 游戏结束
 function endGame() {
+    if (!checkServer()) {
+        return
+    }
     if (!IS_MC) {
         return
     }
-    layer.confirm('是否结束游戏', {
-        btn: ['是', '否'] //按钮
-    }, function () {
-        protobuf.load("protos/GameMessage.proto", function (err, root) {
+    layer.open({
+        type: 1,
+        shade: false,
+        title: false,
+        closeBtn: 1,
+        area: ['50%', 'auto'],
+        content: $("#end-game"), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+    });
+}
+
+// 确认结束游戏
+function endGameConfirm() {
+    if (!checkServer()) {
+        return
+    }
+    if (!IS_MC) {
+        return
+    }
+    $("#end-game-button").hide()
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var baseMessage = root.lookupType("GameMessage.Message");
-            protobuf.load("protos/SoupMessage.proto", function (err, root) {
-                if (err) throw err;
-                var protocol = 2010
-                var childMessage = root.lookupType("SoupMessage.EndReq");
-                var childData = childMessage.fromObject({})
-                messageCreate = baseMessage.fromObject({
-                    protocol: protocol,
-                    code: 0,
-                    data: childMessage.encode(childData).finish()
-                });
-                console.log(messageCreate)
-                buffer = baseMessage.encode(messageCreate).finish();
-                websocket.send(buffer);
+            var protocol = 2010
+            var childMessage = root.lookupType("SoupMessage.EndReq");
+            var childData = childMessage.fromObject({})
+            messageCreate = baseMessage.fromObject({
+                protocol: protocol,
+                code: 0,
+                data: childMessage.encode(childData).finish()
             });
+            buffer = baseMessage.encode(messageCreate).finish();
+            websocket.send(buffer);
         });
-        layer.msg("游戏结束")
     });
 }
 
@@ -638,16 +735,23 @@ function test() {
     });
 }
 
-function buhuo() {
+// 弹窗之前清空内容 房间准备
+function beforeRoomPrepare() {
+    $("#room-prepare-name").empty()
+    $("#room-prepare-max").empty()
+    $("#room-prepare-id").empty()
+    $("#room-prepare-member").empty()
+}
+
+// 加入房间弹窗
+function roomPrepare() {
+    layer.closeAll()
     layer.open({
         type: 1,
         shade: false,
-        title: false, 
+        title: false,
         closeBtn: 0,
         area: ['80%', 'auto'],
-        content: $("#room-prepare"), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
-        cancel: function () {
-            layer.msg('捕获就是从页面已经存在的元素上，包裹layer的结构', { time: 5000, icon: 6 });
-        }
+        content: $("#room-prepare"),
     });
 }

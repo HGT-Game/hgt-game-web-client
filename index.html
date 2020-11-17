@@ -38,6 +38,105 @@
         animation-iteration-count: infinite;
         animation-direction: alternate;
     }
+
+    .fixed-pop-ups {
+        background-color: rgb(72 0 0 / 40%);
+        width: 100%;
+        padding-top: 15px;
+        padding-bottom: 20px;
+        display: none;
+        padding-right: 15px;
+    }
+
+    .fixed-pop-ups h2 {
+        margin: 0 0 0 20px;
+    }
+
+    .fixed-pop-ups p {
+        margin: 10px 0 0 20px;
+    }
+
+    .fixed-pop-ups hr {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .fixed-pop-ups ul {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .fixed-pop-ups .icons li {
+        margin: 10px;
+        display: inline-grid;
+        padding: 0;
+        text-align: center;
+        width: 4.25rem;
+        overflow: hidden;
+    }
+
+    .fixed-pop-ups .icons span {
+        text-align: center;
+        width: 4.25rem;
+    }
+
+    .fixed-pop-ups .icons li a {
+        height: 4.25rem;
+        width: 4.25rem;
+    }
+
+    .dialogue-actions {
+        margin: 15px 0 0 20px;
+    }
+
+    .dialogue-actions li {
+        padding: 15px 15px 0 0;
+    }
+
+    #question-list blockquote {
+        padding-bottom: 0px;
+    }
+
+    #question-list hr {
+        margin-top: 5px;
+        margin-bottom: 15px;
+    }
+
+    #game-round-message-list li p {
+        text-align: left;
+    }
+
+    #game-round-message-list li p span {
+        color: #850202;
+        font-size: 20px;
+        font-weight: bold;
+        margin-left: 18px;
+    }
+
+    #game-round-message-list li {
+        width: 100%;
+        float: left;
+    }
+
+    #game-round-message-list li a {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .message-list-content {
+        float: right;
+        width: 76%;
+        margin-left: 11%;
+        position: inherit;
+        text-align: left;
+    }
+
+    .message-list-content p {
+        text-align: left;
+        margin-left: 0px;
+        color: #420000;
+        font-size: 14px;
+    }
 </style>
 
 <body class="is-preload">
@@ -48,12 +147,12 @@
             <div class="logo">
                 <span class="icon fa-play-circle" style="color: #670000c9;" title="快速加入游戏" onclick="roomHall();"></span>
             </div>
-            <div class="content">
+            <!-- <div class="content">
                 <div class="inner">
                     <h1>海龟汤游戏</h1>
                     <p>其玩法系由出题者提出一个难以理解的事件，参与猜题者可以提出任何问题以试图缩小范围并找出事件背后真正的原因，但出题者仅能则以“是（对）”、“不是（不对）”或“没有关系”来回答问题。</p>
                 </div>
-            </div>
+            </div> -->
             <nav>
                 <ul>
                     <li><a href="#create-room">创建房间</a></li>
@@ -61,69 +160,107 @@
                     <li><a href="#about">关于我们</a></li>
                     <li><a href="#contact">联系我们</a></li>
                     <li><a href="#elements">Elements</a></li>
-                    <li><a href="javascript:void(0)" onclick="buhuo();">房间</a></li>
                 </ul>
             </nav>
         </header>
-        <div id="room-prepare" style="background-color: rgb(72 0 0 / 40%);">
-            <h2 class="major">Intro</h2>
-            <span class="image main"><img src="images/pic01.jpg" alt="" /></span>
-            <p>Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum
-                congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut
-                magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. By the way, check out my <a
-                    href="#work">awesome work</a>.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent
-                taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique
-                libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut
-                ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor.
-                Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique
-                senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus.
-                Pellentesque aliquam maximus risus, vel sed vehicula.</p>
+        <!-- 房间 -->
+        <div id="room-prepare" class="fixed-pop-ups">
+            <h2 class="major" id="room-prepare-name">房间名</h2>
+            <p>房号：<span id="room-prepare-id"></span></p>
+            <p>上限：<span id="room-prepare-max"></span>人</p>
+            <hr>
+            <ul class="icons" id="room-prepare-member">
+                <li><span>MC&房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
+                <li><span>MC</span><a href="javascript:void(0)" class="icon solid fa-times-circle"></a>name</li>
+                <li><span>房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
+                <li><span>-</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
+            </ul>
+            <ul class="actions dialogue-actions">
+                <li><input type="button" value="离开房间" class="primary" onclick="leaveRoom();" /></li>
+                <li><input type="button" value="准备/取消" onclick="prepare();" /></li>
+            </ul>
         </div>
-
+        <!-- 退出房间 / 准备/取消 -->
+        <div id="leave-room" class="fixed-pop-ups">
+            <h2 class="major">退出房间</h2>
+            <ul class="actions dialogue-actions">
+                <li><input type="button" value="确认离开" class="primary" onclick="leaveRoomConfirm();" /></li>
+                <li><input type="button" value="取消" onclick="roomPrepare();" /></li>
+            </ul>
+        </div>
+        <!-- 选题 -->
+        <div id="select-question" class="fixed-pop-ups">
+            <h2 class="major">选汤普</h2>
+            <div id="question-list" style="padding: 20px;">
+                <div onclick="selectQuestion('id');">
+                    <h4>Blockquote</h4>
+                    <blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget tempus
+                        euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis
+                        iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus lorem
+                        ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
+                    <hr>
+                </div>
+            </div>
+        </div>
+        <!-- 游戏页面 -->
+        <div id="game-round" class="fixed-pop-ups">
+            <h2 class="major" id="game-round-title">汤标题</h2>
+            <p id="game-round-question-description">汤面</p>
+            <hr>
+            <div style="width: 100%; height: 390px; overflow: auto;" id="game-round-message-div">
+                <ul class="icons" id="game-round-message-list">
+                    <!-- <li>
+                        <p><a href="javascript:void(0)" class="icon solid fa-user"></a><span>usernmae</span></p>
+                        <div class="message-list-content">
+                            说话内容
+                            <p><i>是</i></p>
+                        </div>
+                    </li> -->
+                    <br>
+                </ul>
+            </div>
+            <hr>
+            <form method="post" action="#">
+                <ul class="actions dialogue-actions">
+                    <li>
+                        <input type="text" id="game-round-message" placeholder="提问的内容" />
+                    </li>
+                    <li><input type="button" value="发送" class="primary" onclick="sendMessage();" /></li>
+                    <li><input type="reset" value="重置" /></li>
+                    <li id="end-game-button" style="display: none;"><input type="button" value="结束游戏" onclick="endGame();" /></li>
+                </ul>
+            </form>
+        </div>
+        <!-- 回答问题 -->
+        <div id="answer-message" class="fixed-pop-ups">
+            <h2 class="major">回答</h2>
+            <input type="hidden" id="answer-message-id" value="" />
+            <ul class="actions dialogue-actions">
+                <li><input type="button" value="取消回答" class="primary" onclick="replyMessage(1);" /></li>
+                <li><input type="button" value="不相关" onclick="replyMessage(2);" /></li>
+                <li><input type="button" value="是" class="primary" onclick="replyMessage(3);" /></li>
+                <li><input type="button" value="不是" onclick="replyMessage(4);" /></li>
+                <li><input type="button" value="是或不是" class="primary" onclick="replyMessage(5);" /></li>
+            </ul>
+        </div>
+        <!-- 结束游戏 -->
+        <div id="end-game" class="fixed-pop-ups">
+            <h2 class="major">结束游戏</h2>
+            <ul class="actions dialogue-actions">
+                <li><input type="button" value="确认" class="primary" onclick="endGameConfirm();" /></li>
+            </ul>
+        </div>
+        <!-- 呈现汤底 -->
+        <div id="game-question-content" class="fixed-pop-ups">
+            <h2 class="major">汤底</h2>
+            <p></p>
+        </div>
         <!-- Main -->
         <div id="main">
-
-            <!-- Intro -->
-            <article id="intro">
-                <h2 class="major">Intro</h2>
-                <span class="image main"><img src="images/pic01.jpg" alt="" /></span>
-                <p>Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum
-                    congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut
-                    magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. By the way, check out my <a
-                        href="#work">awesome work</a>.</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent
-                    taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique
-                    libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut
-                    ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor.
-                    Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique
-                    senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus.
-                    Pellentesque aliquam maximus risus, vel sed vehicula.</p>
-            </article>
-
-            <!-- Work -->
-            <article id="work">
-                <h2 class="major">Work</h2>
-                <span class="image main"><img src="images/pic02.jpg" alt="" /></span>
-                <p>Adipiscing magna sed dolor elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac.
-                    Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer
-                    sollicitudin mauris nec lorem luctus ultrices.</p>
-                <p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna magna
-                    sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas
-                    laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat
-                    tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus amet feugiat
-                    tempus.</p>
-            </article>
-
             <!-- About -->
             <article id="about">
-                <h2 class="major">About</h2>
-                <span class="image main"><img src="images/pic03.jpg" alt="" /></span>
-                <p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at
-                    eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula
-                    lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada
-                    fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum
-                    dolor sit amet.</p>
+                <h2 class="major">关于我们</h2>
+                <p></p>
             </article>
 
             <!-- 大厅房间列表 -->
@@ -168,7 +305,6 @@
                     </ul>
                 </form>
             </article>
-
             <!-- 创建房间 -->
             <article id="create-room">
                 <h2 class="major">创建房间</h2>
@@ -188,8 +324,7 @@
                     </ul>
                 </form>
             </article>
-
-            <!-- Contact -->
+            <!-- 联系我们 -->
             <article id="contact">
                 <h2 class="major">Contact</h2>
                 <form method="post" action="#">
@@ -220,7 +355,7 @@
                 </ul>
             </article>
 
-            <!-- Elements -->
+            <!-- 元素 -->
             <article id="elements">
                 <h2 class="major">Elements</h2>
 
@@ -538,10 +673,12 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
             window.location = "/index.html"
         }
     }
-    var API_DOMAIN = "http://localhost:8899"
+    // var API_DOMAIN = "http://localhost:8899"
+    var API_DOMAIN = "https://api.sunanzhi.com"
     // var API_DOMAIN = getUrlParam("api_domain")
     // wss连接根
-    var WSS_DOMAIN = "ws://localhost:8899/wss"
+    var WSS_DOMAIN = "wss://api.sunanzhi.com/wss"
+    // var WSS_DOMAIN = "ws://localhost:8899/wss"
     // var WSS_DOMAIN = getUrlParam("wss_domain")
     // layer 初始化
     layui.use(['layer', 'form'], function () {
@@ -549,10 +686,14 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
     });
     // websocket 对象
     var websocket
+    // websocket是否连接
     var WEBSOCKET_CONNECT = false
+    // 是否准备
+    var IS_PREPARE = false
     // 是否mc
     var IS_MC = false
-    var MC_ID = ""
+    // 是否房主
+    var IS_OWNER = false
 
     function getUrlParam(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
