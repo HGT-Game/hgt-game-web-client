@@ -1,0 +1,86 @@
+<!DOCTYPE>
+<html>
+<head>
+    <title>工作指南</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="shortcut icon" href="favicon.ico">
+</head>
+<body>
+    <div style="height: 100%; width: 100%; float: left;">
+        <div style="height: 4%; width: 100%;"">
+            <input type=" text" placeholder="高效工作识别地址" id="fish-url" />
+        <button onclick="setFishContent();">确认</button>
+        <button onclick="showGame();">小窗模式</button>
+        <button onclick="setFishContent();"><a href="/index.html" target="_blank">专注模式</a> </button>
+    </div>
+    <iframe id="fish-content" style="height: 95%; width: 100%;" src="" frameborder="0"></iframe>
+    </div>
+</body>
+</html>
+<script src="static/jquery-3.5.1.js"></script>
+<script src="static/layui/layui.js"></script>
+<script>
+    var gameLayer = null
+    document.onkeydown = function (event) {
+        //获取键盘的keyCode值
+        const keyCode = event.keyCode || event.which || event.charCode
+        //获取ctrl 键对应的事件属性
+        const keyCombination = event.altKey
+        if (keyCode == 83 && keyCombination) {
+            // alt + s
+            // 最大化
+            if(gameLayer == null) {
+                showGame()
+            } else {
+                layer.restore(gameLayer)
+            }
+        } else if (keyCode == 67 && keyCombination) {
+            // alt + c
+            // 小化
+            if (gameLayer != null) {
+                layer.min(gameLayer)
+            }
+        }
+
+    }
+    // layer 初始化
+    layui.use(['layer', 'form'], function () {
+        var layer = layui.layer
+    });
+    setFishContent();
+    // 回车发送
+    $("#fish-url").on('keypress', function (event) {
+        if (event.keyCode == 13) {
+            setFishContent()
+        }
+    });
+
+    function setFishContent() {
+        let url = $("#fish-url").val()
+        if (url == "") {
+            url = "https://36kr.com/p/1722571866113"
+        }
+        parent.document.getElementById('fish-content').src = url
+    }
+
+    function showGame() {
+        gameLayer = layer.open({
+            type: 2,
+            title: '广告',
+            shadeClose: false,
+            shade: 0,
+            offset: 'rb',
+            maxmin: true,
+            resize: true,
+            area: ['380px', '60%'],
+            content: '/index.html',
+            cancel: function (index, layero) {
+                gameLayer = null
+                return false;
+            }
+        });
+    }
+
+
+</script>
