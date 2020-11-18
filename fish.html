@@ -22,6 +22,10 @@
 <script src="static/jquery-3.5.1.js"></script>
 <script src="static/layui/layui.js"></script>
 <script>
+    // layer 初始化
+    layui.use(['layer', 'form'], function () {
+        var layer = layui.layer
+    });
     var gameLayer = null
     // 0 未开始游戏 1：还原 2：小化
     var maxminFlag = 0
@@ -48,10 +52,7 @@
         }
 
     }
-    // layer 初始化
-    layui.use(['layer', 'form'], function () {
-        var layer = layui.layer
-    });
+    
     setFishContent();
     // 回车发送
     $("#fish-url").on('keypress', function (event) {
@@ -88,5 +89,10 @@
         });
     }
 
+    setTimeout(() => {
+        if (sessionStorage.getItem("token")) {
+            showGame()
+        }
+    }, 2000);
 
 </script>
