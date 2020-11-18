@@ -1,11 +1,11 @@
 function checkServer() {
     if (!sessionStorage.getItem("token")) {
-        window.location = "#login"
+        window.location = "#tourist-login"
         return false
     }
     // 判断weboskcet是否连接
     if (!WEBSOCKET_CONNECT) {
-        window.location = "#login"
+        window.location = "#tourist-login"
         return false
     }
 

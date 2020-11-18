@@ -158,3 +158,36 @@ function login(scene) {
     })
 }
 
+// 游客登录
+function touristLogin() {
+    let username = $("#tourist-username").val()
+    if (username == "") {
+        layer.msg("请填写游戏昵称")
+        return
+    }
+
+    $.ajax({
+        method: "post",
+        url: API_DOMAIN + "/auth/touristLogin",
+        data: { username: username },
+        success: function (res) {
+            if (res.code != 0 && res.code != 200) {
+                layer.msg(res.message)
+            } else {
+                layer.msg("成功登录")
+                window.location = "#"
+                sessionStorage.setItem("token", res.data.accessToken);
+                sessionStorage.setItem("userId", res.data.userInfo.userId);
+                sessionStorage.setItem("avatar", res.data.userInfo.avatar);
+                sessionStorage.setItem("username", res.data.userInfo.username);
+                // 连接websocket
+                gameServer(res.data.accessToken)
+            }
+        },
+        error: function (res) {
+            console.log(res)
+            layer.msg("出错了，请查看控制台并联系技术人员修复")
+        }
+    })
+}
+
