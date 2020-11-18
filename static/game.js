@@ -591,7 +591,7 @@ function appendAllMsg(msgs) {
             // 修改
             $("#message-" + this.id).find("div").find("p").find("i").html(answer)
         } else {
-            let li = '<li onclick="answerMessage(' + "'" + this.id + "'" + ');" id="message-' + this.id + '"><div>'
+            let li = '<li onclick="answerMessage(' + "'" + this.id + "'" + ', '+"'" + this.content + "'"+');" id="message-' + this.id + '"><div>'
             // 用户头像
             li += '<div class="message-list-avatar"><a href="javascript:void(0)" class="icon solid fa-user"></a></div>'
             // 内容 + 回答
@@ -605,7 +605,7 @@ function appendAllMsg(msgs) {
     roundMsgContent.scrollTop = roundMsgContent.scrollHeight;
 }
 
-function answerMessage(id) {
+function answerMessage(id, content) {
     if (!checkServer()) {
         return
     }
@@ -614,6 +614,8 @@ function answerMessage(id) {
     }
     $("#answer-message-id").val(id)
     $("#answer-message").find(".close").remove()
+    // 内容嵌入弹窗
+    $("#answer-message-content").html(content)
     window.location = "#answer-message"
 }
 
