@@ -143,6 +143,7 @@
                     <li><a href="javascript:void(0)" onclick="menuJoinRoom();">加入房间</a></li>
                     <li><a href="#about">说明</a></li>
                     <li><a href="#contact">联系我们</a></li>
+                    <li><a href="/fish.html">工作主题</a></li>
                     <li><a href="javascript:void(9)" onclick="test();">调试</a></li>
                 </ul>
             </nav>
@@ -492,12 +493,12 @@
             window.location = "/index.html"
         }
     }
-    // var API_DOMAIN = "http://localhost:8899"
-    var API_DOMAIN = "https://api.sunanzhi.com"
+    var API_DOMAIN = "http://localhost:8899"
+    // var API_DOMAIN = "https://api.sunanzhi.com"
     // var API_DOMAIN = getUrlParam("api_domain")
     // wss连接根
-    var WSS_DOMAIN = "wss://api.sunanzhi.com/wss"
-    // var WSS_DOMAIN = "ws://localhost:8899/wss"
+    // var WSS_DOMAIN = "wss://api.sunanzhi.com/wss"
+    var WSS_DOMAIN = "ws://localhost:8899/wss"
     // var WSS_DOMAIN = getUrlParam("wss_domain")
     // layer 初始化
     layui.use(['layer', 'form'], function () {
