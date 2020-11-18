@@ -656,8 +656,27 @@ function start(room) {
     $("#game-round-question-description").html(room.question.question)
     if (IS_MC) {
         $("#end-game-button").css('display', "block")
+        $("#show-game-content").css('display', "block")
+        $("#check-game-content").html(room.question.content)
     }
     $("#game-round").find(".close").remove()
+    window.location = "#game-round"
+}
+
+// 查看汤底
+function showGameContent() {
+    if (!checkServer()) {
+        return
+    }
+    if (!IS_MC) {
+        return
+    }
+    $("#show-game-question-content").find(".close").remove()
+    window.location = "#show-game-question-content"
+}
+
+// 关闭游戏汤底
+function closeGameContent() {
     window.location = "#game-round"
 }
 
@@ -687,6 +706,8 @@ function endGameConfirm() {
         return
     }
     $("#end-game-button").hide()
+    $("#show-game-content").hide()
+    $("#check-game-content").empty()
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");

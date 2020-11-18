@@ -286,7 +286,9 @@
                         <input type="text" id="game-round-message" placeholder="提问的内容" />
                     </li>
                     <li><input type="button" value="发送" class="primary" onclick="sendMessage();" /></li>
-                    <li id="end-game-button" style="display: none;"><input type="button" value="结束游戏"
+                    <li id="show-game-content" style="display: none;"><input type="button" value="查看汤底"
+                            onclick="showGameContent();" /></li>
+                    <li id="end-game-button" style="display: none;"><input type="button" value="结束游戏" class="primary"
                             onclick="endGame();" /></li>
                 </ul>
             </article>
@@ -309,6 +311,14 @@
                 <ul class="actions dialogue-actions">
                     <li><input type="button" value="确认" class="primary" onclick="endGameConfirm();" /></li>
                     <li><input type="button" value="取消" onclick="cancelEndGame();" /></li>
+                </ul>
+            </article>
+            <!-- 查看汤底 -->
+            <article id="show-game-question-content" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major">汤底</h2>
+                <p id="check-game-content"></p>
+                <ul class="actions dialogue-actions">
+                    <li><input type="button" value="关闭" class="primary" onclick="closeGameContent();" /></li>
                 </ul>
             </article>
             <!-- 呈现汤底 -->
