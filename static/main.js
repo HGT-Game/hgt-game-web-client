@@ -191,3 +191,8 @@ function touristLogin() {
     })
 }
 
+
+// 反馈
+function feedback() {
+    layer.msg("暂未开放");
+}

@@ -141,7 +141,7 @@
                 <ul>
                     <li><a href="javascript:void(0)" onclick="menuCreateRoom();">创建房间</a></li>
                     <li><a href="javascript:void(0)" onclick="menuJoinRoom();">加入房间</a></li>
-                    <li><a href="#about">关于我们</a></li>
+                    <li><a href="#about">说明</a></li>
                     <li><a href="#contact">联系我们</a></li>
                     <li><a href="javascript:void(9)" onclick="test();">调试</a></li>
                 </ul>
@@ -151,9 +151,26 @@
         <!-- Main -->
         <div id="main">
             <!-- 关于我们 -->
-            <article id="about">
+            <article id="about" class="fixed-pop-ups" style="padding: 20px;">
                 <h2 class="major">关于我们</h2>
-                <p></p>
+                <p>一个东凑西凑的团队，丝毫没有梦想的废鱼，更新迭代全靠与伪产品开撕。</p>
+                <h2 class="major">游戏发展</h2>
+                <ul>
+                    <li>2020.11.18 web版删档公测</li>
+                    <li>2020.12.01 web版本上线</li>
+                    <li>敬请期待...</li>
+                </ul>
+                <h2 class="major">图标说明</h2>
+                <p><i class="icon solid fa-check-circle"></i> 对/不是/已准备</p>
+                <p><i class="icon solid fa-times-circle"></i> 错/否/未准备</p>
+                <h2 class="major">成员组成</h2>
+                <ul>
+                    <li>决策：MorsTiin</li>
+                    <li>伪产品：水玉</li>
+                    <li>打杂：张牛逼</li>
+                    <li>二把手：Alan</li>
+                    <li>首席UI设计师：Grey Chan</li>
+                </ul>
             </article>
 
             <!-- 大厅房间列表 -->
@@ -331,33 +348,18 @@
             </article>
             <!-- 联系我们 -->
             <article id="contact">
-                <h2 class="major">Contact</h2>
+                <h2 class="major">反馈</h2>
                 <form method="post" action="#">
                     <div class="fields">
-                        <div class="field half">
-                            <label for="name">Name</label>
-                            <input type="text" name="name" id="name" />
-                        </div>
-                        <div class="field half">
-                            <label for="email">Email</label>
-                            <input type="text" name="email" id="email" />
-                        </div>
                         <div class="field">
-                            <label for="message">Message</label>
-                            <textarea name="message" id="message" rows="4"></textarea>
+                            <textarea id="feedback-content" rows="4" placeholder="请输入问题描述"></textarea>
                         </div>
                     </div>
                     <ul class="actions">
-                        <li><input type="submit" value="Send Message" class="primary" /></li>
-                        <li><input type="reset" value="Reset" /></li>
+                        <li><input type="button" value="确认" class="primary" onclick="feedback();" /></li>
+                        <li><input type="reset" value="重置" /></li>
                     </ul>
                 </form>
-                <ul class="icons">
-                    <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-                    <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-                    <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-                    <li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-                </ul>
             </article>
             <!-- 游客模式 -->
             <article id="tourist-login">

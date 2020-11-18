@@ -728,7 +728,7 @@ function endGameConfirm() {
 }
 
 function test() {
-    console.log("查看控制台")
+    layer.msg("查看控制台")
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
