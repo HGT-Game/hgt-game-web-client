@@ -486,8 +486,16 @@ function prepare() {
     });
 }
 
+// 回车发送
+$("#game-round-message").on('keypress', function (event) {
+    if (event.keyCode == 13) {
+        sendMessage()
+    }
+});
+
 // 发送内容
 function sendMessage() {
+    console.log(1)
     if (!checkServer()) {
         return
     }
@@ -587,7 +595,7 @@ function appendAllMsg(msgs) {
             // 用户头像
             li += '<div class="message-list-avatar"><a href="javascript:void(0)" class="icon solid fa-user"></a></div>'
             // 内容 + 回答
-            li += '<div class="message-list-content" style="float: left;"><p class="message-list-username">'+this.avaName+'</p>' + this.content + '<p class="message-list-answer"><i>'+answer+'</i></p></div>'
+            li += '<div class="message-list-content" style="float: left;"><p class="message-list-username">' + this.avaName + '</p>' + this.content + '<p class="message-list-answer"><i>' + answer + '</i></p></div>'
             // 结尾
             li += '</div></li><br>'
             $("#game-round-message-list").append(li)
