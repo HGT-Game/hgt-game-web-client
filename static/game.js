@@ -389,6 +389,8 @@ function addMember(members) {
             if (sessionStorage.getItem("userId") == this.aid) {
                 if (this.mc) {
                     IS_MC = true
+                    // 代表是mc
+                    $("#room-prepare-button").val("开始")
                 }
                 if (this.owner) {
                     IS_OWNER = true;
@@ -757,6 +759,16 @@ function beforeRoomPrepare() {
 function roomPrepare() {
     if (!checkServer()) {
         return
+    }
+    // 判断是否mc
+    if(IS_MC) {
+        $("#room-prepare-button").val("开始")
+    } else {
+        if(IS_PREPARE) {
+            $("#room-prepare-button").val("取消准备")
+        } else {
+            $("#room-prepare-button").val("准备")
+        }
     }
     $("#room-prepare").find(".close").remove()
     window.location = "#room-prepare"
