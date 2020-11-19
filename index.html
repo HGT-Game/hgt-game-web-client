@@ -384,11 +384,9 @@
     }
     // var API_DOMAIN = "http://localhost:8899"
     var API_DOMAIN = "https://api.sunanzhi.com"
-    // var API_DOMAIN = getUrlParam("api_domain")
     // wss连接根
     var WSS_DOMAIN = "wss://api.sunanzhi.com/wss"
     // var WSS_DOMAIN = "ws://localhost:8899/wss"
-    // var WSS_DOMAIN = getUrlParam("wss_domain")
     // layer 初始化
     layui.use(['layer', 'form'], function () {
         var layer = layui.layer
@@ -403,12 +401,6 @@
     var IS_MC = false
     // 是否房主
     var IS_OWNER = false
-
-    function getUrlParam(name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-        if (r != null) return unescape(r[2]); return null; //返回参数值
-    }
 
     if (sessionStorage.getItem("token") && WEBSOCKET_CONNECT == false) {
         gameServer(sessionStorage.getItem("token"))
