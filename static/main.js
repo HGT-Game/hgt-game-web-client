@@ -191,8 +191,42 @@ function touristLogin() {
     })
 }
 
+// 菜单反馈
+function menuFeedback() {
+    if (!checkServer()) {
+        return
+    }
+    window.location = "#feedback"
+}
 
 // 反馈
 function feedback() {
-    layer.msg("暂未开放");
+    if(!checkServer()){
+        return
+    }
+    let content = $("#feedback-content").val()
+    if(content == "") {
+        layer.msg("请输入反馈内容")
+        return
+    }
+    $.ajax({
+        method: "post",
+        url: API_DOMAIN + "/user/feedback",
+        beforeSend: function (XMLHttpRequest) {
+            XMLHttpRequest.setRequestHeader("Authorization", sessionStorage.getItem("token"));
+        },
+        header: {Authorization: sessionStorage.getItem("token")},
+        data: {content: content},
+        success: function (res) {
+            if (res.code != 0 && res.code != 200) {
+                layer.msg(res.message)
+            } else {
+                layer.msg("感谢您的宝贵建议")
+            }
+        },
+        error: function (res) {
+            console.log(res)
+            layer.msg("出错了，请查看控制台并联系技术人员修复")
+        }
+    })
 }
