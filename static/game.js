@@ -197,11 +197,11 @@ function gameServer(authorization, username, password) {
                                 resMessage = resChildMessage.decode(baseMessage.data)
                                 IS_PREPARE = !IS_PREPARE
                                 if (IS_PREPARE) {
-                                    layer.msg("准备")
+                                    $("#room-prepare-button").val("取消准备")
                                     $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').removeClass("fa-times-circle")
                                     $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').addClass("fa-check-circle")
                                 } else {
-                                    layer.msg("取消准备")
+                                    $("#room-prepare-button").val("准备")
                                     $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').addClass("fa-times-circle")
                                     $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').removeClass("fa-check-circle")
                                 }
