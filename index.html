@@ -5,123 +5,12 @@
     <title>海龟汤游戏</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="keywords" content="海龟汤,海龟汤游戏,文字推理,文字推理游戏,脑洞推理,脑洞推理游戏" />
+    <meta name="description" content="海龟汤,海龟汤游戏,文字推理,文字推理游戏,脑洞推理,脑洞推理游戏" />
     <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="static/css/index.css" />
     <link rel="shortcut icon" href="favicon.ico">
-    <noscript>
-        <link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 </head>
-<style>
-    @keyframes breathe {
-        0% {
-            opacity: .4;
-            box-shadow: 0 1px 2px rgb(174 115 115 / 47%), 0 1px 1px rgba(0, 147, 223, 0.1) inset;
-        }
-
-        100% {
-            opacity: 1;
-            border: 1px solid rgba(107 64 64 / 70%);
-            box-shadow: 0 1px 30px #860000, 0 1px 20px #650e0e inset;
-        }
-    }
-
-    .logo {
-        border: solid 2px #550000;
-        border-radius: 100%;
-        animation-timing-function: ease-in-out;
-        animation-name: breathe;
-        animation-duration: 1500ms;
-        animation-iteration-count: infinite;
-        animation-direction: alternate;
-    }
-
-    .fixed-pop-ups {
-        background-color: rgb(72 0 0 / 40%);
-        width: 100%;
-        padding: 15px 15px 20px 0;
-        display: none;
-    }
-
-    .fixed-pop-ups .icons li {
-        /* margin: 10px; */
-        display: inline-grid;
-        padding: 0;
-        text-align: center;
-        width: 4.25rem;
-        overflow: hidden;
-    }
-
-    .fixed-pop-ups .icons span {
-        text-align: center;
-        width: 4.25rem;
-    }
-
-    .fixed-pop-ups .icons li a {
-        height: 4.25rem;
-        width: 4.25rem;
-    }
-
-    .dialogue-actions {
-        margin: 15px 0 0 20px;
-    }
-
-    .dialogue-actions li {
-        padding: 15px 15px 0 0;
-    }
-
-    #question-list hr {
-        margin-top: 5px;
-        margin-bottom: 15px;
-    }
-
-    #game-round-message-list li p {
-        text-align: left;
-        margin-bottom: 6px;
-    }
-
-    #game-round-message-list li p span {
-        color: #850202;
-        font-size: 20px;
-        font-weight: bold;
-        margin-left: 18px;
-    }
-
-    #game-round-message-list li {
-        width: 100%;
-        float: left;
-    }
-
-    #game-round-message-list li a {
-        width: 2.25rem;
-        height: 2.25rem;
-    }
-
-    .message-list-content {
-        width: 76%;
-        margin-left: 20px;
-        position: inherit;
-        text-align: left;
-        font-size: 12px;
-    }
-
-    .message-list-avatar {
-        float: left;
-        width: 2.25rem;
-        height: 2.25rem;
-    }
-
-    .message-list-answer {
-        text-align: left;
-        margin-left: 0px;
-        color: #ffc0007a;
-        margin-top: 2px;
-        font-size: 12px;
-    }
-
-    .message-list-username {
-        color: #ffffff80;
-        font-size: 14px;
-    }
-</style>
 
 <body class="is-preload">
     <!-- Wrapper -->
