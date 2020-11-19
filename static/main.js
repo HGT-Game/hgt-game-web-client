@@ -147,6 +147,7 @@ function login(scene) {
                 sessionStorage.setItem("userId", res.data.userInfo.userId);
                 sessionStorage.setItem("avatar", res.data.userInfo.avatar);
                 sessionStorage.setItem("username", res.data.userInfo.username);
+                $("#show-logout-button").css('display', "block")
                 // 连接websocket
                 gameServer(res.data.accessToken)
             }
@@ -180,6 +181,7 @@ function touristLogin() {
                 sessionStorage.setItem("userId", res.data.userInfo.userId);
                 sessionStorage.setItem("avatar", res.data.userInfo.avatar);
                 sessionStorage.setItem("username", res.data.userInfo.username);
+                $("#show-logout-button").css('display', "block")
                 // 连接websocket
                 gameServer(res.data.accessToken)
             }
@@ -229,4 +231,23 @@ function feedback() {
             layer.msg("出错了，请查看控制台并联系技术人员修复")
         }
     })
+}
+
+// 菜单退出
+function showLogout () {
+    if (sessionStorage.getItem("token")) {
+        window.location = "#logout-options"
+    } else {
+        $("#show-logout-button").hide()
+    }
+}
+
+// 退出
+function logout() {
+    // 清空sessionStorage
+    sessionStorage.clear()
+    websocket.close()
+    $("#show-logout-button").hide()
+    layer.msg("退出成功")
+    window.location = "#"
 }

@@ -99,8 +99,6 @@ function gameServer(authorization, username, password) {
     websocket.onclose = function () {
         console.log('断开');
         WEBSOCKET_CONNECT = false
-        // 清空sessionStorage
-        sessionStorage.clear()
     }
     websocket.onmessage = function (e) {
         heartCheck.reset();
@@ -651,7 +649,6 @@ function replyMessage(answer) {
 
 // 游戏开始 显示对局页面
 function start(room) {
-    layer.closeAll()
     $("#game-round-title").html(room.question.title)
     $("#game-round-question-description").html(room.question.question)
     if (IS_MC) {
