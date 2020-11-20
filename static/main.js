@@ -246,7 +246,7 @@ function showLogout () {
 function logout() {
     // 清空sessionStorage
     sessionStorage.clear()
-    websocket.close()
+    WEBSOCKET_OBJ.close()
     $("#show-logout-button").hide()
     layer.msg("退出成功")
     window.location = "#"
