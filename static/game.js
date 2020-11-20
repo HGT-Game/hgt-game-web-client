@@ -36,7 +36,7 @@ var heartCheck = {
                     data: childMessage.encode(childData).finish()
                 });
                 buffer = baseMessage.encode(messageCreate).finish();
-                websocket.send(buffer);
+                WEBSOCKET_OBJ.send(buffer);
             });
         }, this.timeout)
     }
@@ -50,9 +50,9 @@ function gameServer(authorization, username, password) {
         url = WSS_DOMAIN + "?Authorization=" + authorization
     }
 
-    websocket = new WebSocket(url);
-    websocket.binaryType = 'arraybuffer';
-    websocket.onopen = function () {
+    WEBSOCKET_OBJ = new WebSocket(url);
+    WEBSOCKET_OBJ.binaryType = 'arraybuffer';
+    WEBSOCKET_OBJ.onopen = function () {
         heartCheck.start();
         WEBSOCKET_CONNECT = true
         if (authorization === "") {
@@ -69,7 +69,7 @@ function gameServer(authorization, username, password) {
                     data: childMessage.encode(childData).finish()
                 });
                 buffer = baseMessage.encode(messageCreate).finish();
-                websocket.send(buffer);
+                WEBSOCKET_OBJ.send(buffer);
             });
         } else {
             // 发送获取数据
@@ -87,22 +87,22 @@ function gameServer(authorization, username, password) {
                         data: childMessage.encode(childData).finish()
                     });
                     buffer = baseMessage.encode(messageCreate).finish();
-                    websocket.send(buffer);
+                    WEBSOCKET_OBJ.send(buffer);
                 });
             });
         }
     }
-    websocket.error = function () {
+    WEBSOCKET_OBJ.error = function () {
         console.log('连接错误')
         WEBSOCKET_CONNECT = false
         // 清空sessionStorage
         sessionStorage.clear()
     }
-    websocket.onclose = function () {
+    WEBSOCKET_OBJ.onclose = function () {
         console.log('断开');
         WEBSOCKET_CONNECT = false
     }
-    websocket.onmessage = function (e) {
+    WEBSOCKET_OBJ.onmessage = function (e) {
         heartCheck.reset();
         var baseMessage
         protobuf.load("protos/GameMessage.proto", function (err, root) {
@@ -291,7 +291,7 @@ function roomHall() {
                 data: childMessage.encode(childData).finish()
             });
             buffer = baseMessage.encode(messageCreate).finish();
-            websocket.send(buffer);
+            WEBSOCKET_OBJ.send(buffer);
         });
     });
 }
@@ -322,7 +322,7 @@ function createRoom() {
                 data: childMessage.encode(childData).finish()
             });
             buffer = baseMessage.encode(messageCreate).finish();
-            websocket.send(buffer);
+            WEBSOCKET_OBJ.send(buffer);
         });
     });
 }
@@ -346,7 +346,7 @@ function joinRoomInternal(roomId, password) {
                 data: childMessage.encode(childData).finish()
             });
             buffer = baseMessage.encode(messageCreate).finish();
-            websocket.send(buffer);
+            WEBSOCKET_OBJ.send(buffer);
         });
     });
 }
@@ -460,7 +460,7 @@ function leaveRoomConfirm() {
                 data: childMessage.encode(childData).finish()
             });
             buffer = baseMessage.encode(messageCreate).finish();
-            websocket.send(buffer);
+            WEBSOCKET_OBJ.send(buffer);
         });
     });
 }
@@ -484,7 +484,7 @@ function prepare() {
                 data: childMessage.encode(childData).finish()
             });
             buffer = baseMessage.encode(messageCreate).finish();
-            websocket.send(buffer);
+            WEBSOCKET_OBJ.send(buffer);
         });
     });
 }
@@ -522,7 +522,7 @@ function sendMessage() {
                     data: childMessage.encode(childData).finish()
                 });
                 buffer = baseMessage.encode(messageCreate).finish();
-                websocket.send(buffer);
+                WEBSOCKET_OBJ.send(buffer);
             });
         });
     }
@@ -576,7 +576,7 @@ function selectQuestion(id) {
                 data: childMessage.encode(childData).finish()
             });
             buffer = baseMessage.encode(messageCreate).finish();
-            websocket.send(buffer);
+            WEBSOCKET_OBJ.send(buffer);
         });
     });
 }
@@ -662,7 +662,7 @@ function replyMessage(answer) {
                 data: childMessage.encode(childData).finish()
             });
             buffer = baseMessage.encode(messageCreate).finish();
-            websocket.send(buffer);
+            WEBSOCKET_OBJ.send(buffer);
             layer.close(layer.index);
         });
     });
@@ -740,7 +740,7 @@ function endGameConfirm() {
                 data: childMessage.encode(childData).finish()
             });
             buffer = baseMessage.encode(messageCreate).finish();
-            websocket.send(buffer);
+            WEBSOCKET_OBJ.send(buffer);
         });
     });
 }
@@ -760,7 +760,7 @@ function test() {
                 data: childMessage.encode(childData).finish()
             });
             buffer = baseMessage.encode(messageCreate).finish();
-            websocket.send(buffer);
+            WEBSOCKET_OBJ.send(buffer);
         });
     });
 }
