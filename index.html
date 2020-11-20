@@ -34,7 +34,8 @@
                     <li><a href="/fish.html">工作主题</a></li>
                     <li><a href="#about">说明</a></li>
                     <li><a href="javascript:void(0)" onclick="menuFeedback();">反馈</a></li>
-                    <li id="show-logout-button" style="display: none;"><a href="javascript:void(9)" onclick="showLogout();">退出</a></li>
+                    <li id="show-logout-button" style="display: none;"><a href="javascript:void(9)"
+                            onclick="showLogout();">退出</a></li>
                 </ul>
             </nav>
         </header>
@@ -138,7 +139,7 @@
                     <li><span>-</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li> -->
                 </ul>
                 <ul class="actions dialogue-actions">
-                    <li><input type="button" value="离开房间" class="primary" onclick="leaveRoom();" /></li>
+                    <li><input type="button" value="离开房间" class="primary" onclick="leaveRoom('room-prepare');" /></li>
                     <li><input id="room-prepare-button" type="button" value="准备/取消" onclick="prepare();" /></li>
                 </ul>
             </article>
@@ -148,13 +149,15 @@
                 <p>用户编号：<span id="room-member-id"></span></p>
                 <p>用户名：<span id="room-member-username"></span></p>
                 <ul class="actions dialogue-actions">
-                    <li id="show-kick-button" style="display: none;"><input type="button" value="踢出房间" class="primary" onclick="kickRoom();" /></li>
+                    <li id="show-kick-button" style="display: none;"><input type="button" value="踢出房间" class="primary"
+                            onclick="kickRoom();" /></li>
                     <li><input type="button" value="关闭" onclick="closeMemberInfo();" /></li>
                 </ul>
             </article>
             <!-- 退出房间-->
             <article id="leave-room" class="fixed-pop-ups" style="padding: 20px;">
                 <h2 class="major">退出房间</h2>
+                <input type="hidden" id="cancel-leave-id" value="" />
                 <ul class="actions dialogue-actions">
                     <li><input type="button" value="确认离开" class="primary" onclick="leaveRoomConfirm();" /></li>
                     <li><input type="button" value="取消" onclick="cancelLeaveRoom();" /></li>
@@ -208,6 +211,8 @@
                             onclick="showGameContent();" /></li>
                     <li id="end-game-button" style="display: none;"><input type="button" value="结束游戏" class="primary"
                             onclick="endGame();" /></li>
+                    <li id="leave-game-button" style="display: none;"><input type="button" value="离开游戏"
+                            onclick="leaveRoom('game-round');" /></li>
                 </ul>
             </article>
             <!-- 回答问题 -->
@@ -374,8 +379,7 @@
 
         <!-- Footer -->
         <footer id="footer">
-            <p class="copyright">© 2020 <a
-                    href="http://beian.miit.gov.cn/">粤ICP备18084253号</a></p>
+            <p class="copyright">© 2020 <a href="http://beian.miit.gov.cn/">粤ICP备18084253号</a></p>
         </footer>
     </div>
 
@@ -402,7 +406,7 @@
         }
     }
     var host = "test.develop"
-    if(host == "test.develop") {
+    if (host == "test.develop") {
         var API_DOMAIN = "http://localhost:8899"
         var WSS_DOMAIN = "ws://localhost:8899/wss"
     } else if (host == "hgt.sunanzhi.com") {
@@ -425,7 +429,7 @@
     var IS_OWNER = false
 
     if (sessionStorage.getItem("token")) {
-        if(WEBSOCKET_CONNECT == false) {
+        if (WEBSOCKET_CONNECT == false) {
             gameServer(sessionStorage.getItem("token"))
         }
         $("#show-logout-button").css('display', "block")

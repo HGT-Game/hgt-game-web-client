@@ -171,6 +171,8 @@ message RoomPush {
 
     // MC ID
     string mcId = 12;
+    // 游戏中是否可以离开 1:否 2:是
+    uint32 leaveForPlaying = 13;
 }
 
 // 房间成员信息
@@ -191,6 +193,8 @@ message RoomMemberSeatRes {
     bool mc = 7;
     // 离开方式 1:主动离开 2：被动离开(被踢)
     uint32 leave = 8;
+    // 是否在线
+    bool online = 9;
 }
 
 message QuestionRes {

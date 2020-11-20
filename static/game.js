@@ -178,6 +178,12 @@ function gameServer(authorization, username, password) {
                                     roomPrepare()
                                     layer.msg("成功加入房间")
                                 }
+                                // 判断对局是否可以离开
+                                if(resMessage.room.leaveForPlaying == 2) {
+                                    $("#leave-game-button").css("display", "block")
+                                } else if (resMessage.room.leaveForPlaying == 1) {
+                                    $("#leave-game-button").hide()
+                                }
                                 break;
                             case -2004: // 离开房间
                                 var resChildMessage = root.lookupType("SoupMessage.LeaveRoomReq");
@@ -244,6 +250,13 @@ function gameServer(authorization, username, password) {
                                 // 判断房间人员是否有变动
                                 if (resMessage.seatsChange && resMessage.seatsChange.length > 0) {
                                     addMember(resMessage.seatsChange)
+                                }
+                                // 判断对局是否可以离开
+                                if(resMessage.leaveForPlaying == 2) {
+                                    console.log(resMessage.leaveForPlaying)
+                                    $("#leave-game-button").css("display", "block")
+                                } else if (resMessage.leaveForPlaying == 1) {
+                                    $("#leave-game-button").hide()
                                 }
                                 // 判断是否有人发送消息
                                 if (resMessage.changedMsg && resMessage.changedMsg.length > 0) {
@@ -445,17 +458,19 @@ function addMember(members) {
 }
 
 // 离开房间选项
-function leaveRoom() {
+function leaveRoom(id) {
     if (!checkServer()) {
         return
     }
+    $("#cancel-leave-id").val(id)
     $("#leave-room").find(".close").remove();
     window.location = "#leave-room"
 }
 
 // 取消离开房间
 function cancelLeaveRoom() {
-    window.location = "#room-prepare"
+    let id = $("#cancel-leave-id").val()
+    window.location = "#" + id
 }
 
 // 确认离开房间
