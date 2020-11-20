@@ -147,9 +147,7 @@ function gameServer(authorization, username, password) {
                                 $("#room-prepare-name").append(resMessage.room.roomName)
                                 $("#room-prepare-max").append(resMessage.room.roomMax)
                                 $("#room-prepare-id").append(resMessage.room.roomId)
-                                $.each(resMessage.room.seatsChange, function () {
-                                    $("#room-prepare-member").append('<li id="room-prepare-' + this.aid + '"><span>MC&房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>' + this.avaName + '</li>')
-                                })
+                                addMember(resMessage.room.seatsChange)
                                 layer.msg("成功创建房间")
                                 // 默认准备
                                 IS_PREPARE = true
@@ -207,6 +205,12 @@ function gameServer(authorization, username, password) {
                                     $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').addClass("fa-times-circle")
                                     $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').removeClass("fa-check-circle")
                                 }
+                                break;
+                            case -2006: // 踢人返回
+                                var resChildMessage = root.lookupType("SoupMessage.PrepareRes");
+                                resMessage = resChildMessage.decode(baseMessage.data)
+                                $("#show-kick-button").hide()
+                                roomPrepare()
                                 break;
                             case -2008: // 聊天返回
                                 var resChildMessage = root.lookupType("SoupMessage.ChatRes");
@@ -385,8 +389,21 @@ function addMember(members) {
         return
     }
     $.each(members, function () {
+        // 1:主动离开 2:被踢
         if (this.leave == 1 || this.leave == 2) {
-            // 1:主动离开 2:被踢 
+            // 判断是否当前用户.如果是的话则关闭窗口
+            if (this.aid == sessionStorage.getItem("userId") && this.leave == 2) {
+                // 被踢的是当前用户
+                layer.closeAll()
+                layer.msg("你被移出房间")
+                window.location = "#"
+            } else {
+                if(this.leave == 1) {
+                    layer.msg(this.avaName + "离开房间")
+                } else {
+                    layer.msg(this.avaName + "被踢出房间")
+                }
+            }
             $("#room-prepare-" + this.aid).remove()
         } else {
             if (sessionStorage.getItem("userId") == this.aid) {
@@ -404,7 +421,7 @@ function addMember(members) {
                     IS_PREPARE = false
                 }
             }
-            let role = "-"
+            let role = "玩家"
             if (this.owner && this.mc) {
                 role = "房主&MC"
             } else {
@@ -422,7 +439,7 @@ function addMember(members) {
             if ($("#room-prepare-" + this.aid).length > 0) {
                 $("#room-prepare-" + this.aid).remove()
             }
-            $("#room-prepare-member").append('<li id="room-prepare-' + this.aid + '"><span>' + role + '</span><a href="javascript:void(0)" class="icon solid ' + icon + '"></a>' + this.avaName + '</li>')
+            $("#room-prepare-member").append('<li id="room-prepare-' + this.aid + '"><span>' + role + '</span><a href="javascript:void(0)" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');" class="icon solid ' + icon + '"></a>' + this.avaName + '</li>')
         }
     })
 }
@@ -505,7 +522,7 @@ function sendMessage() {
     var content = $("#game-round-message").val()
     if (content == "") {
         layer.msg("发送内容不能为空")
-    } else if(getByteLen(content) > 25) {
+    } else if (getByteLen(content) > 25) {
         layer.msg("内容过长")
     } else {
         protobuf.load("protos/GameMessage.proto", function (err, root) {
@@ -610,7 +627,7 @@ function appendAllMsg(msgs) {
             // 修改
             $("#message-" + this.id).find("div").find("p").find("i").html(answer)
         } else {
-            let li = '<li onclick="answerMessage(' + "'" + this.id + "'" + ', '+"'" + this.content + "'"+');" id="message-' + this.id + '"><div>'
+            let li = '<li onclick="answerMessage(' + "'" + this.id + "'" + ', ' + "'" + this.content + "'" + ');" id="message-' + this.id + '"><div>'
             // 用户头像
             li += '<div class="message-list-avatar"><a href="javascript:void(0)" class="icon solid fa-user"></a></div>'
             // 内容 + 回答
@@ -779,10 +796,10 @@ function roomPrepare() {
         return
     }
     // 判断是否mc
-    if(IS_MC) {
+    if (IS_MC) {
         $("#room-prepare-button").val("开始")
     } else {
-        if(IS_PREPARE) {
+        if (IS_PREPARE) {
             $("#room-prepare-button").val("取消准备")
         } else {
             $("#room-prepare-button").val("准备")
@@ -806,4 +823,54 @@ function menuJoinRoom() {
         return
     }
     window.location = "#join-room"
+}
+
+// 查看用户信息
+function showRoomMember(userId, username) {
+    if (!checkServer()) {
+        return
+    }
+    // 房主 
+    if(IS_OWNER && userId != sessionStorage.getItem("userId")) {
+        $("#show-kick-button").css("display", "block")
+    }
+    $("#room-member-info").find(".close").remove()
+    $("#room-member-id").html(userId)
+    $("#room-member-username").html(username)
+    window.location = "#room-member-info"
+}
+
+// 关闭查看用户信息
+function closeMemberInfo() {
+    if (!checkServer()) {
+        return
+    }
+    $("#show-kick-button").hide()
+    roomPrepare()
+}
+
+// 题掉用户
+function kickRoom() {
+    if (!checkServer()) {
+        return
+    }
+    let userId = $("#room-member-id").text()
+    console.log($("#room-member-id").text())
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+            if (err) throw err;
+            var protocol = 2006
+            var childMessage = root.lookupType("SoupMessage.KickReq");
+            var childData = childMessage.fromObject({ aid: userId })
+            messageCreate = baseMessage.fromObject({
+                protocol: protocol,
+                code: 0,
+                data: childMessage.encode(childData).finish()
+            });
+            buffer = baseMessage.encode(messageCreate).finish();
+            WEBSOCKET_OBJ.send(buffer);
+        });
+    });
 }

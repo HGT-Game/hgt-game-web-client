@@ -132,14 +132,24 @@
                 <p>上限：<span id="room-prepare-max"></span>人</p>
                 <hr>
                 <ul class="icons" id="room-prepare-member">
-                    <li><span>MC&房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
+                    <!-- <li><span>MC&房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
                     <li><span>MC</span><a href="javascript:void(0)" class="icon solid fa-times-circle"></a>name</li>
                     <li><span>房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
-                    <li><span>-</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
+                    <li><span>-</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li> -->
                 </ul>
                 <ul class="actions dialogue-actions">
                     <li><input type="button" value="离开房间" class="primary" onclick="leaveRoom();" /></li>
                     <li><input id="room-prepare-button" type="button" value="准备/取消" onclick="prepare();" /></li>
+                </ul>
+            </article>
+            <!-- 用户头像点击内容 -->
+            <article id="room-member-info" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major">用户信息</h2>
+                <p>用户编号：<span id="room-member-id"></span></p>
+                <p>用户名：<span id="room-member-username"></span></p>
+                <ul class="actions dialogue-actions">
+                    <li id="show-kick-button" style="display: none;"><input type="button" value="踢出房间" class="primary" onclick="kickRoom();" /></li>
+                    <li><input type="button" value="关闭" onclick="closeMemberInfo();" /></li>
                 </ul>
             </article>
             <!-- 退出房间-->
