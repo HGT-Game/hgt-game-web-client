@@ -1,3 +1,5 @@
+document.write("<script language=javascript src='/static/code.js'></script>");
+
 function checkServer() {
     if (!sessionStorage.getItem("token")) {
         window.location = "#tourist-login"
@@ -503,6 +505,8 @@ function sendMessage() {
     var content = $("#game-round-message").val()
     if (content == "") {
         layer.msg("发送内容不能为空")
+    } else if(getByteLen(content) > 25) {
+        layer.msg("内容过长")
     } else {
         protobuf.load("protos/GameMessage.proto", function (err, root) {
             if (err) throw err;
@@ -522,6 +526,20 @@ function sendMessage() {
             });
         });
     }
+}
+
+// 统计内容长度问题
+function getByteLen(val) {
+    var len = 0;
+    for (var i = 0; i < val.length; i++) {
+        var length = val.charCodeAt(i);
+        if (length >= 0 && length <= 128) {
+            len += 1;
+        } else {
+            len += 2;
+        }
+    }
+    return len;
 }
 
 // 呈现汤普
