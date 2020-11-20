@@ -383,7 +383,8 @@ function addMember(members) {
         return
     }
     $.each(members, function () {
-        if (this.leave) {
+        if (this.leave == 1 || this.leave == 2) {
+            // 1:主动离开 2:被踢 
             $("#room-prepare-" + this.aid).remove()
         } else {
             if (sessionStorage.getItem("userId") == this.aid) {
@@ -727,7 +728,6 @@ function endGameConfirm() {
 }
 
 function test() {
-    layer.msg("查看控制台")
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");

@@ -44,9 +44,12 @@ message LoginRes {
   string userId = 2;
 }
 
+// 1001 下线
 message OfflineReq {
   string userId = 1;
 }
+
+// -1001 下线返回
 message OfflineRes {
 
 }

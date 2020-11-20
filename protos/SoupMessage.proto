@@ -189,8 +189,8 @@ message RoomMemberSeatRes {
     uint32 status = 6;
     // 是否 MC
     bool mc = 7;
-    // 是否离开
-    bool leave = 8;
+    // 离开方式 1:主动离开 2：被动离开(被踢)
+    uint32 leave = 8;
 }
 
 message QuestionRes {
@@ -221,4 +221,52 @@ message ChatMessageRes {
     string avaHead = 6;
     // 是否 MC
     bool mc = 7;
+}
+
+// 加入笔记 请求 2013
+message AddNoteReq {
+    //  聊天消息 id
+    string messageId = 1;
+    //  自定义内容
+    string content = 2;
+}
+
+// 加入笔记 返回
+message AddNoteRes {
+    //  新增笔记
+    NoteRes note = 1;
+}
+
+//删除笔记 请求 2014
+message DeleteNoteReq {
+    //  笔记 id
+    string id = 1;
+}
+
+//删除笔记 返回
+message DeleteNoteRes {
+
+}
+
+// 查询笔记 请求 2015
+message LoadNoteReq {
+    //  查询用户 id
+    string aid = 1;
+}
+
+// 查询笔记 返回
+message LoadNoteRes {
+    //  笔记列表
+    repeated NoteRes notes = 1;
+}
+
+message NoteRes {
+    //  笔记 id
+    string id = 1;
+    //  类型 1:引用对话 2:自定义
+    int32 type = 2;
+    //  自定义类型的内容
+    string content = 3;
+    //  聊天消息引用对象
+    ChatMessageRes chatMessage = 4;
 }
