@@ -108,3 +108,19 @@
     color: #ffffff80;
     font-size: 14px;
 }
+
+.user-note-one {
+    display: flow-root;
+}
+.user-note-action {
+    width: 95%;
+    float: left;
+    padding-right: 10px;
+}
+.user-note-answer {
+    float: left;
+    color: #ffc0007a;
+    width: 100%;
+    font-size: 12px;
+    margin-bottom: 5px;
+}

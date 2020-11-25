@@ -149,9 +149,10 @@
                 <p>用户编号：<span id="room-member-id"></span></p>
                 <p>用户名：<span id="room-member-username"></span></p>
                 <ul class="actions dialogue-actions">
+                    <li><input type="button" value="查看笔记" class="primary" onclick="viewNotes();" /></li>
+                    <li><input type="button" value="关闭" onclick="closeMemberInfo();" /></li>
                     <li id="show-kick-button" style="display: none;"><input type="button" value="踢出房间" class="primary"
                             onclick="kickRoom();" /></li>
-                    <li><input type="button" value="关闭" onclick="closeMemberInfo();" /></li>
                 </ul>
             </article>
             <!-- 退出房间-->
@@ -207,6 +208,8 @@
                         <input type="text" id="game-round-message" placeholder="提问的内容" />
                     </li>
                     <li><input type="button" value="发送" class="primary" onclick="sendMessage();" /></li>
+                    <li id="show-game-notes" style="display: none;"><input type="button" value="查看笔记"
+                        onclick="showMyNotes();" /></li>
                     <li id="show-game-content" style="display: none;"><input type="button" value="查看汤底"
                             onclick="showGameContent();" /></li>
                     <li id="end-game-button" style="display: none;"><input type="button" value="结束游戏" class="primary"
@@ -227,6 +230,33 @@
                     <li><input type="button" value="不是" onclick="replyMessage(4);" /></li>
                     <li><input type="button" value="是或不是" class="primary" onclick="replyMessage(5);" /></li>
                 </ul>
+            </article>
+            <!-- 查看笔记 -->
+            <article id="user-notes" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major"><span id="note-user-name"></span>的笔记</h2>
+                <input type="hidden" name="" id="delete-user-note-id">
+                <ul class="alt" id="user-note-list">
+                    <!-- <li class="user-note-one"><i class="icon solid fa-trash-alt"></i><div class="user-note-action">我是内容任内三的饭卡上的JFK垃圾啊撒旦风口浪尖</div><p class="user-note-answer">是</p></li> -->
+                </ul>
+                <ul class="actions dialogue-actions">
+                    <li id="show-add-customize-note-button" style="display: none;"><input type="button" value="添加笔记" class="primary" onclick="addCustomizeNote();" /></li>
+                    <li><input type="button" value="关闭" onclick="closeUserNote();" /></li>
+                </ul>
+            </article>
+            <!-- 添加自定义笔记 -->
+            <article id="add-customize-note" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major">自定义笔记</h2>
+                <form method="post" action="#">
+                    <div class="fields">
+                        <div class="field">
+                            <input type="text" id="customize-note-content" placeholder="自定义内容" />
+                        </div>
+                    </div>
+                    <ul class="actions dialogue-actions">
+                        <li><input type="button" value="确认" class="primary" onclick="addCustomizeNoteConfirm();" /></li>
+                        <li><input type="button" value="关闭" onclick="closeCustomizeNote();" /></li>
+                    </ul>
+                </form>
             </article>
             <!-- 结束游戏 -->
             <article id="end-game" class="fixed-pop-ups" style="padding: 20px;">
@@ -427,6 +457,10 @@
     var IS_MC = false
     // 是否房主
     var IS_OWNER = false
+    // 房间状态
+    var ROOM_IS_GAMING = false
+    // 是否查看别人笔记
+    var VIEW_OTHER_NOTE_USERNAME = ''
 
     if (sessionStorage.getItem("token")) {
         if (WEBSOCKET_CONNECT == false) {

@@ -1,5 +1,6 @@
 document.write("<script language=javascript src='/static/code.js'></script>");
 
+// 检查服务
 function checkServer() {
     if (!sessionStorage.getItem("token")) {
         window.location = "#tourist-login"
@@ -27,16 +28,9 @@ var heartCheck = {
             protobuf.load("protos/GameMessage.proto", function (err, root) {
                 if (err) throw err;
                 var baseMessage = root.lookupType("GameMessage.Message");
-                var protocol = 2
                 var childMessage = root.lookupType("GameMessage.HeartBeatReq");
                 var childData = childMessage.fromObject({})
-                messageCreate = baseMessage.fromObject({
-                    protocol: protocol,
-                    code: 0,
-                    data: childMessage.encode(childData).finish()
-                });
-                buffer = baseMessage.encode(messageCreate).finish();
-                WEBSOCKET_OBJ.send(buffer);
+                childMessageSend(2, baseMessage, childMessage, childData)
             });
         }, this.timeout)
     }
@@ -44,7 +38,6 @@ var heartCheck = {
 
 // 游戏服务
 function gameServer(authorization, username, password) {
-    var buffer;
     let url = WSS_DOMAIN;
     if (authorization !== "") {
         url = WSS_DOMAIN + "?Authorization=" + authorization
@@ -60,16 +53,9 @@ function gameServer(authorization, username, password) {
             protobuf.load("protos/GameMessage.proto", function (err, root) {
                 if (err) throw err;
                 var baseMessage = root.lookupType("GameMessage.Message");
-                var protocol = 1002
                 var childMessage = root.lookupType("GameMessage.LoginReq");
                 var childData = childMessage.fromObject({ username: username, password: password })
-                messageCreate = baseMessage.fromObject({
-                    protocol: protocol,
-                    code: 0,
-                    data: childMessage.encode(childData).finish()
-                });
-                buffer = baseMessage.encode(messageCreate).finish();
-                WEBSOCKET_OBJ.send(buffer);
+                childMessageSend(1002, baseMessage, childMessage, childData)
             });
         } else {
             // 发送获取数据
@@ -78,16 +64,9 @@ function gameServer(authorization, username, password) {
                 var baseMessage = root.lookupType("GameMessage.Message");
                 protobuf.load("protos/SoupMessage.proto", function (err, root) {
                     if (err) throw err;
-                    var protocol = 2012
                     var childMessage = root.lookupType("SoupMessage.LoadReq");
                     var childData = childMessage.fromObject({})
-                    messageCreate = baseMessage.fromObject({
-                        protocol: protocol,
-                        code: 0,
-                        data: childMessage.encode(childData).finish()
-                    });
-                    buffer = baseMessage.encode(messageCreate).finish();
-                    WEBSOCKET_OBJ.send(buffer);
+                    childMessageSend(2012, baseMessage, childMessage, childData)
                 });
             });
         }
@@ -170,16 +149,18 @@ function gameServer(authorization, username, password) {
                                     // 选题中
                                     layer.msg("选题中")
                                     showQuestion(resMessage.room.selectQuestions)
+                                    ROOM_IS_GAMING = true
                                 } else if (resMessage.room.status == 3) {
                                     // 对局开始
                                     start(resMessage.room)
+                                    ROOM_IS_GAMING = true
                                     appendAllMsg(resMessage.room.msg)
                                 } else {
                                     roomPrepare()
                                     layer.msg("成功加入房间")
                                 }
                                 // 判断对局是否可以离开
-                                if(resMessage.room.leaveForPlaying == 2) {
+                                if (resMessage.room.leaveForPlaying == 2) {
                                     $("#leave-game-button").css("display", "block")
                                 } else if (resMessage.room.leaveForPlaying == 1) {
                                     $("#leave-game-button").hide()
@@ -195,6 +176,8 @@ function gameServer(authorization, username, password) {
                                 IS_MC = false
                                 // 是否房主
                                 IS_OWNER = false
+                                // 房间不是游戏中
+                                ROOM_IS_GAMING = false
                                 layer.msg("离开房间")
                                 window.location = "#"
                                 break;
@@ -231,6 +214,7 @@ function gameServer(authorization, username, password) {
                             case -2010: // 游戏结束返回
                                 var resChildMessage = root.lookupType("SoupMessage.EndRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
+                                ROOM_IS_GAMING = false
                                 break;
                             case -2011: // 选题返回
                                 var resChildMessage = root.lookupType("SoupMessage.SelectQuestionRes");
@@ -244,6 +228,27 @@ function gameServer(authorization, username, password) {
                                     joinRoomInternal(resMessage.roomId, resMessage.password)
                                 }
                                 break;
+                            case -2013: // 加入笔记
+                                var resChildMessage = root.lookupType("SoupMessage.AddNoteRes");
+                                resMessage = resChildMessage.decode(baseMessage.data)
+                                layer.msg("添加笔记成功")
+                                if(resMessage.note.type != 1) {
+                                    showNotes([resMessage.note], false)
+                                }
+                                $("#customize-note-content").val("")
+                                break;
+                            case -2014: // 删除笔记
+                                var resChildMessage = root.lookupType("SoupMessage.AddNoteRes");
+                                resMessage = resChildMessage.decode(baseMessage.data)
+                                let id = $("#delete-user-note-id").val()
+                                $("#note-list-id-" + id).remove()
+                                layer.msg("已删除笔记")
+                                break;
+                            case -2015: // 查询笔记
+                                var resChildMessage = root.lookupType("SoupMessage.LoadNoteRes");
+                                resMessage = resChildMessage.decode(baseMessage.data)
+                                showNotes(resMessage.notes, true)
+                                break;
                             case -2901: // 接收房间消息
                                 var resChildMessage = root.lookupType("SoupMessage.RoomPush");
                                 resMessage = resChildMessage.decode(baseMessage.data)
@@ -252,8 +257,7 @@ function gameServer(authorization, username, password) {
                                     addMember(resMessage.seatsChange)
                                 }
                                 // 判断对局是否可以离开
-                                if(resMessage.leaveForPlaying == 2) {
-                                    console.log(resMessage.leaveForPlaying)
+                                if (resMessage.leaveForPlaying == 2) {
                                     $("#leave-game-button").css("display", "block")
                                 } else if (resMessage.leaveForPlaying == 1) {
                                     $("#leave-game-button").hide()
@@ -265,8 +269,10 @@ function gameServer(authorization, username, password) {
                                 if (resMessage.status == 2) {
                                     // 选题
                                     showQuestion(resMessage.selectQuestions)
+                                    ROOM_IS_GAMING = true
                                 } else if (resMessage.status == 3) {
                                     start(resMessage)
+                                    ROOM_IS_GAMING = true
                                 } else if (resMessage.status == 1) {
                                     $("#game-round-message-list").empty()
                                     // 房间准备中
@@ -288,6 +294,17 @@ function gameServer(authorization, username, password) {
     }
 }
 
+// 子消息入口
+function childMessageSend(protocol, baseMessage, childMessage, childData) {
+    messageCreate = baseMessage.fromObject({
+        protocol: protocol,
+        code: 0,
+        data: childMessage.encode(childData).finish()
+    });
+    buffer = baseMessage.encode(messageCreate).finish();
+    WEBSOCKET_OBJ.send(buffer);
+}
+
 // 获取大厅数据
 function roomHall() {
     if (!checkServer()) {
@@ -299,16 +316,9 @@ function roomHall() {
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var protocol = 2001
             var childMessage = root.lookupType("SoupMessage.RoomHallReq");
             var childData = childMessage.fromObject({})
-            messageCreate = baseMessage.fromObject({
-                protocol: protocol,
-                code: 0,
-                data: childMessage.encode(childData).finish()
-            });
-            buffer = baseMessage.encode(messageCreate).finish();
-            WEBSOCKET_OBJ.send(buffer);
+            childMessageSend(2001, baseMessage, childMessage, childData)
         });
     });
 }
@@ -330,16 +340,9 @@ function createRoom() {
             if (err) throw err;
             let roomMax = 10
             let roomPassword = $("#create-room-password").val()
-            var protocol = 2002
             var childMessage = root.lookupType("SoupMessage.CreateRoomReq");
             var childData = childMessage.fromObject({ password: roomPassword, name: roomName, max: roomMax })
-            messageCreate = baseMessage.fromObject({
-                protocol: protocol,
-                code: 0,
-                data: childMessage.encode(childData).finish()
-            });
-            buffer = baseMessage.encode(messageCreate).finish();
-            WEBSOCKET_OBJ.send(buffer);
+            childMessageSend(2002, baseMessage, childMessage, childData)
         });
     });
 }
@@ -354,16 +357,9 @@ function joinRoomInternal(roomId, password) {
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var protocol = 2003
             var childMessage = root.lookupType("SoupMessage.JoinRoomReq");
             var childData = childMessage.fromObject({ roomId: roomId, password: password })
-            messageCreate = baseMessage.fromObject({
-                protocol: protocol,
-                code: 0,
-                data: childMessage.encode(childData).finish()
-            });
-            buffer = baseMessage.encode(messageCreate).finish();
-            WEBSOCKET_OBJ.send(buffer);
+            childMessageSend(2003, baseMessage, childMessage, childData)
         });
     });
 }
@@ -411,7 +407,7 @@ function addMember(members) {
                 layer.msg("你被移出房间")
                 window.location = "#"
             } else {
-                if(this.leave == 1) {
+                if (this.leave == 1) {
                     layer.msg(this.avaName + "离开房间")
                 } else {
                     layer.msg(this.avaName + "被踢出房间")
@@ -452,6 +448,7 @@ function addMember(members) {
             if ($("#room-prepare-" + this.aid).length > 0) {
                 $("#room-prepare-" + this.aid).remove()
             }
+            layer.msg(this.avaName + '加入房间')
             $("#room-prepare-member").append('<li id="room-prepare-' + this.aid + '"><span>' + role + '</span><a href="javascript:void(0)" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');" class="icon solid ' + icon + '"></a>' + this.avaName + '</li>')
         }
     })
@@ -483,16 +480,9 @@ function leaveRoomConfirm() {
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var protocol = 2004
             var childMessage = root.lookupType("SoupMessage.LeaveRoomReq");
             var childData = childMessage.fromObject({})
-            messageCreate = baseMessage.fromObject({
-                protocol: protocol,
-                code: 0,
-                data: childMessage.encode(childData).finish()
-            });
-            buffer = baseMessage.encode(messageCreate).finish();
-            WEBSOCKET_OBJ.send(buffer);
+            childMessageSend(2004, baseMessage, childMessage, childData)
         });
     });
 }
@@ -507,16 +497,9 @@ function prepare() {
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var protocol = 2005
             var childMessage = root.lookupType("SoupMessage.PrepareReq");
             var childData = childMessage.fromObject({ ok: !IS_PREPARE })
-            messageCreate = baseMessage.fromObject({
-                protocol: protocol,
-                code: 0,
-                data: childMessage.encode(childData).finish()
-            });
-            buffer = baseMessage.encode(messageCreate).finish();
-            WEBSOCKET_OBJ.send(buffer);
+            childMessageSend(2005, baseMessage, childMessage, childData)
         });
     });
 }
@@ -537,41 +520,18 @@ function sendMessage() {
     var content = $("#game-round-message").val()
     if (content == "") {
         layer.msg("发送内容不能为空")
-    } else if (getByteLen(content) > 25) {
-        layer.msg("内容过长")
     } else {
         protobuf.load("protos/GameMessage.proto", function (err, root) {
             if (err) throw err;
             var baseMessage = root.lookupType("GameMessage.Message");
             protobuf.load("protos/SoupMessage.proto", function (err, root) {
                 if (err) throw err;
-                var protocol = 2008
                 var childMessage = root.lookupType("SoupMessage.ChatReq");
                 var childData = childMessage.fromObject({ content: content })
-                messageCreate = baseMessage.fromObject({
-                    protocol: protocol,
-                    code: 0,
-                    data: childMessage.encode(childData).finish()
-                });
-                buffer = baseMessage.encode(messageCreate).finish();
-                WEBSOCKET_OBJ.send(buffer);
+                childMessageSend(2008, baseMessage, childMessage, childData)
             });
         });
     }
-}
-
-// 统计内容长度问题
-function getByteLen(val) {
-    var len = 0;
-    for (var i = 0; i < val.length; i++) {
-        var length = val.charCodeAt(i);
-        if (length >= 0 && length <= 128) {
-            len += 1;
-        } else {
-            len += 2;
-        }
-    }
-    return len;
 }
 
 // 呈现汤普
@@ -599,16 +559,9 @@ function selectQuestion(id) {
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var protocol = 2011
             var childMessage = root.lookupType("SoupMessage.SelectQuestionReq");
             var childData = childMessage.fromObject({ id: id })
-            messageCreate = baseMessage.fromObject({
-                protocol: protocol,
-                code: 0,
-                data: childMessage.encode(childData).finish()
-            });
-            buffer = baseMessage.encode(messageCreate).finish();
-            WEBSOCKET_OBJ.send(buffer);
+            childMessageSend(2011, baseMessage, childMessage, childData)
         });
     });
 }
@@ -620,33 +573,16 @@ function appendAllMsg(msgs) {
     }
     $.each(msgs, function () {
         // 回答转换
-        let answer = ''
-        switch (this.answer) {
-            case 1: // 未回答
-                answer = ''
-                break;
-            case 2:
-                answer = '不相关'
-                break;
-            case 3:
-                answer = '是'
-                break;
-            case 4:
-                answer = '否'
-                break;
-            case 5:
-                answer = '是或不是'
-                break;
-        }
+        let answer = answerSwitch(this.answer)
         if ($("#message-" + this.id).length > 0) {
             // 修改
             $("#message-" + this.id).find("div").find("p").find("i").html(answer)
         } else {
-            let li = '<li onclick="answerMessage(' + "'" + this.id + "'" + ', ' + "'" + this.content + "'" + ');" id="message-' + this.id + '"><div>'
+            let li = '<li id="message-' + this.id + '"><div>'
             // 用户头像
-            li += '<div class="message-list-avatar"><a href="javascript:void(0)" class="icon solid fa-user"></a></div>'
+            li += '<div class="message-list-avatar"><a href="javascript:void(0)" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');" class="icon solid fa-user"></a></div>'
             // 内容 + 回答
-            li += '<div class="message-list-content" style="float: left;"><p class="message-list-username">' + this.avaName + '</p>' + this.content + '<p class="message-list-answer"><i>' + answer + '</i></p></div>'
+            li += '<div class="message-list-content" style="float: left;"><p class="message-list-username">' + this.avaName + '</p><span  onclick="answerMessage(' + "'" + this.id + "'" + ', ' + "'" + this.content + "'" + ');">' + this.content + '</span><p class="message-list-answer"><i>' + answer + '</i></p></div>'
             // 结尾
             li += '</div></li><br>'
             $("#game-round-message-list").append(li)
@@ -655,12 +591,37 @@ function appendAllMsg(msgs) {
     var roundMsgContent = $("#game-round-message-div")[0];
     roundMsgContent.scrollTop = roundMsgContent.scrollHeight;
 }
+// 回答转换
+function answerSwitch(status) {
+    let answer = ''
+    switch (status) {
+        case 1: // 未回答
+            answer = ''
+            break;
+        case 2:
+            answer = '不相关'
+            break;
+        case 3:
+            answer = '是'
+            break;
+        case 4:
+            answer = '否'
+            break;
+        case 5:
+            answer = '是或不是'
+            break;
+    }
+    return answer
+}
 
+// MC 回答
 function answerMessage(id, content) {
     if (!checkServer()) {
         return
     }
     if (!IS_MC) {
+        // 非mc 静默添加笔记
+        addNote(id)
         return
     }
     $("#answer-message-id").val(id)
@@ -685,17 +646,9 @@ function replyMessage(answer) {
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var protocol = 2009
             var childMessage = root.lookupType("SoupMessage.AnswerReq");
             var childData = childMessage.fromObject({ id: id, answer: answer })
-            messageCreate = baseMessage.fromObject({
-                protocol: protocol,
-                code: 0,
-                data: childMessage.encode(childData).finish()
-            });
-            buffer = baseMessage.encode(messageCreate).finish();
-            WEBSOCKET_OBJ.send(buffer);
-            layer.close(layer.index);
+            childMessageSend(2009, baseMessage, childMessage, childData)
         });
     });
 }
@@ -708,6 +661,8 @@ function start(room) {
         $("#end-game-button").css('display', "block")
         $("#show-game-content").css('display', "block")
         $("#check-game-content").html(room.question.content)
+    } else {
+        $("#show-game-notes").css('display', "block")
     }
     $("#game-round").find(".close").remove()
     window.location = "#game-round"
@@ -757,42 +712,30 @@ function endGameConfirm() {
     }
     $("#end-game-button").hide()
     $("#show-game-content").hide()
+    $("#show-game-notes").hide()
     $("#check-game-content").empty()
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var protocol = 2010
             var childMessage = root.lookupType("SoupMessage.EndReq");
             var childData = childMessage.fromObject({})
-            messageCreate = baseMessage.fromObject({
-                protocol: protocol,
-                code: 0,
-                data: childMessage.encode(childData).finish()
-            });
-            buffer = baseMessage.encode(messageCreate).finish();
-            WEBSOCKET_OBJ.send(buffer);
+            childMessageSend(2010, baseMessage, childMessage, childData)
         });
     });
 }
 
+// 测试
 function test() {
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var protocol = 3000
             var childMessage = root.lookupType("SoupMessage.CreateRoomReq");
             var childData = childMessage.fromObject({})
-            messageCreate = baseMessage.fromObject({
-                protocol: protocol,
-                code: 0,
-                data: childMessage.encode(childData).finish()
-            });
-            buffer = baseMessage.encode(messageCreate).finish();
-            WEBSOCKET_OBJ.send(buffer);
+            childMessageSend(3000, baseMessage, childMessage, childData)
         });
     });
 }
@@ -846,7 +789,7 @@ function showRoomMember(userId, username) {
         return
     }
     // 房主 
-    if(IS_OWNER && userId != sessionStorage.getItem("userId")) {
+    if (IS_OWNER && userId != sessionStorage.getItem("userId")) {
         $("#show-kick-button").css("display", "block")
     }
     $("#room-member-info").find(".close").remove()
@@ -861,10 +804,14 @@ function closeMemberInfo() {
         return
     }
     $("#show-kick-button").hide()
-    roomPrepare()
+    if (ROOM_IS_GAMING) {
+        window.location = "#game-round"
+    } else {
+        roomPrepare()
+    }
 }
 
-// 题掉用户
+// 踢掉用户
 function kickRoom() {
     if (!checkServer()) {
         return
@@ -876,16 +823,157 @@ function kickRoom() {
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var protocol = 2006
             var childMessage = root.lookupType("SoupMessage.KickReq");
             var childData = childMessage.fromObject({ aid: userId })
-            messageCreate = baseMessage.fromObject({
-                protocol: protocol,
-                code: 0,
-                data: childMessage.encode(childData).finish()
-            });
-            buffer = baseMessage.encode(messageCreate).finish();
-            WEBSOCKET_OBJ.send(buffer);
+            childMessageSend(2006, baseMessage, childMessage, childData)
         });
     });
 }
+
+// 查看自己的笔记
+function showMyNotes() {
+    if (!checkServer()) {
+        return
+    }
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+            if (err) throw err;
+            let userId = sessionStorage.getItem("userId")
+            VIEW_OTHER_NOTE_USERNAME = ''
+            var childMessage = root.lookupType("SoupMessage.LoadNoteReq");
+            var childData = childMessage.fromObject({ aid: userId })
+            childMessageSend(2015, baseMessage, childMessage, childData)
+        });
+    });
+}
+
+// 关闭笔记弹窗
+function closeUserNote() {
+    $("#user-notes").hide()
+    window.location = "#game-round"
+}
+
+// 静默添加笔记
+function addNote(id) {
+    if (!checkServer()) {
+        return
+    }
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+            if (err) throw err;
+            var childMessage = root.lookupType("SoupMessage.AddNoteReq");
+            var childData = childMessage.fromObject({ messageId: id })
+            childMessageSend(2013, baseMessage, childMessage, childData)
+        });
+    });
+}
+
+// 展示笔记
+function showNotes(notes, isEmpty) {
+    if (isEmpty) {
+        $("#user-note-list").empty()
+    }
+    $.each(notes, function () {
+        let note = ''
+        let content = ''
+        let answer = ''
+        if (this.type == 1) {
+            // 引用
+            content = this.chatMessage.content
+            // 查看回答 
+            answer = answerSwitch(this.chatMessage.answer)
+        } else {
+            // 自定义
+            content = this.content
+        }
+        let deleteI = ''
+        if (VIEW_OTHER_NOTE_USERNAME == "") {
+            deleteI = '<i class="icon solid fa-trash-alt" onclick="deleteNote(' + "'" + this.id + "'" + ');"></i>'
+        }
+        note = '<li id="note-list-id-' + this.id + '" class="user-note-one">' + deleteI + '<div class="user-note-action">' + content + '</div><p class="user-note-answer">' + answer + '</p></li>'
+        $("#user-note-list").append(note)
+    })
+    $("#note-user-name").empty()
+    if (VIEW_OTHER_NOTE_USERNAME == "") {
+        $("#note-user-name").html("我")
+        $("#show-add-customize-note-button").css("display", "block")
+    } else {
+        $("#note-user-name").html(VIEW_OTHER_NOTE_USERNAME)
+        $("#show-add-customize-note-button").hide()
+    }
+    $("#user-notes").find(".close").remove()
+    window.location = "#user-notes"
+}
+
+// 添加自定义笔记
+function addCustomizeNote() {
+    $("#add-customize-note").find(".close").remove()
+    window.location = "#add-customize-note"
+}
+
+// 确认添加自定义笔记
+function addCustomizeNoteConfirm() {
+    if (!checkServer()) {
+        return
+    }
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+            if (err) throw err;
+            let content = $("#customize-note-content").val()
+            var childMessage = root.lookupType("SoupMessage.AddNoteReq");
+            var childData = childMessage.fromObject({ content: content })
+            childMessageSend(2013, baseMessage, childMessage, childData)
+        });
+    });
+}
+
+// 关闭自定义笔记
+function closeCustomizeNote() {
+    window.location = "#user-notes"
+}
+
+// 删除笔记
+function deleteNote(id) {
+    if (!checkServer()) {
+        return
+    }
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+            if (err) throw err;
+            $("#delete-user-note-id").val(id)
+            var childMessage = root.lookupType("SoupMessage.DeleteNoteReq");
+            var childData = childMessage.fromObject({ id: id })
+            childMessageSend(2014, baseMessage, childMessage, childData)
+        });
+    });
+}
+
+// 查看别人的笔记
+function viewNotes() {
+    if (!checkServer()) {
+        return
+    }
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+            if (err) throw err;
+            let userId = $("#room-member-id").html()
+            if(userId != sessionStorage.getItem("userId")) {
+                VIEW_OTHER_NOTE_USERNAME = $("#room-member-username").html()
+            }
+            var childMessage = root.lookupType("SoupMessage.LoadNoteReq");
+            var childData = childMessage.fromObject({ aid: userId })
+            childMessageSend(2015, baseMessage, childMessage, childData)
+        });
+    });
+}
+
