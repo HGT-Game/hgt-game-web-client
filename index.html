@@ -33,7 +33,7 @@
                     <li><a href="javascript:void(0)" onclick="roomHall();">房间列表</a></li>
                     <li><a href="/fish.html">工作主题</a></li>
                     <li><a href="#about">说明</a></li>
-                    <li><a href="javascript:void(0)" onclick="menuFeedback();">反馈</a></li>
+                    <li><a href="javascript:void(0)" onclick="menuFeedback();">联系我们</a></li>
                     <li id="show-logout-button" style="display: none;"><a href="javascript:void(9)"
                             onclick="showLogout();">退出</a></li>
                 </ul>
@@ -46,6 +46,11 @@
             <article id="about" class="fixed-pop-ups" style="padding: 20px;">
                 <h2 class="major">关于我们</h2>
                 <p>一个东凑西凑的团队，丝毫没有梦想的废鱼，更新迭代全靠与伪产品开撕。</p>
+                <h2 class="major">规则</h2>
+                <ul>
+                    <li>人数需要 >= 3 人才能开始</li>
+                    <li>游戏时长超过 5分钟 才可以结束</li>
+                </ul>
                 <h2 class="major">游戏发展</h2>
                 <ul>
                     <li>2020.11.18 web版删档公测</li>
@@ -53,15 +58,18 @@
                     <li>敬请期待...</li>
                 </ul>
                 <h2 class="major">图标说明</h2>
-                <p><i class="icon solid fa-check-circle"></i> 对/不是/已准备</p>
-                <p><i class="icon solid fa-times-circle"></i> 错/否/未准备</p>
-                <h2 class="major">成员组成</h2>
+                <div class="icon-description">
+                    <p><i class="icon solid fa-check-circle"></i> 对/不是/已准备</p>
+                    <p><i class="icon solid fa-times-circle"></i> 错/否/未准备</p>
+                    <p><i class="icon solid fa-trash-alt"></i> 删除操作</p>
+                </div>
+                    <h2 class="major">成员组成</h2>
                 <ul>
                     <li>决策：MorsTiin</li>
-                    <li>伪产品：水玉</li>
-                    <li>打杂：张牛逼</li>
-                    <li>二把手：Alan</li>
-                    <li>首席UI设计师：Grey Chan</li>
+                    <li>制作：水玉</li>
+                    <li>执行：张牛逼</li>
+                    <li>端水：Alan</li>
+                    <li>美术：Grey Chan</li>
                 </ul>
             </article>
 
@@ -78,12 +86,6 @@
                             </tr>
                         </thead>
                         <tbody id="room-hall-content">
-                            <!-- <tr>
-                                <td>我是房间名</td>
-                                <td>1</td>
-                                <td style="text-align: right;"><a href="javascript:void(0)"
-                                        class="button small">加入房间</a></td>
-                            </tr> -->
                         </tbody>
                     </table>
                 </div>
@@ -133,10 +135,6 @@
                 <p>上限：<span id="room-prepare-max"></span>人</p>
                 <hr>
                 <ul class="icons" id="room-prepare-member">
-                    <!-- <li><span>MC&房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
-                    <li><span>MC</span><a href="javascript:void(0)" class="icon solid fa-times-circle"></a>name</li>
-                    <li><span>房主</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li>
-                    <li><span>-</span><a href="javascript:void(0)" class="icon solid fa-check-circle"></a>name</li> -->
                 </ul>
                 <ul class="actions dialogue-actions">
                     <li><input type="button" value="离开房间" class="primary" onclick="leaveRoom('room-prepare');" /></li>
@@ -225,7 +223,7 @@
                 <form method="post" action="#">
                     <div class="fields">
                         <div class="field">
-                            <input type="text" id="customize-note-content" placeholder="自定义内容" />
+                            <input type="text" id="customize-note-content" placeholder="内容" />
                         </div>
                     </div>
                     <ul class="actions dialogue-actions">
@@ -260,13 +258,17 @@
             </article>
             <!-- 联系我们 -->
             <article id="feedback">
-                <h2 class="major">反馈</h2>
+                <h2 class="major">联系我们</h2>
                 <form method="post" action="#">
                     <div class="fields">
                         <div class="field">
-                            <textarea id="feedback-content" rows="4" placeholder="请输入问题描述"></textarea>
+                            <textarea id="feedback-content" rows="4" placeholder="请输入内容"></textarea>
                         </div>
                     </div>
+                    <ul class="icons">
+                        <li><a href="https://github.com/HGT-Game" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+                        <li><a href="https://weibo.com/zsunanzhi" class="icon brands fa-weibo"><span class="label">Weibo</span></a></li>
+                    </ul>
                     <ul class="actions">
                         <li><input type="button" value="确认" class="primary" onclick="feedback();" /></li>
                         <li><input type="reset" value="重置" /></li>

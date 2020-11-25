@@ -124,3 +124,10 @@
     font-size: 12px;
     margin-bottom: 5px;
 }
+
+.icon-description {
+    margin-bottom: 30px;
+}
+.icon-description p {
+    margin-bottom: 10px;
+}
