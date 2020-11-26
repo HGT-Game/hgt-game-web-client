@@ -1,14 +1,15 @@
 document.write("<script language=javascript src='/static/code.js'></script>");
+document.write("<script language=javascript src='/static/main.js'></script>");
 
 // 检查服务
 function checkServer() {
     if (!sessionStorage.getItem("token")) {
-        window.location = "#tourist-login"
+        showTouristLogin()
         return false
     }
     // 判断weboskcet是否连接
     if (!WEBSOCKET_CONNECT) {
-        window.location = "#tourist-login"
+        showTouristLogin()
         return false
     }
 

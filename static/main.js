@@ -1,58 +1,3 @@
-var codeList = []
-// ---------- 创建房间相关
-codeList[20001] = "房间不合法"
-codeList[20002] = "房间人数设置不合法"
-codeList[20003] = "CodeCreateRoomFailure"
-codeList[20004] = "已经创建房间 退出即可"
-// ---------- 房间相关
-codeList[20101] = "房间不存在"
-codeList[20102] = "当前房间不在游戏中"
-codeList[20103] = "当前房间在游戏中"
-codeList[20104] = "房间成员不存在"
-codeList[20105] = "当前房间不在选题中"
-// ---------- 加入房间相关
-codeList[20200] = "加入房间失败"
-codeList[20201] = "房间已经满人"
-codeList[20202] = "已经加入房间"
-// ---------- 房间推送相关
-codeList[20300] = "收到房间推送"
-// ---------- 离开房间相关
-codeList[20400] = "离开房间失败"
-codeList[20401] = "游戏中 不能离开房间"
-// ---------- 准备相关
-codeList[20500] = "准备失败"
-codeList[20501] = "还有玩家没有准备"
-codeList[20502] = "人数太少 最少三个人"
-codeList[20503] = "游戏已经开始 不可以准备"
-codeList[20504] = "你已经准备 请勿重复准备"
-codeList[20505] = "你已经取消 请勿重复取消"
-// ---------- 踢人相关
-codeList[20600] = "踢人失败"
-codeList[20601] = "踢人参数错误"
-codeList[20602] = "此人不存在 无法踢人"
-// ---------- 交换位置相关
-codeList[20700] = "交换位置失败"
-codeList[20701] = "当前座位已经有人"
-// ---------- 结束游戏相关
-codeList[20800] = "结束游戏失败"
-codeList[20801] = "游戏不在游戏中不能结束"
-// ---------- 聊天相关
-codeList[20900] = "聊天被限制"
-codeList[20901] = "聊天内容不合法"
-codeList[20902] = "场次记录不存在"
-codeList[20903] = "聊天记录不存在"
-codeList[20904] = "说话太快了"
-// ---------- 成员相关
-codeList[21000] = "成员不是闲置状态"
-codeList[21001] = "成员不是MC"
-codeList[21002] = "成员不是房主"
-// ----------- 回答相关
-codeList[21100] = "答案类型不存在"
-codeList[21101] = "不是mc 不具备权限"
-// ----------- 题目相关
-codeList[21200] = "题目不存在"
-codeList[21201] = "不是mc 没有权限选题"
-
 // 注册
 function register() {
     let username = $("#register-username").val()
@@ -159,6 +104,32 @@ function login(scene) {
     })
 }
 
+// 展示游客登录
+function showTouristLogin() {
+    changeCaptcha()
+    window.location = "#tourist-login"
+}
+
+// 更换图形验证码
+function changeCaptcha() {
+    $.ajax({
+        method: "get",
+        url: API_DOMAIN + "/api/captcha",
+        success: function (res) {
+            if (res.code != 0 && res.code != 200) {
+                layer.msg(res.message)
+            } else {
+                $("#tourist-captcha-image").attr("src", res.data.base64)
+                $("#tourist-captcha-id").val(res.data.captchaId)
+            }
+        },
+        error: function (res) {
+            console.log(res)
+            layer.msg("出错了，请查看控制台并联系技术人员修复")
+        }
+    })
+}
+
 // 游客登录
 function touristLogin() {
     let username = $("#tourist-username").val()
@@ -166,13 +137,24 @@ function touristLogin() {
         layer.msg("请填写游戏昵称")
         return
     }
+    let captcha = $("#tourist-captcha").val()
+    if (captcha == "") {
+        layer.msg("请输入验证码")
+        return
+    }
+    let captchaId = $("#tourist-captcha-id").val()
+    if (captchaId == "") {
+        layer.msg("非法途径")
+        return
+    }
 
     $.ajax({
         method: "post",
         url: API_DOMAIN + "/auth/touristLogin",
-        data: { username: username },
+        data: { username: username, captchaId: captchaId, captcha: captcha },
         success: function (res) {
             if (res.code != 0 && res.code != 200) {
+                changeCaptcha()
                 layer.msg(res.message)
             } else {
                 layer.msg("成功登录")
@@ -182,6 +164,8 @@ function touristLogin() {
                 sessionStorage.setItem("avatar", res.data.userInfo.avatar);
                 sessionStorage.setItem("username", res.data.userInfo.username);
                 $("#show-logout-button").css('display', "block")
+                $("#tourist-captcha-image").attr("src", "")
+                $("#tourist-captcha-id").val("")
                 // 连接websocket
                 gameServer(res.data.accessToken)
             }

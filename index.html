@@ -284,6 +284,13 @@
                             <label>昵称</label>
                             <input type="text" id="tourist-username" placeholder="游戏昵称" />
                         </div>
+                        <div class="field">
+                            <label>验证码</label>
+                            <input type="text" id="tourist-captcha" placeholder="输入验证码" />
+                            <br>
+                            <input type="hidden" id="tourist-captcha-id" value="">
+                            <img id="tourist-captcha-image" width="130px" height="40px" style="background-color: aliceblue;" src="" onclick="changeCaptcha();" alt="">
+                        </div>
                     </div>
                     <ul class="actions">
                         <li><input type="button" value="登录" class="primary" onclick="touristLogin();" /></li>
