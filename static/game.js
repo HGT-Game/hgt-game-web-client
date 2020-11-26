@@ -514,7 +514,6 @@ $("#game-round-message").on('keypress', function (event) {
 
 // 发送内容
 function sendMessage() {
-    console.log(1)
     if (!checkServer()) {
         return
     }
@@ -722,7 +721,6 @@ function endGameConfirm() {
     $("#end-game-button").hide()
     $("#show-game-content").hide()
     $("#show-game-notes").hide()
-    $("#check-game-content").empty()
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
