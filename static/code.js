@@ -1,6 +1,6 @@
 var codeList = []
 // ---------- 创建房间相关
-codeList[20001] = "房间不合法"
+codeList[20001] = "房间名不合法"
 codeList[20002] = "房间人数设置不合法"
 codeList[20003] = "CodeCreateRoomFailure"
 codeList[20004] = "已经创建房间 退出即可"
