@@ -656,12 +656,20 @@ function replyMessage(answer) {
 
 // 游戏开始 显示对局页面
 function start(room) {
-    $("#game-round-title").html(room.question.title)
-    $("#game-round-question-description").html(room.question.question)
+    if(room.question) {
+        if(room.question.title) {
+            $("#game-round-title").html(room.question.title)
+        }
+        if(room.question.question) {
+            $("#game-round-question-description").html(room.question.question)
+        }
+    }
     if (IS_MC) {
         $("#end-game-button").css('display', "block")
         $("#show-game-content").css('display', "block")
-        $("#check-game-content").html(room.question.content)
+        if(room.question && room.question.content) {
+            $("#check-game-content").html(room.question.content)
+        }
     } else {
         $("#show-game-notes").css('display', "block")
     }
