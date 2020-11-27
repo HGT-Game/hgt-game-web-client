@@ -453,13 +453,13 @@ function addMember(members) {
                 $("#room-prepare-" + this.aid).remove()
             }
             // 非游戏状态才需要提示
-            if(!ROOM_IS_GAMING) {
+            if (!ROOM_IS_GAMING) {
                 layer.msg(this.avaName + '加入房间')
             }
             $("#room-prepare-member").append(
                 '<li id="room-prepare-' + this.aid + '">' +
                 '<span>' + role + '</span>' +
-                '<a href="javascript:void(0)" style="background-image: url('+this.avaHead+');" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');" class="icon solid ' + icon + '"></a>' + this.avaName +
+                '<a href="javascript:void(0)" style="background-image: url(' + this.avaHead + ');" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');" class="icon solid ' + icon + '"></a>' + this.avaName +
                 '</li>'
             )
         }
@@ -589,11 +589,28 @@ function appendAllMsg(msgs) {
             // 修改
             $("#message-" + this.id).find("div").find("p").find("i").html(answer)
         } else {
+            // 判断信息是否自己
+            // 头像
+            let avatarAlign = 'message-list-avatar-left'
+            // 内容 + 用户名
+            let messageUsername = 'message-list-username-left'
+            let messageContent = 'message-list-content-left'
+            let messageContentSpan = ''
+            // 回答
+            let messageAnswer = 'message-list-answer-left'
+            if (this.aid == localStorage.getItem("userId")) {
+                avatarAlign = 'message-list-avatar-right'
+                messageContent = 'message-list-content-right'
+                messageUsername = 'message-list-username-right'
+                messageAnswer = 'message-list-answer-right'
+                // messageContentSpan = 'style="width: 100%;text-align: left;float: right;"'
+            }
             let li = '<li id="message-' + this.id + '"><div>'
             // 用户头像
-            li += '<div class="message-list-avatar"><a href="javascript:void(0)" style="background-image: url('+this.avaHead+');" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');"></a></div>'
+            li += '<div class="' + avatarAlign + '"><a href="javascript:void(0)" style="background-image: url(' + this.avaHead + ');" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');"></a></div>'
             // 内容 + 回答
-            li += '<div class="message-list-content" style="float: left;"><p class="message-list-username">' + this.avaName + '</p><span  onclick="answerMessage(' + "'" + this.id + "'" + ', ' + "'" + this.content + "'" + ');">' + this.content + '</span><p class="message-list-answer"><i>' + answer + '</i></p></div>'
+            li += '<div class="' + messageContent + '"><p class="' + messageUsername + '">' + this.avaName + '</p><span ' + messageContentSpan + ' onclick="answerMessage(' + "'" + this.id + "'" + ', ' + "'" + this.content + "'" + ');">'
+                + this.content + '</span><br><p class="' + messageAnswer + '"><i>' + answer + '</i></p></div>'
             // 结尾
             li += '</div></li><br>'
             $("#game-round-message-list").append(li)

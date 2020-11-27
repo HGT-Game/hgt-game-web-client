@@ -64,7 +64,7 @@
 }
 
 #game-round-message-list li p {
-    text-align: left;
+    /* text-align: left; */
     margin-bottom: 6px;
 }
 
@@ -86,32 +86,73 @@
     margin-top: 5px;
 }
 
-.message-list-content {
+.message-list-content-left {
     width: 76%;
     margin-left: 20px;
     position: inherit;
     text-align: left;
     font-size: 12px;
-}
-
-.message-list-avatar {
     float: left;
-    width: 2.25rem;
-    height: 2.25rem;
+}
+.message-list-content-right {
+    width: 76%;
+    margin-right: 20px;
+    position: inherit;
+    text-align: right;
+    font-size: 12px;
+    float: right;
+}
+.message-list-content-span-left {
+    float: left;
+    text-align: left;
+    width: 100%;
+}
+.message-list-content-span-right {
+    float: right;
+    text-align: left;
+    width: 100%;
 }
 
-.message-list-answer {
+/* 左内容 */
+.message-list-avatar-left {
+    float: left;
+    width: 2.50rem;
+    height: 2.50rem;
+}
+
+/* 右内容 */
+.message-list-avatar-right {
+    float: right;
+    width: 2.50rem;
+    height: 2.50rem;
+}
+
+.message-list-answer-left {
     text-align: left;
     margin-left: 0px;
     color: #ffc0007a;
     margin-top: 2px;
     font-size: 12px;
 }
+.message-list-answer-right {
+    text-align: right;
+    margin-left: 0px;
+    color: #ffc0007a;
+    margin-top: 2px;
+    font-size: 12px;
+}
 
-.message-list-username {
+.message-list-username-left {
     color: #ffffff80;
     font-size: 14px;
 }
+.message-list-username-right {
+    color: #ffffff80;
+    font-size: 14px;
+    text-align: right;
+    /* float: left; */
+}
+
 
 .user-note-one {
     display: flow-root;
