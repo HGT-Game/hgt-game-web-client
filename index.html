@@ -448,9 +448,9 @@
     // 是否查看别人笔记
     var VIEW_OTHER_NOTE_USERNAME = ''
 
-    if (sessionStorage.getItem("token")) {
+    if (localStorage.getItem("token")) {
         if (WEBSOCKET_CONNECT == false) {
-            gameServer(sessionStorage.getItem("token"))
+            gameServer(localStorage.getItem("token"))
         }
         $("#show-logout-button").css('display', "block")
     } else {

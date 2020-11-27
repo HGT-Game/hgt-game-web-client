@@ -3,7 +3,7 @@ document.write("<script language=javascript src='/static/main.js'></script>");
 
 // 检查服务
 function checkServer() {
-    if (!sessionStorage.getItem("token")) {
+    if (!localStorage.getItem("token")) {
         showTouristLogin()
         return false
     }
@@ -75,8 +75,8 @@ function gameServer(authorization, username, password) {
     WEBSOCKET_OBJ.error = function () {
         console.log('连接错误')
         WEBSOCKET_CONNECT = false
-        // 清空sessionStorage
-        sessionStorage.clear()
+        // 清空localStorage
+        localStorage.clear()
     }
     WEBSOCKET_OBJ.onclose = function () {
         console.log('断开');
@@ -146,7 +146,7 @@ function gameServer(authorization, username, password) {
                                 $("#room-prepare-max").append(resMessage.room.roomMax)
                                 $("#room-prepare-id").append(resMessage.room.roomId)
                                 addMember(resMessage.room.seatsChange)
-                                if (resMessage.room.mcId == sessionStorage.getItem("userId") && resMessage.room.status == 2) {
+                                if (resMessage.room.mcId == localStorage.getItem("userId") && resMessage.room.status == 2) {
                                     // 选题中
                                     layer.msg("选题中")
                                     showQuestion(resMessage.room.selectQuestions)
@@ -188,12 +188,12 @@ function gameServer(authorization, username, password) {
                                 IS_PREPARE = !IS_PREPARE
                                 if (IS_PREPARE) {
                                     $("#room-prepare-button").val("取消准备")
-                                    $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').removeClass("fa-times-circle")
-                                    $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').addClass("fa-check-circle")
+                                    $("#room-prepare-" + localStorage.getItem("userId")).find('a').removeClass("fa-times-circle")
+                                    $("#room-prepare-" + localStorage.getItem("userId")).find('a').addClass("fa-check-circle")
                                 } else {
                                     $("#room-prepare-button").val("准备")
-                                    $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').addClass("fa-times-circle")
-                                    $("#room-prepare-" + sessionStorage.getItem("userId")).find('a').removeClass("fa-check-circle")
+                                    $("#room-prepare-" + localStorage.getItem("userId")).find('a').addClass("fa-times-circle")
+                                    $("#room-prepare-" + localStorage.getItem("userId")).find('a').removeClass("fa-check-circle")
                                 }
                                 break;
                             case -2006: // 踢人返回
@@ -405,7 +405,7 @@ function addMember(members) {
         // 1:主动离开 2:被踢
         if (this.leave == 1 || this.leave == 2) {
             // 判断是否当前用户.如果是的话则关闭窗口
-            if (this.aid == sessionStorage.getItem("userId") && this.leave == 2) {
+            if (this.aid == localStorage.getItem("userId") && this.leave == 2) {
                 // 被踢的是当前用户
                 layer.closeAll()
                 layer.msg("你被移出房间")
@@ -419,7 +419,7 @@ function addMember(members) {
             }
             $("#room-prepare-" + this.aid).remove()
         } else {
-            if (sessionStorage.getItem("userId") == this.aid) {
+            if (localStorage.getItem("userId") == this.aid) {
                 if (this.mc) {
                     IS_MC = true
                     // 代表是mc
@@ -797,7 +797,7 @@ function showRoomMember(userId, username) {
         return
     }
     // 房主 
-    if (IS_OWNER && userId != sessionStorage.getItem("userId")) {
+    if (IS_OWNER && userId != localStorage.getItem("userId")) {
         $("#show-kick-button").css("display", "block")
     }
     $("#room-member-info").find(".close").remove()
@@ -848,7 +848,7 @@ function showMyNotes() {
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            let userId = sessionStorage.getItem("userId")
+            let userId = localStorage.getItem("userId")
             VIEW_OTHER_NOTE_USERNAME = ''
             var childMessage = root.lookupType("SoupMessage.LoadNoteReq");
             var childData = childMessage.fromObject({ aid: userId })
@@ -975,7 +975,7 @@ function viewNotes() {
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
             let userId = $("#room-member-id").html()
-            if(userId != sessionStorage.getItem("userId")) {
+            if(userId != localStorage.getItem("userId")) {
                 VIEW_OTHER_NOTE_USERNAME = $("#room-member-username").html()
             }
             var childMessage = root.lookupType("SoupMessage.LoadNoteReq");

@@ -88,10 +88,10 @@ function login(scene) {
             } else {
                 layer.msg("成功登录")
                 window.location = "#"
-                sessionStorage.setItem("token", res.data.accessToken);
-                sessionStorage.setItem("userId", res.data.userInfo.userId);
-                sessionStorage.setItem("avatar", res.data.userInfo.avatar);
-                sessionStorage.setItem("username", res.data.userInfo.username);
+                localStorage.setItem("token", res.data.accessToken);
+                localStorage.setItem("userId", res.data.userInfo.userId);
+                localStorage.setItem("avatar", res.data.userInfo.avatar);
+                localStorage.setItem("username", res.data.userInfo.username);
                 $("#show-logout-button").css('display', "block")
                 // 连接websocket
                 gameServer(res.data.accessToken)
@@ -159,10 +159,10 @@ function touristLogin() {
             } else {
                 layer.msg("成功登录")
                 window.location = "#"
-                sessionStorage.setItem("token", res.data.accessToken);
-                sessionStorage.setItem("userId", res.data.userInfo.userId);
-                sessionStorage.setItem("avatar", res.data.userInfo.avatar);
-                sessionStorage.setItem("username", res.data.userInfo.username);
+                localStorage.setItem("token", res.data.accessToken);
+                localStorage.setItem("userId", res.data.userInfo.userId);
+                localStorage.setItem("avatar", res.data.userInfo.avatar);
+                localStorage.setItem("username", res.data.userInfo.username);
                 $("#show-logout-button").css('display', "block")
                 $("#tourist-captcha-image").attr("src", "")
                 $("#tourist-captcha-id").val("")
@@ -199,9 +199,9 @@ function feedback() {
         method: "post",
         url: API_DOMAIN + "/user/feedback",
         beforeSend: function (XMLHttpRequest) {
-            XMLHttpRequest.setRequestHeader("Authorization", sessionStorage.getItem("token"));
+            XMLHttpRequest.setRequestHeader("Authorization", localStorage.getItem("token"));
         },
-        header: {Authorization: sessionStorage.getItem("token")},
+        header: {Authorization: localStorage.getItem("token")},
         data: {content: content},
         success: function (res) {
             if (res.code != 0 && res.code != 200) {
@@ -219,7 +219,7 @@ function feedback() {
 
 // 菜单退出
 function showLogout () {
-    if (sessionStorage.getItem("token")) {
+    if (localStorage.getItem("token")) {
         window.location = "#logout-options"
     } else {
         $("#show-logout-button").hide()
@@ -228,8 +228,8 @@ function showLogout () {
 
 // 退出
 function logout() {
-    // 清空sessionStorage
-    sessionStorage.clear()
+    // 清空localStorage
+    localStorage.clear()
     WEBSOCKET_OBJ.close()
     $("#show-logout-button").hide()
     layer.msg("退出成功")
