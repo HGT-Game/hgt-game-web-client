@@ -216,6 +216,9 @@ function gameServer(authorization, username, password) {
                                 var resChildMessage = root.lookupType("SoupMessage.EndRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
                                 ROOM_IS_GAMING = false
+                                $("#end-game-button").hide()
+                                $("#show-game-content").hide()
+                                $("#show-game-notes").hide()
                                 break;
                             case -2011: // 选题返回
                                 var resChildMessage = root.lookupType("SoupMessage.SelectQuestionRes");
@@ -718,9 +721,7 @@ function endGameConfirm() {
     if (!IS_MC) {
         return
     }
-    $("#end-game-button").hide()
-    $("#show-game-content").hide()
-    $("#show-game-notes").hide()
+    
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
