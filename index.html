@@ -397,6 +397,11 @@
                     <li><input type="button" value="确认" class="primary" onclick="logout();" /></li>
                 </ul>
             </article>
+            <!-- 提示外界浏览器打开 -->
+            <article id="weixin-broswer" class="fixed-pop-ups" style="padding: 20px;">
+                <h2 class="major">提示</h2>
+                <p>已禁止微信内嵌浏览器访问，可使用外置浏览器打开此站点。（微信小程序版即将推出）</p>
+            </article>
         </div>
 
         <!-- Footer -->
@@ -421,20 +426,17 @@
 <script src="static/main.js"></script>
 <script src="static/game.js"></script>
 <script>
-    // 对浏览器的UserAgent进行正则匹配，不含有微信独有标识的则为其他浏览器
-    var useragent = navigator.userAgent;
-    if (useragent.match(/MicroMessenger/i) == 'MicroMessenger') {
-        // 这里警告框会阻塞当前页面继续加载
-        alert('已禁止微信内嵌浏览器访问，可使用外置浏览器打开此站点。（微信小程序版即将推出）');
-        // 以下代码是用javascript强行关闭当前页面
-        var opened = window.open('about:blank', '_self');
-        opened.opener = null;
-        opened.close();
-    }
     // 监听页面刷新
     window.onload = function (event) {
-        if (window.location.hash != "") {
-            window.location = "/index.html"
+        // 对浏览器的UserAgent进行正则匹配，不含有微信独有标识的则为其他浏览器
+        var useragent = navigator.userAgent;
+        if (useragent.match(/MicroMessenger/i) == 'MicroMessenger') {
+            // 这里警告框会阻塞当前页面继续加载
+            window.location = "/index.html#weixin-broswer"
+        } else {
+            if (window.location.hash != "") {
+                window.location = "/index.html"
+            }
         }
     }
     var host = window.location.host
