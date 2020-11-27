@@ -23,7 +23,8 @@
             <div class="content">
                 <div class="inner">
                     <h1 onclick="test();">海龟汤游戏</h1>
-                    <p>其玩法系由出题者提出一个难以理解的事件，参与猜题者可以提出任何问题以试图缩小范围并找出事件背后真正的原因，但出题者仅能则以“是（对）”、“不是（不对）”、“是或不是（半对）”或“无关”来回答问题。</p>
+                    <p>其玩法系由出题者提出一个难以理解的事件，参与猜题者可以提出任何问题以试图缩小范围并找出事件背后真正的原因，但出题者仅能则以“是（对）”、“不是（不对）”、“是或不是（半对）”或“无关”来回答问题。
+                    </p>
                 </div>
             </div>
             <nav>
@@ -64,7 +65,7 @@
                     <p><i class="icon solid fa-times-circle"></i> 错/否/未准备</p>
                     <p><i class="icon solid fa-trash-alt"></i> 删除操作</p>
                 </div>
-                    <h2 class="major">成员组成</h2>
+                <h2 class="major">成员组成</h2>
                 <ul>
                     <li>决策：MorsTiin</li>
                     <li>制作：水玉</li>
@@ -185,7 +186,7 @@
                     </li>
                     <li><input type="button" value="发送" class="primary" onclick="sendMessage();" /></li>
                     <li id="show-game-notes" style="display: none;"><input type="button" value="查看笔记"
-                        onclick="showMyNotes();" /></li>
+                            onclick="showMyNotes();" /></li>
                     <li id="show-game-content" style="display: none;"><input type="button" value="查看汤底"
                             onclick="showGameContent();" /></li>
                     <li id="end-game-button" style="display: none;"><input type="button" value="结束游戏" class="primary"
@@ -214,7 +215,8 @@
                 <ul class="alt" id="user-note-list">
                 </ul>
                 <ul class="actions dialogue-actions">
-                    <li id="show-add-customize-note-button" style="display: none;"><input type="button" value="添加笔记" class="primary" onclick="addCustomizeNote();" /></li>
+                    <li id="show-add-customize-note-button" style="display: none;"><input type="button" value="添加笔记"
+                            class="primary" onclick="addCustomizeNote();" /></li>
                     <li><input type="button" value="关闭" onclick="closeUserNote();" /></li>
                 </ul>
             </article>
@@ -267,8 +269,10 @@
                         </div>
                     </div>
                     <ul class="icons">
-                        <li><a href="https://github.com/HGT-Game" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-                        <li><a href="https://weibo.com/zsunanzhi" class="icon brands fa-weibo"><span class="label">Weibo</span></a></li>
+                        <li><a href="https://github.com/HGT-Game" class="icon brands fa-github"><span
+                                    class="label">GitHub</span></a></li>
+                        <li><a href="https://weibo.com/zsunanzhi" class="icon brands fa-weibo"><span
+                                    class="label">Weibo</span></a></li>
                     </ul>
                     <ul class="actions">
                         <li><input type="button" value="确认" class="primary" onclick="feedback();" /></li>
@@ -290,7 +294,9 @@
                             <input type="text" id="tourist-captcha" placeholder="输入验证码" />
                             <br>
                             <input type="hidden" id="tourist-captcha-id" value="">
-                            <img id="tourist-captcha-image" width="130px" height="40px" style="background-color: aliceblue;border-radius: 4px;" src="" onclick="changeCaptcha();" alt="">
+                            <img id="tourist-captcha-image" width="130px" height="40px"
+                                style="background-color: aliceblue;border-radius: 4px;" src=""
+                                onclick="changeCaptcha();" alt="">
                         </div>
                     </div>
                     <ul class="actions">
@@ -415,6 +421,16 @@
 <script src="static/main.js"></script>
 <script src="static/game.js"></script>
 <script>
+    // 对浏览器的UserAgent进行正则匹配，不含有微信独有标识的则为其他浏览器
+    var useragent = navigator.userAgent;
+    if (useragent.match(/MicroMessenger/i) == 'MicroMessenger') {
+        // 这里警告框会阻塞当前页面继续加载
+        alert('已禁止微信内嵌浏览器访问，可使用外置浏览器打开此站点。（微信小程序版即将推出）');
+        // 以下代码是用javascript强行关闭当前页面
+        var opened = window.open('about:blank', '_self');
+        opened.opener = null;
+        opened.close();
+    }
     // 监听页面刷新
     window.onload = function (event) {
         if (window.location.hash != "") {
