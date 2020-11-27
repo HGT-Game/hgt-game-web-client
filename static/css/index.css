@@ -45,6 +45,9 @@
 .fixed-pop-ups .icons li a {
     height: 4.25rem;
     width: 4.25rem;
+    line-height: 4.25rem;
+    background-position: 50% 50%;
+    background-size: contain;
 }
 
 .dialogue-actions {
@@ -78,8 +81,9 @@
 }
 
 #game-round-message-list li a {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.50rem;
+    height: 2.50rem;
+    margin-top: 5px;
 }
 
 .message-list-content {

@@ -236,7 +236,7 @@ function gameServer(authorization, username, password) {
                                 var resChildMessage = root.lookupType("SoupMessage.AddNoteRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
                                 layer.msg("添加笔记成功")
-                                if(resMessage.note.type != 1) {
+                                if (resMessage.note.type != 1) {
                                     showNotes([resMessage.note], false)
                                 }
                                 $("#customize-note-content").val("")
@@ -453,7 +453,13 @@ function addMember(members) {
                 $("#room-prepare-" + this.aid).remove()
             }
             layer.msg(this.avaName + '加入房间')
-            $("#room-prepare-member").append('<li id="room-prepare-' + this.aid + '"><span>' + role + '</span><a href="javascript:void(0)" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');" class="icon solid ' + icon + '"></a>' + this.avaName + '</li>')
+            // background-image: url(https://static.sunanzhi.com/hgt/avatar/hgt_avatar_3.jpg);
+            $("#room-prepare-member").append(
+                '<li id="room-prepare-' + this.aid + '">' +
+                '<span>' + role + '</span>' +
+                '<a href="javascript:void(0)" style="background-image: url('+this.avaHead+');" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');" class="icon solid ' + icon + '"></a>' + this.avaName +
+                '</li>'
+            )
         }
     })
 }
@@ -583,7 +589,7 @@ function appendAllMsg(msgs) {
         } else {
             let li = '<li id="message-' + this.id + '"><div>'
             // 用户头像
-            li += '<div class="message-list-avatar"><a href="javascript:void(0)" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');" class="icon solid fa-user"></a></div>'
+            li += '<div class="message-list-avatar"><a href="javascript:void(0)" style="background-image: url('+this.avaHead+');" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');"></a></div>'
             // 内容 + 回答
             li += '<div class="message-list-content" style="float: left;"><p class="message-list-username">' + this.avaName + '</p><span  onclick="answerMessage(' + "'" + this.id + "'" + ', ' + "'" + this.content + "'" + ');">' + this.content + '</span><p class="message-list-answer"><i>' + answer + '</i></p></div>'
             // 结尾
@@ -658,18 +664,18 @@ function replyMessage(answer) {
 
 // 游戏开始 显示对局页面
 function start(room) {
-    if(room.question) {
-        if(room.question.title) {
+    if (room.question) {
+        if (room.question.title) {
             $("#game-round-title").html(room.question.title)
         }
-        if(room.question.question) {
+        if (room.question.question) {
             $("#game-round-question-description").html(room.question.question)
         }
     }
     if (IS_MC) {
         $("#end-game-button").css('display', "block")
         $("#show-game-content").css('display', "block")
-        if(room.question && room.question.content) {
+        if (room.question && room.question.content) {
             $("#check-game-content").html(room.question.content)
         }
     } else {
@@ -721,7 +727,7 @@ function endGameConfirm() {
     if (!IS_MC) {
         return
     }
-    
+
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
@@ -975,7 +981,7 @@ function viewNotes() {
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
             let userId = $("#room-member-id").html()
-            if(userId != localStorage.getItem("userId")) {
+            if (userId != localStorage.getItem("userId")) {
                 VIEW_OTHER_NOTE_USERNAME = $("#room-member-username").html()
             }
             var childMessage = root.lookupType("SoupMessage.LoadNoteReq");
