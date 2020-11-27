@@ -452,8 +452,10 @@ function addMember(members) {
             if ($("#room-prepare-" + this.aid).length > 0) {
                 $("#room-prepare-" + this.aid).remove()
             }
-            layer.msg(this.avaName + '加入房间')
-            // background-image: url(https://static.sunanzhi.com/hgt/avatar/hgt_avatar_3.jpg);
+            // 非游戏状态才需要提示
+            if(!ROOM_IS_GAMING) {
+                layer.msg(this.avaName + '加入房间')
+            }
             $("#room-prepare-member").append(
                 '<li id="room-prepare-' + this.aid + '">' +
                 '<span>' + role + '</span>' +
