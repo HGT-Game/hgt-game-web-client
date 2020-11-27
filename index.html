@@ -400,7 +400,7 @@
             <!-- 提示外界浏览器打开 -->
             <article id="weixin-broswer" class="fixed-pop-ups" style="padding: 20px;">
                 <h2 class="major">提示</h2>
-                <p>已禁止微信内嵌浏览器访问，可使用外置浏览器打开此站点。（微信小程序版即将推出）</p>
+                <p>如需浏览，可使用外置浏览器打开此站点。（微信小程序版即将推出）</p>
             </article>
         </div>
 
@@ -432,6 +432,7 @@
         var useragent = navigator.userAgent;
         if (useragent.match(/MicroMessenger/i) == 'MicroMessenger') {
             // 这里警告框会阻塞当前页面继续加载
+            $("#weixin-broswer").find(".close").remove()
             window.location = "/index.html#weixin-broswer"
         } else {
             if (window.location.hash != "") {
