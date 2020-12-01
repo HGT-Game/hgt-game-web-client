@@ -11,7 +11,10 @@
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="cache-control" content="no-cache">
     <link rel="stylesheet" href="//static.sunanzhi.com/hgt/assets/css/main.css" />
-    <link rel="stylesheet" href="static/css/index.css" />
+    <script>
+        var now = new Date().getTime();
+        document.write('<link href="static/css/index.css?t=' + now + '" rel="stylesheet" type="text/css"/>');
+    </script>
     <link rel="shortcut icon" href="favicon.ico">
 </head>
 
@@ -452,8 +455,10 @@
 <script src="//static.sunanzhi.com/hgt/assets/js/main.js"></script>
 <script src="//static.sunanzhi.com/js/layui/layui.js"></script>
 <script src="//static.sunanzhi.com/js/protobuf/protobuf.js"></script>
-<script src="static/main.js"></script>
-<script src="static/game.js"></script>
+<script type="text/javascript">
+    document.write('<script src="static/main.js?timestamp='+new Date().getTime()+'" type="text/javascript" charset="utf-8">	<\/script>');
+    document.write('<script src="static/game.js?timestamp='+new Date().getTime()+'" type="text/javascript" charset="utf-8">	<\/script>');
+</script>
 <script>
     // 监听页面刷新
     window.onload = function (event) {
