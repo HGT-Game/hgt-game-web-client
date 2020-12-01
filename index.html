@@ -176,10 +176,16 @@
             </article>
             <!-- 游戏页面 -->
             <article id="game-round" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major" id="game-round-title">汤标题</h2>
-                <p id="game-round-question-description" style="margin-bottom: 0;">汤面</p>
+                <div style="width: 100%; height: 20px;">
+                    <div id="game-round-title-div"><h2 class="major" id="game-round-title">汤标题</h2></div>
+                    <i id="game-question-chevron-down" style="display: none; float: right;"
+                        class="icon solid fa-chevron-down" onclick="showGameQuestion();"></i>
+                    <i id="game-question-chevron-up" style="float: right;" class="icon solid fa-chevron-up"
+                        onclick="closeGameQuestion();"></i>
+                </div>
+                <p class="game-question-show" id="game-round-question-description">汤面</p>
                 <hr style="margin: 20px 0 20px 0;">
-                <div style="width: 100%; height: 390px; overflow: auto;" id="game-round-message-div">
+                <div class="game-round-message-list" id="game-round-message-div">
                     <ul class="icons" id="game-round-message-list">
                     </ul>
                 </div>
@@ -420,7 +426,8 @@
                 <p style="margin-top: 3px;">
                     <a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral" target="_blank"
                         rel="nofollow" sponsor="upyun">
-                        <img style="height: 25px;" src="//static.sunanzhi.com/image/cooperation/logo/upyun-white.png" alt="upyun">
+                        <img style="height: 25px;" src="//static.sunanzhi.com/image/cooperation/logo/upyun-white.png"
+                            alt="upyun">
                     </a>
                 </p>
             </div>
@@ -466,7 +473,7 @@
         var WSS_DOMAIN = "wss://api.sunanzhi.com/wss"
     }
     // layer 初始化
-    layui.use(['layer', 'form'], function () {
+    layui.use(['layer'], function () {
         var layer = layui.layer
     });
     // websocket 对象

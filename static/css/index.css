@@ -63,6 +63,50 @@
     margin-bottom: 15px;
 }
 
+#game-round-title-div {
+    display: block; 
+    float: left; 
+    margin: 0; 
+    width: 90%; 
+    overflow: hidden;
+    height: 40px;
+}
+.game-question-close {
+    overflow: hidden;
+    max-height: 0;
+    -webkit-transition: max-height 0.5s ease-in-out;
+    transition: max-height 0.5s ease-in-out;
+}
+.game-question-show {
+    margin-bottom: -10px;
+    width: 100%;
+    margin-top: 20px;
+    max-height: 500px;
+    -webkit-transition: max-height 0.5s ease-in-out;
+    transition: max-height 0.5s ease-in-out;
+}
+.game-round-message-list {
+    width: 100%; 
+    height: 390px; 
+    overflow: auto;
+    padding: 0 5px 0 5px;
+}
+.game-round-message-list::-webkit-scrollbar {
+    width: 4px;
+}
+.game-round-message-list::-webkit-scrollbar-track {
+    background-color:rgba(255, 255, 255, 0);
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    border-radius:2em;
+}
+.game-round-message-list::-webkit-scrollbar-thumb {
+    background-color:rgba(226, 226, 226, 0.3);
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    border-radius:2em;
+}
+
 #game-round-message-list li p {
     /* text-align: left; */
     margin-bottom: 6px;

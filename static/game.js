@@ -1029,3 +1029,18 @@ function viewNotes() {
     });
 }
 
+// 展开汤面
+function showGameQuestion() {
+    $("#game-round-question-description").removeClass("game-question-close");
+    $("#game-round-question-description").addClass("game-question-show");
+    $("#game-question-chevron-down").hide()
+    $("#game-question-chevron-up").css("display", "block")
+}
+// 缩小汤面
+function closeGameQuestion() {
+    $("#game-round-question-description").removeClass("game-question-show");
+    $("#game-round-question-description").addClass("game-question-close");
+    $("#game-question-chevron-up").hide()
+    $("#game-question-chevron-down").css("display", "block")
+}
+
