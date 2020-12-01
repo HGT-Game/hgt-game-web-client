@@ -16,6 +16,23 @@ function checkServer() {
     return true;
 }
 
+// 重置flag
+function resetFlag() {
+    WEBSOCKET_OBJ = null
+    // websocket是否连接
+    WEBSOCKET_CONNECT = false
+    // 是否准备
+    IS_PREPARE = false
+    // 是否mc
+    IS_MC = false
+    // 是否房主
+    IS_OWNER = false
+    // 房间状态
+    ROOM_IS_GAMING = false
+    // 是否查看别人笔记
+    VIEW_OTHER_NOTE_USERNAME = ''
+}
+
 // 心跳检测
 var heartCheck = {
     timeout: 50000,//ms
@@ -74,13 +91,13 @@ function gameServer(authorization, username, password) {
     }
     WEBSOCKET_OBJ.error = function () {
         console.log('连接错误')
-        WEBSOCKET_CONNECT = false
+        resetFlag();
         // 清空localStorage
         localStorage.clear()
     }
     WEBSOCKET_OBJ.onclose = function () {
         console.log('断开');
-        WEBSOCKET_CONNECT = false
+        resetFlag();
     }
     WEBSOCKET_OBJ.onmessage = function (e) {
         heartCheck.reset();
