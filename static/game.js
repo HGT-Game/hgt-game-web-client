@@ -278,6 +278,8 @@ function gameServer(authorization, username, password) {
                                     start(resMessage)
                                     ROOM_IS_GAMING = true
                                 } else if (resMessage.status == 1) {
+                                    ROOM_IS_GAMING = false
+                                    // 清空聊天记录
                                     $("#game-round-message-list").empty()
                                     // 房间准备中
                                     if (resMessage.question && resMessage.question.content) {
