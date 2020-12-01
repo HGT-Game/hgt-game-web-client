@@ -72,7 +72,7 @@
     height: 40px;
 }
 .game-question-close {
-    overflow: hidden;
+    display: none;
     max-height: 0;
     -webkit-transition: max-height 0.5s ease-in-out;
     transition: max-height 0.5s ease-in-out;
