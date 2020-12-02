@@ -622,7 +622,6 @@ function appendAllMsg(msgs) {
                 messageContent = 'message-list-content-right'
                 messageUsername = 'message-list-username-right'
                 messageAnswer = 'message-list-answer-right'
-                // messageContentSpan = 'style="width: 100%;text-align: left;float: right;"'
             }
             let li = '<li id="message-' + this.id + '"><div>'
             // 用户头像

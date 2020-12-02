@@ -87,7 +87,7 @@
 }
 .game-round-message-list {
     width: 100%; 
-    height: 390px; 
+    height: 450px; 
     overflow: auto;
     padding: 0 5px 0 5px;
 }
