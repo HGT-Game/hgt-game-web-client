@@ -844,6 +844,10 @@ function showRoomMember(userId, username) {
     if (IS_OWNER && userId != localStorage.getItem("userId")) {
         $("#show-kick-button").css("display", "block")
     }
+    // 如果房间游戏中不用查看笔记
+    if(!ROOM_IS_GAMING) {
+        $("#room-member-note").hide()
+    }
     $("#room-member-info").find(".close").remove()
     $("#room-member-id").html(userId)
     $("#room-member-username").html(username)
@@ -1043,4 +1047,12 @@ function closeGameQuestion() {
     $("#game-question-chevron-up").hide()
     $("#game-question-chevron-down").css("display", "block")
 }
-
+// 对局菜单
+function showRoundMenu() {
+    $("#game-round-menu").find(".close").remove()
+    window.location = "#game-round-menu"
+}
+// 关闭对局菜单
+function closeRoundMenu() {
+    window.location = "#game-round"
+}

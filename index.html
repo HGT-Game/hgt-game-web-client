@@ -74,6 +74,11 @@
                     <p><i class="icon solid fa-check-circle"></i> 对/不是/已准备</p>
                     <p><i class="icon solid fa-times-circle"></i> 错/否/未准备</p>
                     <p><i class="icon solid fa-trash-alt"></i> 删除操作</p>
+                    <p><i class="icon solid fa-paper-plane"></i> 发送</p>
+                    <p><i class="icon solid fa-chevron-down"></i> 展开</p>
+                    <p><i class="icon solid fa-chevron-up"></i> 缩回</p>
+                    <p><i class="icon solid fa-file-alt"></i> 笔记</p>
+                    <p><i class="icon solid fa-question-circle"></i> 汤底</p>
                 </div>
                 <h2 class="major">成员组成</h2>
                 <ul>
@@ -159,7 +164,7 @@
                 <p>用户编号：<span id="room-member-id"></span></p>
                 <p>用户名：<span id="room-member-username"></span></p>
                 <ul class="actions dialogue-actions">
-                    <li><input type="button" value="查看笔记" class="primary" onclick="viewNotes();" /></li>
+                    <li id="room-member-note"><input type="button" value="查看笔记" class="primary" onclick="viewNotes();" /></li>
                     <li><input type="button" value="关闭" onclick="closeMemberInfo();" /></li>
                     <li id="show-kick-button" style="display: none;"><input type="button" value="踢出房间" class="primary"
                             onclick="kickRoom();" /></li>
@@ -182,7 +187,8 @@
             </article>
             <!-- 游戏页面 -->
             <article id="game-round" class="fixed-pop-ups" style="padding: 20px;">
-                <div style="width: 100%; height: 20px;">
+                <i class="icon solid fa-bars" onclick="showRoundMenu();"></i>
+                <div style="width: 100%; height: 25px;">
                     <div id="game-round-title-div">
                         <h2 class="major" id="game-round-title">汤标题</h2>
                     </div>
@@ -197,16 +203,28 @@
                     <ul class="icons" id="game-round-message-list">
                     </ul>
                 </div>
-                <hr>
+                <hr style="margin: 10px 0 10px 0;">
                 <ul class="actions dialogue-actions">
-                    <li>
-                        <input type="text" id="game-round-message" placeholder="提问的内容" />
+                    <li style="position: relative;">
+                        <i id="show-game-notes" class="icon solid fa-file-alt" style="font-size: 25px; width: 30px;
+                            position: absolute;display: none;" onclick="showMyNotes();"></i>
+                        <i id="show-game-content" class="icon solid fa-question-circle" style="font-size: 25px; width: 30px;
+                            position: absolute;display: none;" onclick="showGameContent();"></i>
+                        <input style="width: 88%;
+                        float: right;" type="text" id="game-round-message" placeholder="提问的内容" />
+                        <i style="position: absolute;
+                        right: 10px;
+                        top: 8px;
+                        width: 20px;
+                        opacity: 0.7;" class="icon solid fa-paper-plane" onclick="sendMessage();"></i>
                     </li>
-                    <li><input type="button" value="发送" class="primary" onclick="sendMessage();" /></li>
-                    <li id="show-game-notes" style="display: none;"><input type="button" value="查看笔记"
-                            onclick="showMyNotes();" /></li>
-                    <li id="show-game-content" style="display: none;"><input type="button" value="查看汤底"
-                            onclick="showGameContent();" /></li>
+                </ul>
+            </article>
+            <!-- 对局菜单 -->
+            <article id="game-round-menu">
+                <h2 class="major">对局菜单</h2>
+                <ul class="actions dialogue-actions" style="margin-bottom: 20px;">
+                    <li><input type="button" value="返回游戏" onclick="closeRoundMenu();" /></li>
                     <li id="end-game-button" style="display: none;"><input type="button" value="结束游戏" class="primary"
                             onclick="endGame();" /></li>
                     <li id="leave-game-button" style="display: none;"><input type="button" value="离开游戏"
@@ -456,8 +474,8 @@
 <script src="//static.sunanzhi.com/js/layui/layui.js"></script>
 <script src="//static.sunanzhi.com/js/protobuf/protobuf.js"></script>
 <script type="text/javascript">
-    document.write('<script src="static/main.js?timestamp='+new Date().getTime()+'" type="text/javascript" charset="utf-8">	<\/script>');
-    document.write('<script src="static/game.js?timestamp='+new Date().getTime()+'" type="text/javascript" charset="utf-8">	<\/script>');
+    document.write('<script src="static/main.js?timestamp=' + new Date().getTime() + '" type="text/javascript" charset="utf-8">	<\/script>');
+    document.write('<script src="static/game.js?timestamp=' + new Date().getTime() + '" type="text/javascript" charset="utf-8">	<\/script>');
 </script>
 <script>
     // 监听页面刷新
