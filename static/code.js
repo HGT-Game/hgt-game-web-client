@@ -1,5 +1,6 @@
 var codeList = []
 codeList[500] = "请求错误"
+codeList[2] = "达到最大连接数"
 // ---------- 创建房间相关
 codeList[20001] = "房间名不合法"
 codeList[20002] = "房间人数设置不合法"
