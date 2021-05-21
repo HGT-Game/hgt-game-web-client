@@ -287,6 +287,9 @@ function gameServer(authorization, username, password) {
                                 if (resMessage.changedMsg && resMessage.changedMsg.length > 0) {
                                     appendAllMsg(resMessage.changedMsg)
                                 }
+                                if (resMessage.msg && resMessage.msg.length > 0) {
+                                    appendAllMsg(resMessage.msg)
+                                }
                                 if (resMessage.status == 2) {
                                     // 选题
                                     showQuestion(resMessage.selectQuestions)
