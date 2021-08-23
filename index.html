@@ -38,9 +38,9 @@
                     <li><a href="javascript:void(0)" onclick="menuCreateRoom();">创建房间</a></li>
                     <li><a href="javascript:void(0)" onclick="menuJoinRoom();">加入房间</a></li>
                     <li><a href="javascript:void(0)" onclick="roomHall();">房间列表</a></li>
-                    <li><a href="/fish.html">工作主题</a></li>
+                    <!-- <li><a href="/fish.html">工作主题</a></li> -->
                     <li><a href="#about">说明</a></li>
-                    <li><a href="javascript:void(0)" onclick="menuFeedback();">联系我们</a></li>
+                    <!-- <li><a href="javascript:void(0)" onclick="menuFeedback();">联系我们</a></li> -->
                     <li id="show-logout-button" style="display: none;"><a href="javascript:void(9)"
                             onclick="showLogout();">退出</a></li>
                 </ul>
@@ -442,6 +442,8 @@
 
         <!-- Footer -->
         <footer id="footer">
+            <p class="copyright"><a href="javascript:void(0)" onclick="menuFeedback();">联系我们</a></p>
+            <p class="copyright">加入QQ：<a href="https://jq.qq.com/?_wv=1027&k=9kLPr9Zb">727986995</a></p>
             <p class="copyright">© 2020 <a href="https://beian.miit.gov.cn/">粤ICP备18084253号</a></p>
             <div style="margin-top: 5px;">
                 <p class="copyright">
@@ -495,7 +497,7 @@
     var host = window.location.host
     if (host == "test.develop") {
         var API_DOMAIN = "http://localhost:8899"
-        var WSS_DOMAIN = "ws://localhost:8899/wss"
+        var WSS_DOMAIN = "ws://localhost:8898/wss"
     } else {
         var API_DOMAIN = "https://api.sunanzhi.com"
         var WSS_DOMAIN = "wss://api.sunanzhi.com/wss"
