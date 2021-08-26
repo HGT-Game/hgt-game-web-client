@@ -306,6 +306,8 @@ function gameServer(authorization, username, password) {
                                         $("#game-question-content").find("p").html(resMessage.question.content)
                                         $("#game-question-content").find(".close").remove()
                                         window.location = "#game-question-content"
+                                    } else {
+                                        roomPrepare()
                                     }
                                 }
                                 break;
