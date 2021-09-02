@@ -855,7 +855,7 @@ function showUserDetail(aid, avaName, avaHead) {
     $('.main ').toggleClass('open-chat-sidebar')
     $("#user-detail-avatar").attr("src", avaHead)
     $("#user-detail-username").html(avaName)
-    if (localStorage.getItem("userId") == aid) {
+    if (localStorage.getItem("userId") == aid && ROOM_IS_GAMING) {
         $("#add-note-form").css("display", "block")
         VIEW_OTHER_NOTE_USERNAME = ""
     } else {
@@ -965,6 +965,9 @@ function getNoteAnswer(status) {
 
 // 确认添加自定义笔记
 function addCustomizeNoteConfirm() {
+    if(!ROOM_IS_GAMING) {
+        return
+    }
     if (!checkServer()) {
         return
     }

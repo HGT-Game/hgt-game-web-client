@@ -11735,7 +11735,7 @@ fieldset:disabled .btn {
     --box-shadow  : #c7c1c1;
     --sidebar-bg  : #F3F7FA;
     --note-card-bg: #d8d8d8;
-    --question-bg : #f3f2ef;
+    --question-bg : #bebebe;
 }
 
 :root [class="theme-indigo"] {
