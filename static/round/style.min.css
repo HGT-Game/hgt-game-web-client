@@ -2239,7 +2239,7 @@ progress {
     font-size       : 1rem;
     font-weight     : 400;
     line-height     : 1.5;
-    color           : #212529;
+    color           : var(--font-color);
     background-color: #fff;
     background-clip : padding-box;
     border          : 1px solid #ced4da;
@@ -3033,7 +3033,7 @@ textarea.form-control.is-invalid {
     user-select     : none;
     background-color: transparent;
     border          : 1px solid transparent;
-    padding         : .375rem .75rem;
+    padding         : .25rem .65rem;
     font-size       : 1rem;
     border-radius   : .25rem;
     transition      : color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out
@@ -11735,6 +11735,7 @@ fieldset:disabled .btn {
     --box-shadow  : #c7c1c1;
     --sidebar-bg  : #F3F7FA;
     --note-card-bg: #d8d8d8;
+    --question-bg : #f3f2ef;
 }
 
 :root [class="theme-indigo"] {
@@ -11767,6 +11768,7 @@ fieldset:disabled .btn {
     --box-shadow  : #484c52;
     --sidebar-bg  : #1d1d1d;
     --note-card-bg: #1d1d1d;
+    --question-bg : #2a2a2a;
 }
 
 [data-theme="dark"] [class="theme-indigo"] {
@@ -12152,7 +12154,7 @@ body.admin .main-body .body-page::-webkit-scrollbar-thumb {
     transition        : all 0.2s ease-in-out;
     background        : var(--card-color);
     position          : absolute;
-    visibility        : hidden;
+    /* visibility        : hidden; */
     z-index           : 99;
     right             : 11px;
     top               : 8px
@@ -12163,9 +12165,9 @@ body.admin .main-body .body-page::-webkit-scrollbar-thumb {
     padding: 4px
 }
 
-.chat-list li img.avatar {
+/* .chat-list li img.avatar {
     filter: grayscale(1)
-}
+} */
 
 .chat-list li:hover .hover_action {
     visibility: visible
@@ -12902,7 +12904,8 @@ body.admin .main-body .body-page::-webkit-scrollbar-thumb {
 }
 
 .main .user-detail-sidebar,
-.main .user-note-sidebar,
+.main .room-info-sidebar,
+.main .question-list-sidebar,
 .main .addnew-user-sidebar {
     -webkit-transition: all 0.2s ease-in-out;
     -moz-transition   : all 0.2s ease-in-out;
@@ -12924,14 +12927,16 @@ body.admin .main-body .body-page::-webkit-scrollbar-thumb {
 }
 
 .main .user-detail-sidebar::-webkit-scrollbar,
-.main .user-note-sidebar::-webkit-scrollbar,
+.main .room-info-sidebar::-webkit-scrollbar,
+.main .question-list-sidebar::-webkit-scrollbar,
 .main .addnew-user-sidebar::-webkit-scrollbar {
     width           : 0;
     background-color: var(--sidebar-bg)
 }
 
 .main .user-detail-sidebar::-webkit-scrollbar-thumb,
-.main .user-note-sidebar::-webkit-scrollbar-thumb,
+.main .room-info-sidebar::-webkit-scrollbar-thumb,
+.main .question-list-sidebar::-webkit-scrollbar-thumb,
 .main .addnew-user-sidebar::-webkit-scrollbar-thumb {
     background   : var(--font-eee);
     border-radius: 5px
@@ -12940,7 +12945,8 @@ body.admin .main-body .body-page::-webkit-scrollbar-thumb {
 @media screen and (max-width: 767px) {
 
     .main .user-detail-sidebar,
-    .main .user-note-sidebar,
+    .main .room-info-sidebar,
+    .main .question-list-sidebar,
     .main .addnew-user-sidebar {
         width  : 100%;
         z-index: 99;
@@ -12979,21 +12985,38 @@ body.admin .main-body .body-page::-webkit-scrollbar-thumb {
 }
 
 /* 打开笔记窗口 ----start */
-.main.open-note-sidebar .chat-body {
+.main.open-room-sidebar .chat-body {
     width: calc(100% - 360px)
 }
 
-.main.open-note-sidebar .user-note-sidebar {
+.main.open-room-sidebar .room-info-sidebar {
     right: 0px
 }
 
 @media screen and (max-width: 767px) {
-    .main.open-note-sidebar .user-note-sidebar {
+    .main.open-room-sidebar .room-info-sidebar {
         right  : 0;
         z-index: 99 !important
     }
 }
 /* 打开笔记窗口 ----end */
+
+/* 打开汤普列表 ----start */
+.main.open-question-list-sidebar .chat-body {
+    width: calc(100% - 360px)
+}
+
+.main.open-question-list-sidebar .question-list-sidebar {
+    right: 0px
+}
+
+@media screen and (max-width: 767px) {
+    .main.open-question-list-sidebar .question-list-sidebar {
+        right  : 0;
+        z-index: 99 !important
+    }
+}
+/* 打开汤普列表 ----end */
 
 @media screen and (min-width: 1200px) {
     .main {
@@ -13004,15 +13027,16 @@ body.admin .main-body .body-page::-webkit-scrollbar-thumb {
 @media screen and (max-width: 1200px) {
 
     .main.open-chat-sidebar .chat-body,
-    .main.open-note-sidebar .chat-body,
+    .main.room-info-sidebar .chat-body,
+    .main.open-question-list-sidebar .chat-body,
     .main.open-user-sidebar .chat-body {
         width: 100%
     }
 
     .main.open-chat-sidebar .addnew-user-sidebar,
     .main.open-chat-sidebar .user-detail-sidebar,
-    .main.open-note-sidebar .show-user-sidebar,
-    .main.open-note-sidebar .user-note-sidebar,
+    .main.open-room-sidebar .room-info-sidebar,
+    .main.open-question-list-sidebar .question-list-sidebar,
     .main.open-user-sidebar .addnew-user-sidebar,
     .main.open-user-sidebar .user-detail-sidebar {
         z-index: 9
@@ -13853,8 +13877,22 @@ p {
     color     : #fff
 }
 
+.question-list li {
+    background-color: var(--question-bg);
+    position        : relative;
+    padding         : 15px 15px 15px 15px;
+    font-size       : 15px;
+    line-height     : 26px
+}
+
+.question-list .btn {
+    position: absolute;
+    right   : 8px;
+    top     : 10px
+}
+
 .add-note li {
-    background-color: var(--note-card-bg);
+    background-color: var(--question-bg);
     position        : relative;
     padding         : 15px 35px 15px 15px;
     font-size       : 15px;

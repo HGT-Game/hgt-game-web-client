@@ -225,6 +225,8 @@ message ChatMessageRes {
     string avaHead = 6;
     // 是否 MC
     bool mc = 7;
+    // 发言时间
+    string createdAt = 8;
 }
 
 // 加入笔记 请求 2013
@@ -249,7 +251,8 @@ message DeleteNoteReq {
 
 //删除笔记 返回
 message DeleteNoteRes {
-
+    //  笔记 id
+    string id = 1;
 }
 
 // 查询笔记 请求 2015

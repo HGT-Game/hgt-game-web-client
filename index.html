@@ -38,9 +38,7 @@
                     <li><a href="javascript:void(0)" onclick="menuCreateRoom();">创建房间</a></li>
                     <li><a href="javascript:void(0)" onclick="menuJoinRoom();">加入房间</a></li>
                     <li><a href="javascript:void(0)" onclick="roomHall();">房间列表</a></li>
-                    <!-- <li><a href="/fish.html">工作主题</a></li> -->
                     <li><a href="#about">说明</a></li>
-                    <!-- <li><a href="javascript:void(0)" onclick="menuFeedback();">联系我们</a></li> -->
                     <li id="show-logout-button" style="display: none;"><a href="javascript:void(9)"
                             onclick="showLogout();">退出</a></li>
                 </ul>
@@ -68,20 +66,11 @@
                 <h2 class="major">游戏发展</h2>
                 <ul>
                     <li>2020.12.01 web版删档公测</li>
-                    <li>微信小程序版已立项</li>
+                    <li>微信小程序版已立项（夭折）</li>
+                    <li>2021.9.2 web2.0全新房间页面</li>
+                    <li>微信公众号已立项</li>
                     <li>敬请期待...</li>
                 </ul>
-                <h2 class="major">图标说明</h2>
-                <div class="icon-description">
-                    <p><i class="icon solid fa-check-circle"></i> 对/不是/已准备</p>
-                    <p><i class="icon solid fa-times-circle"></i> 错/否/未准备</p>
-                    <p><i class="icon solid fa-trash-alt"></i> 删除操作</p>
-                    <p><i class="icon solid fa-paper-plane"></i> 发送</p>
-                    <p><i class="icon solid fa-chevron-down"></i> 展开</p>
-                    <p><i class="icon solid fa-chevron-up"></i> 缩回</p>
-                    <p><i class="icon solid fa-file-alt"></i> 笔记</p>
-                    <p><i class="icon solid fa-question-circle"></i> 汤底</p>
-                </div>
                 <h2 class="major">成员组成</h2>
                 <ul>
                     <li>决策：张牛逼</li>
@@ -146,156 +135,6 @@
                         <li><input type="button" value="创建房间" class="primary" onclick="createRoom();" /></li>
                     </ul>
                 </form>
-            </article>
-            <!-- 房间 -->
-            <article id="room-prepare" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major" id="room-prepare-name">房间名</h2>
-                <p>房号：<span id="room-prepare-id"></span></p>
-                <p>上限：<span id="room-prepare-max"></span>人</p>
-                <hr>
-                <ul class="icons" id="room-prepare-member">
-                </ul>
-                <ul class="actions dialogue-actions">
-                    <li><input type="button" value="离开房间" class="primary" onclick="leaveRoom('room-prepare');" /></li>
-                    <li><input id="room-prepare-button" type="button" value="准备/取消" onclick="prepare();" /></li>
-                </ul>
-            </article>
-            <!-- 用户头像点击内容 -->
-            <article id="room-member-info" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major">用户信息</h2>
-                <p>用户编号：<span id="room-member-id"></span></p>
-                <p>用户名：<span id="room-member-username"></span></p>
-                <ul class="actions dialogue-actions">
-                    <li id="room-member-note"><input type="button" value="查看笔记" class="primary" onclick="viewNotes();" /></li>
-                    <li><input type="button" value="关闭" onclick="closeMemberInfo();" /></li>
-                    <li id="show-kick-button" style="display: none;"><input type="button" value="踢出房间" class="primary"
-                            onclick="kickRoom();" /></li>
-                </ul>
-            </article>
-            <!-- 退出房间-->
-            <article id="leave-room" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major">退出房间</h2>
-                <input type="hidden" id="cancel-leave-id" value="" />
-                <ul class="actions dialogue-actions">
-                    <li><input type="button" value="确认离开" class="primary" onclick="leaveRoomConfirm();" /></li>
-                    <li><input type="button" value="取消" onclick="cancelLeaveRoom();" /></li>
-                </ul>
-            </article>
-            <!-- 选题 -->
-            <article id="select-question" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major">选汤普</h2>
-                <div id="question-list">
-                </div>
-            </article>
-            <!-- 游戏页面 -->
-            <article id="game-round" class="fixed-pop-ups" style="padding: 20px;">
-                <i class="icon solid fa-bars" onclick="showRoundMenu();"></i>
-                <div style="width: 100%; height: 25px;">
-                    <div id="game-round-title-div">
-                        <h2 class="major" id="game-round-title">汤标题</h2>
-                    </div>
-                    <i id="game-question-chevron-down" style="display: none; float: right;"
-                        class="icon solid fa-chevron-down" onclick="showGameQuestion();"></i>
-                    <i id="game-question-chevron-up" style="float: right;" class="icon solid fa-chevron-up"
-                        onclick="closeGameQuestion();"></i>
-                </div>
-                <p class="game-question-show" id="game-round-question-description">汤面</p>
-                <hr style="margin: 20px 0 20px 0;">
-                <div class="game-round-message-list" id="game-round-message-div">
-                    <ul class="icons" id="game-round-message-list">
-                    </ul>
-                </div>
-                <hr style="margin: 10px 0 10px 0;">
-                <ul class="actions dialogue-actions">
-                    <li style="position: relative;">
-                        <i id="show-game-notes" class="icon solid fa-file-alt" style="font-size: 25px; width: 30px;
-                            position: absolute;display: none;" onclick="showMyNotes();"></i>
-                        <i id="show-game-content" class="icon solid fa-question-circle" style="font-size: 25px; width: 30px;
-                            position: absolute;display: none;" onclick="showGameContent();"></i>
-                        <input style="width: 88%;
-                        float: right;" type="text" id="game-round-message" placeholder="提问的内容" />
-                        <i style="position: absolute;
-                        right: 10px;
-                        top: 8px;
-                        width: 20px;
-                        opacity: 0.7;" class="icon solid fa-paper-plane" onclick="sendMessage();"></i>
-                    </li>
-                </ul>
-            </article>
-            <!-- 对局菜单 -->
-            <article id="game-round-menu">
-                <h2 class="major">对局菜单</h2>
-                <ul class="actions dialogue-actions" style="margin-bottom: 20px;">
-                    <li><input type="button" value="返回游戏" onclick="closeRoundMenu();" /></li>
-                    <li id="end-game-button" style="display: none;"><input type="button" value="结束游戏" class="primary"
-                            onclick="endGame();" /></li>
-                    <li id="leave-game-button" style="display: none;"><input type="button" value="离开游戏"
-                            onclick="leaveRoom('game-round');" /></li>
-                </ul>
-            </article>
-            <!-- 回答问题 -->
-            <article id="answer-message" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major">回答</h2>
-                <p id="answer-message-content"></p>
-                <input type="hidden" id="answer-message-id" value="" />
-                <ul class="actions dialogue-actions">
-                    <li><input type="button" value="取消回答" class="primary" onclick="replyMessage(1);" /></li>
-                    <li><input type="button" value="不相关" onclick="replyMessage(2);" /></li>
-                    <li><input type="button" value="是" class="primary" onclick="replyMessage(3);" /></li>
-                    <li><input type="button" value="不是" onclick="replyMessage(4);" /></li>
-                    <li><input type="button" value="是或不是" class="primary" onclick="replyMessage(5);" /></li>
-                </ul>
-            </article>
-            <!-- 查看笔记 -->
-            <article id="user-notes" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major"><span id="note-user-name"></span>的笔记</h2>
-                <input type="hidden" name="" id="delete-user-note-id">
-                <ul class="alt" id="user-note-list">
-                </ul>
-                <ul class="actions dialogue-actions">
-                    <li id="show-add-customize-note-button" style="display: none;"><input type="button" value="添加笔记"
-                            class="primary" onclick="addCustomizeNote();" /></li>
-                    <li><input type="button" value="关闭" onclick="closeUserNote();" /></li>
-                </ul>
-            </article>
-            <!-- 添加自定义笔记 -->
-            <article id="add-customize-note" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major">自定义笔记</h2>
-                <form method="post" action="#">
-                    <div class="fields">
-                        <div class="field">
-                            <input type="text" id="customize-note-content" placeholder="内容" />
-                        </div>
-                    </div>
-                    <ul class="actions dialogue-actions">
-                        <li><input type="button" value="确认" class="primary" onclick="addCustomizeNoteConfirm();" /></li>
-                        <li><input type="button" value="关闭" onclick="closeCustomizeNote();" /></li>
-                    </ul>
-                </form>
-            </article>
-            <!-- 结束游戏 -->
-            <article id="end-game" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major">结束游戏</h2>
-                <ul class="actions dialogue-actions">
-                    <li><input type="button" value="确认" class="primary" onclick="endGameConfirm();" /></li>
-                    <li><input type="button" value="取消" onclick="cancelEndGame();" /></li>
-                </ul>
-            </article>
-            <!-- 查看汤底 -->
-            <article id="show-game-question-content" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major">汤底</h2>
-                <p id="check-game-content"></p>
-                <ul class="actions dialogue-actions">
-                    <li><input type="button" value="关闭" class="primary" onclick="closeGameContent();" /></li>
-                </ul>
-            </article>
-            <!-- 呈现汤底 -->
-            <article id="game-question-content" class="fixed-pop-ups" style="padding: 20px;">
-                <h2 class="major">汤底</h2>
-                <p></p>
-                <ul class="actions dialogue-actions">
-                    <li><input type="button" value="关闭" class="primary" onclick="roomPrepare();" /></li>
-                </ul>
             </article>
             <!-- 联系我们 -->
             <article id="feedback">
@@ -490,10 +329,6 @@
             // 这里警告框会阻塞当前页面继续加载
             $("#weixin-broswer").find(".close").remove()
             window.location = "/index.html#weixin-broswer"
-        } else {
-            if (window.location.hash != "") {
-                window.location = "/index.html"
-            }
         }
     }
     var host = window.location.host

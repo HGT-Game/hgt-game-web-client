@@ -140,6 +140,10 @@ function gameServer(authorization, username, password) {
                             case -2002: // 创房返回
                                 var resChildMessage = root.lookupType("SoupMessage.CreateRoomRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
+                                beforeRoomPrepare()
+                                $("#room-prepare-name").append(resMessage.room.roomName)
+                                $("#room-prepare-max").append(resMessage.room.roomMax)
+                                $("#room-prepare-id").append(resMessage.room.roomId)
                                 addMember(resMessage.room.seatsChange)
                                 layer.msg("成功创建房间")
                                 // 默认准备
@@ -148,31 +152,31 @@ function gameServer(authorization, username, password) {
                                 IS_MC = true
                                 // 默认房主
                                 IS_OWNER = true
-                                window.location = '/round.html'
+                                // 展现房间窗
+                                roomPrepare()
                                 break;
                             case -2003: // 加入房间返回
-                                if(window.location.pathname == '/index.html') {
-                                    window.location = '/round.html'
-                                }
                                 var resChildMessage = root.lookupType("SoupMessage.JoinRoomRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
+                                beforeRoomPrepare()
+                                $("#room-prepare-name").append(resMessage.room.roomName)
+                                $("#room-prepare-max").append(resMessage.room.roomMax)
+                                $("#room-prepare-id").append(resMessage.room.roomId)
                                 addMember(resMessage.room.seatsChange)
-                                // 房间名
-                                $("#round-start-title").html(resMessage.room.roomName)
-                                // 关闭房间信息按钮
-                                $(".show-room-info").hide()
                                 if (resMessage.room.mcId == localStorage.getItem("userId") && resMessage.room.status == 2) {
                                     // 选题中
                                     layer.msg("选题中")
                                     showQuestion(resMessage.room.selectQuestions)
                                     ROOM_IS_GAMING = true
                                 } else if (resMessage.room.status == 3) {
-                                    closeQuestion()
                                     // 对局开始
                                     start(resMessage.room)
                                     ROOM_IS_GAMING = true
+                                    appendAllMsg(resMessage.room.msg)
+                                } else {
+                                    roomPrepare()
+                                    layer.msg("成功加入房间")
                                 }
-                                appendAllMsg(resMessage.room.msg)
                                 // 判断对局是否可以离开
                                 if (resMessage.room.leaveForPlaying == 2) {
                                     $("#leave-game-button").css("display", "block")
@@ -181,7 +185,7 @@ function gameServer(authorization, username, password) {
                                 }
                                 break;
                             case -2004: // 离开房间
-                                var resChildMessage = root.lookupType("SoupMessage.LeaveRoomRes");
+                                var resChildMessage = root.lookupType("SoupMessage.LeaveRoomReq");
                                 resMessage = resChildMessage.decode(baseMessage.data)
                                 layer.closeAll()
                                 // 是否准备
@@ -193,29 +197,45 @@ function gameServer(authorization, username, password) {
                                 // 房间不是游戏中
                                 ROOM_IS_GAMING = false
                                 layer.msg("离开房间")
-                                window.location = "/index.html"
+                                window.location = "#"
                                 break;
                             case -2005: // 准备返回
                                 var resChildMessage = root.lookupType("SoupMessage.PrepareRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
+                                IS_PREPARE = !IS_PREPARE
+                                if (IS_PREPARE) {
+                                    $("#room-prepare-button").val("取消准备")
+                                    $("#room-prepare-" + localStorage.getItem("userId")).find('a').removeClass("fa-times-circle")
+                                    $("#room-prepare-" + localStorage.getItem("userId")).find('a').addClass("fa-check-circle")
+                                } else {
+                                    $("#room-prepare-button").val("准备")
+                                    $("#room-prepare-" + localStorage.getItem("userId")).find('a').addClass("fa-times-circle")
+                                    $("#room-prepare-" + localStorage.getItem("userId")).find('a').removeClass("fa-check-circle")
+                                }
                                 break;
                             case -2006: // 踢人返回
-                                var resChildMessage = root.lookupType("SoupMessage.KickRes");
+                                var resChildMessage = root.lookupType("SoupMessage.PrepareRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
+                                $("#show-kick-button").hide()
+                                roomPrepare()
                                 break;
                             case -2008: // 聊天返回
                                 var resChildMessage = root.lookupType("SoupMessage.ChatRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
-                                $("#message-content").val("")
+                                $("#game-round-message").val("")
                                 break;
                             case -2009: // mc回复返回
                                 var resChildMessage = root.lookupType("SoupMessage.AnswerRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
+                                window.location = "#game-round"
                                 break;
                             case -2010: // 游戏结束返回
                                 var resChildMessage = root.lookupType("SoupMessage.EndRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
                                 ROOM_IS_GAMING = false
+                                $("#end-game-button").hide()
+                                $("#show-game-content").hide()
+                                $("#show-game-notes").hide()
                                 break;
                             case -2011: // 选题返回
                                 var resChildMessage = root.lookupType("SoupMessage.SelectQuestionRes");
@@ -225,16 +245,8 @@ function gameServer(authorization, username, password) {
                                 var resChildMessage = root.lookupType("SoupMessage.LoadRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
                                 if (resMessage.reconnect == true) {
-                                    if(window.location.pathname == '/index.html') {
-                                        window.location = '/round.html'
-                                    } else {
-                                        // 触发重连 直接请求加入房间
-                                        joinRoomInternal(resMessage.roomId, resMessage.password)
-                                    }
-                                } else {
-                                    if(window.location.pathname != '/index.html') {
-                                        window.location = '/index.html'
-                                    }
+                                    // 触发重连 直接请求加入房间
+                                    joinRoomInternal(resMessage.roomId, resMessage.password)
                                 }
                                 break;
                             case -2013: // 加入笔记
@@ -247,9 +259,10 @@ function gameServer(authorization, username, password) {
                                 $("#customize-note-content").val("")
                                 break;
                             case -2014: // 删除笔记
-                                var resChildMessage = root.lookupType("SoupMessage.DeleteNoteReq");
+                                var resChildMessage = root.lookupType("SoupMessage.AddNoteRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
-                                $("#note-list-id-" + resMessage.id).remove()
+                                let id = $("#delete-user-note-id").val()
+                                $("#note-list-id-" + id).remove()
                                 layer.msg("已删除笔记")
                                 break;
                             case -2015: // 查询笔记
@@ -264,6 +277,12 @@ function gameServer(authorization, username, password) {
                                 if (resMessage.seatsChange && resMessage.seatsChange.length > 0) {
                                     addMember(resMessage.seatsChange)
                                 }
+                                // 判断对局是否可以离开
+                                if (resMessage.leaveForPlaying == 2) {
+                                    $("#leave-game-button").css("display", "block")
+                                } else if (resMessage.leaveForPlaying == 1) {
+                                    $("#leave-game-button").hide()
+                                }
                                 // 判断是否有人发送消息
                                 if (resMessage.changedMsg && resMessage.changedMsg.length > 0) {
                                     appendAllMsg(resMessage.changedMsg)
@@ -273,24 +292,24 @@ function gameServer(authorization, username, password) {
                                 }
                                 if (resMessage.status == 2) {
                                     // 选题
-                                    $("#message-list").empty()
                                     showQuestion(resMessage.selectQuestions)
                                     ROOM_IS_GAMING = true
                                 } else if (resMessage.status == 3) {
-                                    closeQuestion()
                                     start(resMessage)
                                     ROOM_IS_GAMING = true
                                 } else if (resMessage.status == 1) {
                                     ROOM_IS_GAMING = false
+                                    // 清空聊天记录
+                                    $("#game-round-message-list").empty()
                                     // 房间准备中
                                     if (resMessage.question && resMessage.question.content) {
-                                        endRoundAfter(resMessage);
-                                        layer.confirm(resMessage.question.content, {
-                                            title: '汤底',
-                                        })
+                                        $("#game-question-content").find("p").html(resMessage.question.content)
+                                        $("#game-question-content").find(".close").remove()
+                                        window.location = "#game-question-content"
+                                    } else {
+                                        roomPrepare()
                                     }
                                 }
-                                
                                 break;
                             default:
 
@@ -414,7 +433,7 @@ function addMember(members) {
                 // 被踢的是当前用户
                 layer.closeAll()
                 layer.msg("你被移出房间")
-                window.location = "/index.html"
+                window.location = "#"
             } else {
                 if (this.leave == 1) {
                     layer.msg(this.avaName + "离开房间")
@@ -422,93 +441,84 @@ function addMember(members) {
                     layer.msg(this.avaName + "被踢出房间")
                 }
             }
-            // 人员列表移除
-            $("#member-id-" + this.aid).remove()
+            $("#room-prepare-" + this.aid).remove()
         } else {
             if (localStorage.getItem("userId") == this.aid) {
                 if (this.mc) {
                     IS_MC = true
-                    // 代表是mc，显示开始按钮
-                    $("#room-prepare-button").html("开始")
+                    // 代表是mc
+                    $("#room-prepare-button").val("开始")
                 }
                 if (this.owner) {
                     IS_OWNER = true;
                 }
                 if (this.status == 3 || this.status == 4) {
                     IS_PREPARE = true
-                    if (!IS_MC) {
-                        $("#room-prepare-button").html("取消准备")
-                    }
                 } else {
                     IS_PREPARE = false
-                    if (!IS_MC) {
-                        $("#room-prepare-button").html("准备")
-                    }
                 }
+            }
+            let role = "玩家"
+            if (this.owner && this.mc) {
+                role = "房主&MC"
+            } else {
+                if (this.owner) {
+                    role = "房主"
+                } else if (this.mc) {
+                    role = "MC"
+                }
+            }
+            let icon = "fa-check-circle"
+            // 判断准备
+            if (this.status != 3) {
+                icon = "fa-times-circle"
+            }
+            if ($("#room-prepare-" + this.aid).length > 0) {
+                $("#room-prepare-" + this.aid).remove()
             }
             // 非游戏状态才需要提示
-            if ($("#member-id-" + this.aid).length == 0) {
+            if (!ROOM_IS_GAMING) {
                 layer.msg(this.avaName + '加入房间')
-                // 加入房间人员列表
-                var memberLi =
-                    '<li id="member-id-' + this.aid + '" class="">' +
-                    (!this.mc ? ('<div class="hover_action" onclick="kick(&quot;' + this.aid + '&quot;);">' +
-                        '<button type="button" class="btn btn-link text-danger"><i class="zmdi zmdi-delete"></i></button>' +
-                        '</div>') : '') +
-                    '<a href="#" class="card">' +
-                    '<div class="card-body">' +
-                    '<div class="media">' +
-                    '<div class="avatar me-3">' +
-                    '<span class="status rounded-circle"></span>' +
-                    '<img onclick="showUserDetail(&quot;' + this.aid + '&quot;, &quot;' + this.avaName + '&quot;, &quot;' + this.avaHead + '&quot;);" id="member-avatar-img" class="avatar rounded-circle" src="' + this.avaHead + '">' +
-                    '</div>' +
-                    '<div class="media-body overflow-hidden">' +
-                    '<div class="d-flex align-items-center mb-1">' +
-                    '<h6 id="member-name" class="text-truncate mb-0 me-auto">' + this.avaName + '</h6>' +
-                    '</div>' +
-                    '<div class="text-truncate" id="member-last-content-' + this.aid + '"></div>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>' +
-                    '</a>' +
-                    '</li>'
-
-                if (this.mc) {
-                    $("#member-list").prepend(memberLi)
-                } else {
-                    $("#member-list").append(memberLi)
-                }
             }
-            if (this.status == 3 || this.status == 4) {
-                $("#member-id-" + this.aid).addClass("online")
-                $("#member-id-" + this.aid).removeClass("away")
-            } else {
-                $("#member-id-" + this.aid).addClass("away")
-                $("#member-id-" + this.aid).removeClass("online")
-            }
+            $("#room-prepare-member").append(
+                '<li id="room-prepare-' + this.aid + '">' +
+                '<span>' + role + '</span>' +
+                '<a href="javascript:void(0)" style="background-image: url(' + this.avaHead + ');" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');" class="icon solid ' + icon + '"></a>' + this.avaName +
+                '</li>'
+            )
         }
     })
 }
-
 
 // 离开房间选项
 function leaveRoom(id) {
     if (!checkServer()) {
         return
     }
-    layer.confirm('是否离开房间', {
-        title: '提示',
-        btn: ['是']
-    }, function () {
-        protobuf.load("protos/GameMessage.proto", function (err, root) {
+    $("#cancel-leave-id").val(id)
+    $("#leave-room").find(".close").remove();
+    window.location = "#leave-room"
+}
+
+// 取消离开房间
+function cancelLeaveRoom() {
+    let id = $("#cancel-leave-id").val()
+    window.location = "#" + id
+}
+
+// 确认离开房间
+function leaveRoomConfirm() {
+    if (!checkServer()) {
+        return
+    }
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var baseMessage = root.lookupType("GameMessage.Message");
-            protobuf.load("protos/SoupMessage.proto", function (err, root) {
-                if (err) throw err;
-                var childMessage = root.lookupType("SoupMessage.LeaveRoomReq");
-                var childData = childMessage.fromObject({})
-                childMessageSend(2004, baseMessage, childMessage, childData)
-            });
+            var childMessage = root.lookupType("SoupMessage.LeaveRoomReq");
+            var childData = childMessage.fromObject({})
+            childMessageSend(2004, baseMessage, childMessage, childData)
         });
     });
 }
@@ -531,7 +541,7 @@ function prepare() {
 }
 
 // 回车发送
-$("#message-content").on('keypress', function (event) {
+$("#game-round-message").on('keypress', function (event) {
     if (event.keyCode == 13) {
         sendMessage()
     }
@@ -542,7 +552,7 @@ function sendMessage() {
     if (!checkServer()) {
         return
     }
-    var content = $("#message-content").val()
+    var content = $("#game-round-message").val()
     if (content == "") {
         layer.msg("发送内容不能为空")
     } else {
@@ -567,16 +577,11 @@ function showQuestion(questions) {
     $("#question-list").empty()
     // 选题中
     $.each(questions, function () {
-        let question = '<li onclick="selectQuestion(&quot;' + this.id + '&quot;);" class="card border-0 mb-2"><h6>' + this.title + '</h6><span>' + this.question + '</span></li>'
+        let question = '<div onclick="selectQuestion(' + "'" + this.id + "'" + ');"><h4>' + this.title + '</h4><blockquote>' + this.question + '</blockquote></div><hr>'
         $("#question-list").append(question)
     })
-    // 呈现汤普
-    $('.main ').toggleClass('open-question-list-sidebar')
-}
-// 关闭汤普
-function closeQuestion() {
-    $('.main ').removeClass('open-question-list-sidebar')
-    $("#room-prepare-button").hide()
+    $("#select-question").find(".close").remove()
+    window.location = "#select-question"
 }
 
 // 选择汤普
@@ -602,136 +607,91 @@ function appendAllMsg(msgs) {
         return
     }
     $.each(msgs, function () {
-        let selfMsg = this.aid == localStorage.getItem("userId")
         // 回答转换
+        let answer = answerSwitch(this.answer)
         if ($("#message-" + this.id).length > 0) {
             // 修改
-            $("#message-" + this.id).find(".message-answer").html(answerSwitch(selfMsg, this.answer, this.id))
+            $("#message-" + this.id).find("div").find("p").find("i").html(answer)
         } else {
-            var messageContent = ''
-            let msgDate = new Date(this.createdAt)
-            let h = msgDate.getHours()
-            let m = msgDate.getMinutes()
-            let s = msgDate.getSeconds()
             // 判断信息是否自己
-            if (selfMsg) {
-                messageContent +=
-                    '<li id="message-' + this.id + '" class="d-flex message right">' +
-                    '<div class="message-body">' +
-                    '<span class="date-time text-muted">' + h + ':' + m + ':' + s + '</span>' +
-                    '<div class="message-row d-flex align-items-center justify-content-end">' +
-                    '<div class="dropdown">' +
-                    '<a class="text-muted me-1 p-2 text-muted" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-                    '<i class="zmdi zmdi-more-vert"></i>' +
-                    '</a>' +
-                    '<div class="dropdown-menu">' +
-                    '<a class="dropdown-item" onclick="addNote(&quot;' + this.id + '&quot;);" href="#">添加笔记</a>' +
-                    '</div>' +
-                    '</div>' +
-                    '<div class="message-content border p-3">' + this.content + '</div>' +
-                    '</div>' +
-                    answerSwitch(selfMsg, this.answer, this.id) +
-                    '</div>' +
-                    '</li>'
-            } else {
-                messageContent +=
-                    '<li id="message-' + this.id + '" class="d-flex message">' +
-                    '<div class="mr-lg-3 me-2">' +
-                    '<img onclick="showUserDetail(&quot;' + this.aid + '&quot;, &quot;' + this.avaName + '&quot;, &quot;' + this.avaHead + '&quot;);" class="avatar sm rounded-circle" src="' + this.avaHead + '" alt="avatar">' +
-                    '</div>' +
-                    '<div class="message-body">' +
-                    '<span class="date-time text-muted">' + this.avaName + ', ' + h + ':' + m + ':' + s + '</span>' +
-                    '<div class="message-row d-flex align-items-center">' +
-                    '<div class="message-content p-3">' + this.content + '</div>' +
-                    '<div class="dropdown">' +
-                    '<a class="text-muted ms-1 p-2 text-muted" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-                    '<i class="zmdi zmdi-more-vert"></i>' +
-                    '</a>' +
-                    '<div class="dropdown-menu dropdown-menu-right">' +
-                    '<a class="dropdown-item" onclick="addNote(&quot;' + this.id + '&quot;);" href="#">添加笔记</a>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>' +
-                    answerSwitch(selfMsg, this.answer, this.id) +
-                    '</div>' +
-                    '</li>'
+            // 头像
+            let avatarAlign = 'message-list-avatar-left'
+            // 内容 + 用户名
+            let messageUsername = 'message-list-username-left'
+            let messageContent = 'message-list-content-left'
+            let messageContentSpan = ''
+            // 回答
+            let messageAnswer = 'message-list-answer-left'
+            if (this.aid == localStorage.getItem("userId")) {
+                avatarAlign = 'message-list-avatar-right'
+                messageContent = 'message-list-content-right'
+                messageUsername = 'message-list-username-right'
+                messageAnswer = 'message-list-answer-right'
             }
-            $("#message-list").append(messageContent)
-            $("#member-last-content-" + this.aid).html(this.content)
+            let li = '<li id="message-' + this.id + '"><div>'
+            // 用户头像
+            li += '<div class="' + avatarAlign + '"><a href="javascript:void(0)" style="background-image: url(' + this.avaHead + ');" onclick="showRoomMember(' + "'" + this.aid + "'" + ', ' + "'" + this.avaName + "'" + ');"></a></div>'
+            // 内容 + 回答
+            li += '<div class="' + messageContent + '"><p class="' + messageUsername + '">' + this.avaName + '</p><span ' + messageContentSpan + ' onclick="answerMessage(' + "'" + this.id + "'" + ', ' + "'" + this.content + "'" + ');">'
+                + this.content + '</span><br><p class="' + messageAnswer + '"><i>' + answer + '</i></p></div>'
+            // 结尾
+            li += '</div></li><br>'
+            $("#game-round-message-list").append(li)
         }
     })
-    var messageListContent = $("#message-list-div")[0]
-    messageListContent.scrollTop = messageListContent.scrollHeight;
+    var roundMsgContent = $("#game-round-message-div")[0];
+    roundMsgContent.scrollTop = roundMsgContent.scrollHeight;
 }
-
 // 回答转换
-function answerSwitch(selfMsg, status, id) {
-    if(!ROOM_IS_GAMING) {
-        return ''
-    }
-    let style = ''
-    if (selfMsg) {
-        style = 'style="float:right;"'
-    }
+function answerSwitch(status) {
     let answer = ''
     switch (status) {
         case 1: // 未回答
-            answer = (IS_MC && !selfMsg ? '<div class="message-row d-flex align-items-center message-answer">' +
-                '<button onclick="replyMessage(3, &quot;' + id + '&quot;);" type="button" class="btn btn-outline-primary btn-rounded mb-1 me-1">是</button>' +
-                '<button onclick="replyMessage(4, &quot;' + id + '&quot;);" type="button" class="btn btn-outline-danger btn-rounded mb-1 me-1">不是</button>' +
-                '<button onclick="replyMessage(5, &quot;' + id + '&quot;);" type="button" class="btn btn-outline-warning btn-rounded mb-1 me-1">是或不是</button>' +
-                '<button onclick="replyMessage(2, &quot;' + id + '&quot;);" type="button" class="btn btn-outline-dark btn-rounded mb-1 me-1">无关</button>' +
-                '</div>' : '<div class="message-row d-flex align-items-center message-answer" ' + style + '></div>')
+            answer = ''
             break;
-        case 2: // 无关
-            answer = (IS_MC ? '<div class="message-row d-flex align-items-center message-answer" ' + style + '>' +
-                '<button onclick="showAllAnswer(&quot;' + id + '&quot;);" type="button" class="btn btn-outline-dark btn-rounded mb-1 me-1">无关</button>' +
-                '</div>' : '<div class="message-row d-flex align-items-center message-answer" ' + style + '>' +
-                '<button type="button" class="btn btn-outline-dark btn-rounded mb-1 me-1">无关</button>' +
-            '</div>')
+        case 2:
+            answer = '不相关'
             break;
-        case 3: // 是
-            answer = (IS_MC ? ('<div class="message-row d-flex align-items-center message-answer" ' + style + '>' +
-                '<button onclick="showAllAnswer(&quot;' + id + '&quot;);" type="button" class="btn btn-outline-primary btn-rounded mb-1 me-1">是</button>' +
-                '</div>') : ('<div class="message-row d-flex align-items-center message-answer" ' + style + '>' +
-                    '<button type="button" class="btn btn-outline-primary btn-rounded mb-1 me-1">是</button>' +
-                    '</div>'))
+        case 3:
+            answer = '是'
             break;
-        case 4: // 不是
-            answer = (IS_MC ? '<div class="message-row d-flex align-items-center message-answer" ' + style + '>' +
-                '<button onclick="showAllAnswer(&quot;' + id + '&quot;);" type="button" class="btn btn-outline-danger btn-rounded mb-1 me-1">不是</button>' +
-                '</div>' : '<div class="message-row d-flex align-items-center message-answer" ' + style + '>' +
-                '<button type="button" class="btn btn-outline-danger btn-rounded mb-1 me-1">不是</button>' +
-            '</div>')
+        case 4:
+            answer = '否'
             break;
-        case 5: // 是或不是
-            answer = (IS_MC ? '<div class="message-row d-flex align-items-center message-answer" ' + style + '>' +
-                '<button onclick="showAllAnswer(&quot;' + id + '&quot;);" type="button" class="btn btn-outline-warning btn-rounded mb-1 me-1">是或不是</button>' +
-                '</div>' : '<div class="message-row d-flex align-items-center message-answer" ' + style + '>' +
-                '<button type="button" class="btn btn-outline-warning btn-rounded mb-1 me-1">是或不是</button>' +
-            '</div>')
+        case 5:
+            answer = '是或不是'
             break;
     }
     return answer
 }
 
-function showAllAnswer(id) {
-    $("#message-" + id).find(".message-answer").html('<div class="message-row d-flex align-items-center message-answer">' +
-        '<button onclick="replyMessage(3, &quot;' + id + '&quot;);" type="button" class="btn btn-outline-primary btn-rounded mb-1 me-1">是</button>' +
-        '<button onclick="replyMessage(4, &quot;' + id + '&quot;);" type="button" class="btn btn-outline-danger btn-rounded mb-1 me-1">不是</button>' +
-        '<button onclick="replyMessage(5, &quot;' + id + '&quot;);" type="button" class="btn btn-outline-warning btn-rounded mb-1 me-1">是或不是</button>' +
-        '<button onclick="replyMessage(2, &quot;' + id + '&quot;);" type="button" class="btn btn-outline-dark btn-rounded mb-1 me-1">无关</button>' +
-        '</div>')
+// MC 回答
+function answerMessage(id, content) {
+    if (!checkServer()) {
+        return
+    }
+    if (!IS_MC) {
+        // 非mc 静默添加笔记
+        addNote(id)
+        return
+    }
+    $("#answer-message-id").val(id)
+    $("#answer-message").find(".close").remove()
+    // 内容嵌入弹窗
+    $("#answer-message-content").html(content)
+    window.location = "#answer-message"
 }
 
 // mc回答
-function replyMessage(answer, id) {
+function replyMessage(answer) {
     if (!checkServer()) {
         return
     }
     if (!IS_MC) {
         return
     }
+    let id = $("#answer-message-id").val()
+
     protobuf.load("protos/GameMessage.proto", function (err, root) {
         if (err) throw err;
         var baseMessage = root.lookupType("GameMessage.Message");
@@ -748,24 +708,40 @@ function replyMessage(answer, id) {
 function start(room) {
     if (room.question) {
         if (room.question.title) {
-            $("#round-start-title").html(room.question.title)
+            $("#game-round-title").html(room.question.title)
         }
         if (room.question.question) {
-            $("#question-description").html(room.question.question)
+            $("#game-round-question-description").html(room.question.question)
         }
     }
     if (IS_MC) {
+        $("#end-game-button").css('display', "block")
+        $("#show-game-content").css('display', "block")
         if (room.question && room.question.content) {
-            $("#question-content").html(room.question.content)
-            $("#question-content-check").css("display", "block")
-            $("#question-content-check-btn").css("display", "block")
+            $("#check-game-content").html(room.question.content)
         }
     } else {
-        $("#question-content-check").hide()
-        $("#question-content-check-btn").hide()
+        $("#show-game-notes").css('display', "block")
     }
-    // 显示房间按钮
-    $(".show-room-info").css("display", "block")
+    $("#game-round").find(".close").remove()
+    window.location = "#game-round"
+}
+
+// 查看汤底
+function showGameContent() {
+    if (!checkServer()) {
+        return
+    }
+    if (!IS_MC) {
+        return
+    }
+    $("#show-game-question-content").find(".close").remove()
+    window.location = "#show-game-question-content"
+}
+
+// 关闭游戏汤底
+function closeGameContent() {
+    window.location = "#game-round"
 }
 
 // 游戏结束
@@ -776,21 +752,34 @@ function endGame() {
     if (!IS_MC) {
         return
     }
-    layer.confirm('是否公布汤底？', {
-        title: '提示',
-        btn: ['是']
-    }, function () {
-        protobuf.load("protos/GameMessage.proto", function (err, root) {
+    $("#end-game").find(".close").remove()
+    window.location = "#end-game"
+}
+
+// 取消结束游戏
+function cancelEndGame() {
+    window.location = "#game-round"
+}
+
+// 确认结束游戏
+function endGameConfirm() {
+    if (!checkServer()) {
+        return
+    }
+    if (!IS_MC) {
+        return
+    }
+
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
-            var baseMessage = root.lookupType("GameMessage.Message");
-            protobuf.load("protos/SoupMessage.proto", function (err, root) {
-                if (err) throw err;
-                var childMessage = root.lookupType("SoupMessage.EndReq");
-                var childData = childMessage.fromObject({})
-                childMessageSend(2010, baseMessage, childMessage, childData)
-            });
+            var childMessage = root.lookupType("SoupMessage.EndReq");
+            var childData = childMessage.fromObject({})
+            childMessageSend(2010, baseMessage, childMessage, childData)
         });
-    })
+    });
 }
 
 // 测试
@@ -805,6 +794,33 @@ function test() {
             childMessageSend(3000, baseMessage, childMessage, childData)
         });
     });
+}
+
+// 弹窗之前清空内容 房间准备
+function beforeRoomPrepare() {
+    $("#room-prepare-name").empty()
+    $("#room-prepare-max").empty()
+    $("#room-prepare-id").empty()
+    $("#room-prepare-member").empty()
+}
+
+// 加入房间弹窗
+function roomPrepare() {
+    if (!checkServer()) {
+        return
+    }
+    // 判断是否mc
+    if (IS_MC) {
+        $("#room-prepare-button").val("开始")
+    } else {
+        if (IS_PREPARE) {
+            $("#room-prepare-button").val("取消准备")
+        } else {
+            $("#room-prepare-button").val("准备")
+        }
+    }
+    $("#room-prepare").find(".close").remove()
+    window.location = "#room-prepare"
 }
 
 // 菜单创建房间
@@ -823,56 +839,59 @@ function menuJoinRoom() {
     window.location = "#join-room"
 }
 
-// 踢掉用户
-function kick(aid) {
+// 查看用户信息
+function showRoomMember(userId, username) {
     if (!checkServer()) {
         return
     }
-    layer.confirm('是否踢掉此玩家', {
-        title: '提示',
-        btn: ['是']
-    }, function () {
-        protobuf.load("protos/GameMessage.proto", function (err, root) {
-            if (err) throw err
-            var baseMessage = root.lookupType("GameMessage.Message")
-            protobuf.load("protos/SoupMessage.proto", function (err, root) {
-                if (err) throw err
-                var childMessage = root.lookupType("SoupMessage.KickReq")
-                var childData = childMessage.fromObject({ aid: aid })
-                childMessageSend(2006, baseMessage, childMessage, childData)
-            });
-        })
-    })
-}
-
-// 展示自己的用户信息
-function showMineDetail() {
-    showUserDetail(localStorage.getItem("userId"), localStorage.getItem("username"), localStorage.getItem("avatar"))
-}
-
-// 展示他人用户信息
-function showUserDetail(aid, avaName, avaHead) {
-    $('.main ').toggleClass('open-chat-sidebar')
-    $("#user-detail-avatar").attr("src", avaHead)
-    $("#user-detail-username").html(avaName)
-    if (localStorage.getItem("userId") == aid) {
-        $("#add-note-form").css("display", "block")
-        VIEW_OTHER_NOTE_USERNAME = ""
-    } else {
-        $("#add-note-form").hide()
-        VIEW_OTHER_NOTE_USERNAME = avaName
+    // 房主 
+    if (IS_OWNER && userId != localStorage.getItem("userId")) {
+        $("#show-kick-button").css("display", "block")
     }
-    // $("#user-detail-id").html(aid)
-    checkNotes(aid)
+    // 如果房间游戏中不用查看笔记
+    if(!ROOM_IS_GAMING) {
+        $("#room-member-note").hide()
+    }
+    $("#room-member-info").find(".close").remove()
+    $("#room-member-id").html(userId)
+    $("#room-member-username").html(username)
+    window.location = "#room-member-info"
 }
 
-// 关闭用户详情
-$('.close-chat-sidebar').on('click', function () {
-    $('.main ').removeClass('open-chat-sidebar')
-});
+// 关闭查看用户信息
+function closeMemberInfo() {
+    if (!checkServer()) {
+        return
+    }
+    $("#show-kick-button").hide()
+    if (ROOM_IS_GAMING) {
+        window.location = "#game-round"
+    } else {
+        roomPrepare()
+    }
+}
 
-// 查看笔记
-function checkNotes(aid) {
+// 踢掉用户
+function kickRoom() {
+    if (!checkServer()) {
+        return
+    }
+    let userId = $("#room-member-id").text()
+    console.log($("#room-member-id").text())
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+            if (err) throw err;
+            var childMessage = root.lookupType("SoupMessage.KickReq");
+            var childData = childMessage.fromObject({ aid: userId })
+            childMessageSend(2006, baseMessage, childMessage, childData)
+        });
+    });
+}
+
+// 查看自己的笔记
+function showMyNotes() {
     if (!checkServer()) {
         return
     }
@@ -881,11 +900,19 @@ function checkNotes(aid) {
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
+            let userId = localStorage.getItem("userId")
+            VIEW_OTHER_NOTE_USERNAME = ''
             var childMessage = root.lookupType("SoupMessage.LoadNoteReq");
-            var childData = childMessage.fromObject({ aid: aid })
+            var childData = childMessage.fromObject({ aid: userId })
             childMessageSend(2015, baseMessage, childMessage, childData)
         });
     });
+}
+
+// 关闭笔记弹窗
+function closeUserNote() {
+    $("#user-notes").hide()
+    window.location = "#game-round"
 }
 
 // 静默添加笔记
@@ -911,56 +938,41 @@ function showNotes(notes, isEmpty) {
         $("#user-note-list").empty()
     }
     $.each(notes, function () {
+        let note = ''
         let content = ''
+        let answer = ''
         if (this.type == 1) {
             // 引用
             content = this.chatMessage.content
+            // 查看回答 
+            answer = answerSwitch(this.chatMessage.answer)
         } else {
             // 自定义
             content = this.content
         }
         let deleteI = ''
         if (VIEW_OTHER_NOTE_USERNAME == "") {
-            deleteI = '<button onclick="deleteNote(' + "'" + this.id + "'" + ');" class="btn btn-sm btn-link"><i class="zmdi zmdi-delete text-danger"></i></button>'
-        } else {
-            deleteI = '<button onclick="addNote(' + "'" + this.id + "'" + ');" class="btn btn-sm btn-link"><i class="zmdi zmdi-plus"></i></button>'
+            deleteI = '<i class="icon solid fa-trash-alt" onclick="deleteNote(' + "'" + this.id + "'" + ');"></i>'
         }
-        let note = '<li id="note-list-id-' + this.id + '" class="card border-0 mb-2">' +
-            '<span>' + content + '</span>' +
-            deleteI +
-            getNoteAnswer(this.chatMessage.answer) +
-            '</li>'
+        note = '<li id="note-list-id-' + this.id + '" class="user-note-one">' + deleteI + '<div class="user-note-action">' + content + '</div><p class="user-note-answer">' + answer + '</p></li>'
         $("#user-note-list").append(note)
     })
+    $("#note-user-name").empty()
+    if (VIEW_OTHER_NOTE_USERNAME == "") {
+        $("#note-user-name").html("我")
+        $("#show-add-customize-note-button").css("display", "block")
+    } else {
+        $("#note-user-name").html(VIEW_OTHER_NOTE_USERNAME)
+        $("#show-add-customize-note-button").hide()
+    }
+    $("#user-notes").find(".close").remove()
+    window.location = "#user-notes"
 }
 
-// 获取笔记回答
-function getNoteAnswer(status) {
-    let res = ''
-    switch (status) {
-        case 2: // 无关
-            res = '<div>' +
-                '<button type="button" class="btn btn-outline-dark btn-rounded mt-2" style="position: inherit;">无关</button>' +
-                '</div>'
-            break
-        case 3: // 是
-            res = '<div>' +
-                '<button type="button" class="btn btn-outline-primary btn-rounded mt-2" style="position: inherit;">是</button>' +
-                '</div>'
-            break
-        case 4: // 不是
-            res = '<div>' +
-                '<button type="button" class="btn btn-outline-danger btn-rounded mt-2" style="position: inherit;">不是</button>' +
-                '</div>'
-            break
-        case 5: // 是或不是
-            res = '<div>' +
-                '<button type="button" class="btn btn-outline-warning btn-rounded mt-2" style="position: inherit;">是或不是</button>' +
-                '</div>'
-            break
-    }
-
-    return res
+// 添加自定义笔记
+function addCustomizeNote() {
+    $("#add-customize-note").find(".close").remove()
+    window.location = "#add-customize-note"
 }
 
 // 确认添加自定义笔记
@@ -981,6 +993,11 @@ function addCustomizeNoteConfirm() {
     });
 }
 
+// 关闭自定义笔记
+function closeCustomizeNote() {
+    window.location = "#user-notes"
+}
+
 // 删除笔记
 function deleteNote(id) {
     if (!checkServer()) {
@@ -991,6 +1008,7 @@ function deleteNote(id) {
         var baseMessage = root.lookupType("GameMessage.Message");
         protobuf.load("protos/SoupMessage.proto", function (err, root) {
             if (err) throw err;
+            $("#delete-user-note-id").val(id)
             var childMessage = root.lookupType("SoupMessage.DeleteNoteReq");
             var childData = childMessage.fromObject({ id: id })
             childMessageSend(2014, baseMessage, childMessage, childData)
@@ -998,21 +1016,47 @@ function deleteNote(id) {
     });
 }
 
-function endRoundAfter(resMessage) {
-    $("#message-list").empty()
-    $("#round-start-title").html("")
-    // 房间准备按钮
-    $("#room-prepare-button").css("display", "block")
-    // 房间名
-    $("#round-start-title").html(resMessage.roomName)
-    // 关闭房间信息
-    $('.main ').toggleClass('open-room-sidebar')
-    $("#question-description").html("")
-    $("#question-content").html("")
-    // 关闭房间信息按钮
-    $(".show-room-info").hide()
-    // 展现房间聊天数据
-    if (resMessage.msg && resMessage.msg.length > 0) {
-        appendAllMsg(resMessage.msg)
+// 查看别人的笔记
+function viewNotes() {
+    if (!checkServer()) {
+        return
     }
+    protobuf.load("protos/GameMessage.proto", function (err, root) {
+        if (err) throw err;
+        var baseMessage = root.lookupType("GameMessage.Message");
+        protobuf.load("protos/SoupMessage.proto", function (err, root) {
+            if (err) throw err;
+            let userId = $("#room-member-id").html()
+            if (userId != localStorage.getItem("userId")) {
+                VIEW_OTHER_NOTE_USERNAME = $("#room-member-username").html()
+            }
+            var childMessage = root.lookupType("SoupMessage.LoadNoteReq");
+            var childData = childMessage.fromObject({ aid: userId })
+            childMessageSend(2015, baseMessage, childMessage, childData)
+        });
+    });
+}
+
+// 展开汤面
+function showGameQuestion() {
+    $("#game-round-question-description").removeClass("game-question-close");
+    $("#game-round-question-description").addClass("game-question-show");
+    $("#game-question-chevron-down").hide()
+    $("#game-question-chevron-up").css("display", "block")
+}
+// 缩小汤面
+function closeGameQuestion() {
+    $("#game-round-question-description").removeClass("game-question-show");
+    $("#game-round-question-description").addClass("game-question-close");
+    $("#game-question-chevron-up").hide()
+    $("#game-question-chevron-down").css("display", "block")
+}
+// 对局菜单
+function showRoundMenu() {
+    $("#game-round-menu").find(".close").remove()
+    window.location = "#game-round-menu"
+}
+// 关闭对局菜单
+function closeRoundMenu() {
+    window.location = "#game-round"
 }

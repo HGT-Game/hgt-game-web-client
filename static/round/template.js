@@ -15,22 +15,14 @@
     $('.rightbar .close-sidebar').on('click', function () {
         $('.rightbar').removeClass('open')
     });
-    // 展示用户详情
-    $('.show-user-detail').on('click', function () {
-        $('.main ').toggleClass('open-chat-sidebar')
-    });
-    // 关闭用户详情
-    $('.close-chat-sidebar').on('click', function () {
-        $('.main ').removeClass('open-chat-sidebar')
-    });
 
-    // 展示笔记列表
-    $('.show-user-note').on('click', function () {
-        $('.main ').toggleClass('open-note-sidebar')
+    // 展示房间信息
+    $('.show-room-info').on('click', function () {
+        $('.main ').toggleClass('open-room-sidebar')
     });
     // 关闭笔记列表
-    $('.close-note-sidebar').on('click', function () {
-        $('.main ').toggleClass('open-note-sidebar')
+    $('.close-room-sidebar').on('click', function () {
+        $('.main ').toggleClass('open-room-sidebar')
     });
 
     $('.close-chat-sidebar').on('click', function () {
@@ -76,7 +68,8 @@
     }
     function switchTheme(e) {
         if (e.target.checked) {
-            document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('theme', 'dark');
+            document.documentElement.setAttribute('data-theme', 'dark'); 
+            localStorage.setItem('theme', 'dark');
         } else {
             document.documentElement.setAttribute('data-theme', 'light');
             localStorage.setItem('theme', 'light');

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>海龟汤-对局</title>
+
+    <link rel="stylesheet" href="./static/round/material-design-iconic-font.min.css">
+
+    <link rel="stylesheet" href="./static/round/style.min.css">
+</head>
+
+<body>
+    <div id="layout" class="theme-cyan">
+
+        <div class="navigation navbar justify-content-center py-xl-4 py-md-3 py-0 px-3">
+
+            <div class="nav flex-md-column nav-pills flex-grow-1" role="tablist" aria-orientation="vertical">
+                <a class="mb-xl-3 mb-md-2 nav-link user-avatar show-user-detail" data-toggle="pill"
+                    href="javascript:void(0);" role="tab">
+                    <img src="./static/round/avatar1.jpg" class="avatar sm rounded-circle" alt="user avatar">
+                </a>
+                <a class="mt-xl-3 mt-md-2 nav-link show-user-note" href="javascript:void(0);">
+                    <i class="zmdi zmdi-comment-edit"></i>
+                </a>
+                <a class="mt-xl-3 mt-md-2 nav-link" data-toggle="pill" href="javascript:void(0);"><i
+                        class="zmdi zmdi-lamp"></i></a>
+                <a class="mt-xl-3 mt-md-2 nav-link light-dark-toggle" href="javascript:void(0);">
+                    <i class="zmdi zmdi-brightness-2"></i>
+                    <input class="light-dark-btn" type="checkbox">
+                </a>
+            </div>
+            <button type="submit" class="btn sidebar-toggle-btn shadow-sm"><i class="zmdi zmdi-menu"></i></button>
+        </div>
+
+
+        <div class="sidebar border-end py-xl-4 py-3 px-xl-4 px-3">
+            <div class="tab-content">
+
+                <div class="tab-pane fade show active" id="nav-tab-chat" role="tabpanel">
+
+                    <ul class="chat-list">
+                        <li class="header d-flex justify-content-between ps-3 pe-3 mb-1">
+                            <span>RECENT CHATS</span>
+                            <div class="dropdown">
+                                <a class="btn btn-link px-1 py-0 border-0 text-muted dropdown-toggle"
+                                    href="/single-chat-2.html#" role="button" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false"><i class="zmdi zmdi-filter-list"></i></a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="/single-chat-2.html#">Action</a>
+                                    <a class="dropdown-item" href="/single-chat-2.html#">Another action</a>
+                                    <a class="dropdown-item" href="/single-chat-2.html#">Something else here</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="online">
+                            <div class="hover_action">
+                                <button type="button" class="btn btn-link text-info"><i
+                                        class="zmdi zmdi-eye"></i></button>
+                                <button type="button" class="btn btn-link text-warning"><i
+                                        class="zmdi zmdi-star"></i></button>
+                                <button type="button" class="btn btn-link text-danger"><i
+                                        class="zmdi zmdi-delete"></i></button>
+                            </div>
+                            <a href="/single-chat.html" class="card">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="avatar me-3">
+                                            <span class="status rounded-circle"></span>
+                                            <img class="avatar rounded-circle" src="./static/round/avatar5.jpg"
+                                                alt="avatar">
+                                        </div>
+                                        <div class="media-body overflow-hidden">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <h6 class="text-truncate mb-0 me-auto">Jason Porter</h6>
+                                                <p class="small text-muted text-nowrap ms-4 mb-0">11:08 am</p>
+                                            </div>
+                                            <div class="text-truncate">It is a long established fact that a reader w...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="hover_action">
+                                <button type="button" class="btn btn-link text-info"><i
+                                        class="zmdi zmdi-eye"></i></button>
+                                <button type="button" class="btn btn-link text-warning"><i
+                                        class="zmdi zmdi-star"></i></button>
+                                <button type="button" class="btn btn-link text-danger"><i
+                                        class="zmdi zmdi-delete"></i></button>
+                            </div>
+                            <a href="/group-chat.html" class="card">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="avatar me-3">
+                                            <span class="status rounded-circle"></span>
+                                            <div class="avatar rounded-circle no-image timber">
+                                                <span>UD</span>
+                                            </div>
+                                        </div>
+                                        <div class="media-body overflow-hidden">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <h6 class="text-truncate mb-0 me-auto">UI-Design Group</h6>
+                                                <p class="small text-muted text-nowrap ms-4 mb-0">11:08 am</p>
+                                            </div>
+                                            <div class="text-truncate">
+                                                <i class="zmdi zmdi-file-text me-1"></i> It is a long established fact
+                                                that a reader w...
+                                                <div class="avatar-list avatar-list-stacked mt-1">
+                                                    <img class="avatar xs rounded" src="./static/round/avatar5.jpg"
+                                                        data-toggle="tooltip" data-placement="top" title=""
+                                                        data-original-title="Sean">
+                                                    <img class="avatar xs rounded" src="./static/round/avatar6.jpg"
+                                                        data-toggle="tooltip" data-placement="top" title=""
+                                                        data-original-title="Martin">
+                                                    <img class="avatar xs rounded" src="./static/round/avatar1.jpg"
+                                                        data-toggle="tooltip" data-placement="top" title=""
+                                                        data-original-title="Terry">
+                                                    <img class="avatar xs rounded" src="./static/round/avatar4.jpg"
+                                                        data-toggle="tooltip" data-placement="top" title=""
+                                                        data-original-title="Michelle">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="away active">
+                            <div class="hover_action">
+                                <button type="button" class="btn btn-link text-info"><i
+                                        class="zmdi zmdi-eye"></i></button>
+                                <button type="button" class="btn btn-link text-warning"><i
+                                        class="zmdi zmdi-star"></i></button>
+                                <button type="button" class="btn btn-link text-danger"><i
+                                        class="zmdi zmdi-delete"></i></button>
+                            </div>
+                            <a href="/single-chat-2.html" class="card">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="avatar me-3">
+                                            <span class="status rounded-circle"></span>
+                                            <img class="avatar rounded-circle" src="./static/round/avatar1.jpg"
+                                                alt="avatar">
+                                        </div>
+                                        <div class="media-body overflow-hidden">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <h6 class="text-truncate mb-0 me-auto">Michelle Green</h6>
+                                                <p class="small text-muted text-nowrap ms-4 mb-0">11:08 am</p>
+                                            </div>
+                                            <div class="text-truncate">What Can i do right now?</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="hover_action">
+                                <button type="button" class="btn btn-link text-info"><i
+                                        class="zmdi zmdi-eye"></i></button>
+                                <button type="button" class="btn btn-link text-warning"><i
+                                        class="zmdi zmdi-star"></i></button>
+                                <button type="button" class="btn btn-link text-danger"><i
+                                        class="zmdi zmdi-delete"></i></button>
+                            </div>
+                            <a href="/single-chat-2.html#" class="card">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="avatar me-3">
+                                            <span class="status rounded-circle"></span>
+                                            <img class="avatar rounded-circle" src="./static/round/avatar2.jpg"
+                                                alt="avatar">
+                                        </div>
+                                        <div class="media-body overflow-hidden">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <h6 class="text-truncate mb-0 me-auto">Elizabeth Martin <span
+                                                        class="badge badge-info">4</span></h6>
+                                                <p class="small text-muted text-nowrap ms-4 mb-0">11:08 am</p>
+                                            </div>
+                                            <div class="text-truncate"><i class="zmdi zmdi-file-text me-1"></i> It is a
+                                                long established fact that a reader w...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="online">
+                            <div class="hover_action">
+                                <button type="button" class="btn btn-link text-info"><i
+                                        class="zmdi zmdi-eye"></i></button>
+                                <button type="button" class="btn btn-link text-warning"><i
+                                        class="zmdi zmdi-star"></i></button>
+                                <button type="button" class="btn btn-link text-danger"><i
+                                        class="zmdi zmdi-delete"></i></button>
+                            </div>
+                            <a href="/single-chat-2.html#" class="card">
+                                <div class="card-body">
+                                    <div class="media">
+                                        <div class="avatar me-3">
+                                            <span class="status rounded-circle"></span>
+                                            <img class="avatar rounded-circle" src="./static/round/avatar3.jpg"
+                                                alt="avatar">
+                                        </div>
+                                        <div class="media-body overflow-hidden">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <h6 class="text-truncate mb-0 me-auto">David Wallace</h6>
+                                                <p class="small text-muted text-nowrap ms-4 mb-0">11:08 am</p>
+                                            </div>
+                                            <div class="text-truncate">
+                                                <div class="wave">
+                                                    <span class="dot"></span>
+                                                    <span class="dot"></span>
+                                                    <span class="dot"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="main px-xl-5 px-lg-4 px-3">
+
+            <div class="chat-body">
+
+                <div class="chat-header border-bottom py-xl-4 py-md-3 py-2">
+                    <div class="container-xxl">
+                        <div class="row align-items-center">
+
+                            <div class="col-12">
+                                <div class="media">
+                                    <div class="media-body overflow-hidden">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <h6 class="text-truncate mb-0 me-auto">《HGT Title》</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-content">
+                    <div class="container-xxl">
+                        <ul class="list-unstyled py-4">
+
+                            <li class="d-flex message right">
+                                <div class="message-body">
+                                    <span class="date-time text-muted">7:19 PM</span>
+                                    <div class="message-row d-flex align-items-center justify-content-end">
+
+                                        <div class="dropdown">
+                                            <a class="text-muted me-1 p-2 text-muted" href="/single-chat-2.html#"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="zmdi zmdi-more-vert"></i>
+                                            </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Edit</a>
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Share</a>
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Delete</a>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="message-content border p-3">
+                                            Hello
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex message">
+
+                                <div class="mr-lg-3 me-2">
+                                    <img class="avatar sm rounded-circle" src="./static/round/avatar1.jpg" alt="avatar">
+                                </div>
+
+                                <div class="message-body">
+                                    <span class="date-time text-muted">Michelle, 7:19 PM</span>
+                                    <div class="message-row d-flex align-items-center">
+
+                                        <div class="message-content p-3">
+                                            Hello, <br> How are you?
+                                        </div>
+
+                                        <div class="dropdown">
+                                            <a class="text-muted ms-1 p-2 text-muted" href="/single-chat-2.html#"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="zmdi zmdi-more-vert"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Edit</a>
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Share</a>
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Delete</a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="d-flex message">
+
+                                <div class="mr-lg-3 me-2">
+                                    <img class="avatar sm rounded-circle" src="./static/round/avatar1.jpg" alt="avatar">
+                                </div>
+
+                                <div class="message-body">
+                                    <span class="date-time text-muted">Michelle, 7:19 PM</span>
+                                    <div class="message-row d-flex align-items-center">
+
+                                        <div class="message-content p-3">
+                                            Okay, All the Lorem Ipsum generators on the Internet
+                                        </div>
+
+                                        <div class="dropdown">
+                                            <a class="text-muted ms-1 p-2 text-muted" href="/single-chat-2.html#"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="zmdi zmdi-more-vert"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Edit</a>
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Share</a>
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Delete</a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="d-flex message right">
+                                <div class="message-body">
+                                    <span class="date-time text-muted">7:19 PM</span>
+                                    <div class="message-row d-flex align-items-center justify-content-end">
+
+                                        <div class="dropdown">
+                                            <a class="text-muted me-1 p-2 text-muted" href="/single-chat-2.html#"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="zmdi zmdi-more-vert"></i>
+                                            </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Edit</a>
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Share</a>
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Delete</a>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="message-content border p-3">
+                                            Hello, David
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="d-flex message">
+
+                                <div class="mr-lg-3 me-2">
+                                    <img class="avatar sm rounded-circle" src="./static/round/avatar1.jpg" alt="avatar">
+                                </div>
+
+                                <div class="message-body">
+                                    <span class="date-time text-muted">Michelle, 7:19 PM</span>
+                                    <div class="message-row d-flex align-items-center">
+
+                                        <div class="message-content p-3">
+                                            Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+                                            roots in a piece of classical Latin literature from 45 BC, making it over
+                                            2000 years old.
+                                        </div>
+
+                                        <div class="dropdown">
+                                            <a class="text-muted ms-1 p-2 text-muted" href="/single-chat-2.html#"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="zmdi zmdi-more-vert"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Edit</a>
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Share</a>
+                                                <a class="dropdown-item" href="/single-chat-2.html#">Delete</a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chat-footer border-top py-xl-4 py-lg-2 py-2">
+                    <div class="container-xxl">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="input-group align-items-center">
+
+                                    <input type="text" class="form-control border-0 pl-0"
+                                        placeholder="Type your message...">
+
+                                    <div class="input-group-append">
+                                        <span class="input-group-text border-0 pr-0">
+                                            <button type="submit" class="btn btn-primary">
+                                                <span class="d-none d-md-inline-block me-2">Send</span>
+                                                <i class="zmdi zmdi-mail-send"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 用户详情 -->
+            <div class="user-detail-sidebar py-xl-4 py-3 px-xl-4 px-3">
+                <div class="d-flex flex-column">
+                    <div class="header border-bottom pb-4 d-flex justify-content-between">
+                        <div>
+                            <h6 class="mb-0 font-weight-bold">Group Activity</h6>
+                            <span class="text-muted">4 Participants</span>
+                        </div>
+                        <div>
+                            <button class="btn btn-link text-muted close-chat-sidebar" type="button"><i
+                                    class="zmdi zmdi-close"></i></button>
+                        </div>
+                    </div>
+                    <div class="body">
+                        <ul class="nav nav-tabs nav-overflow page-header-tabs">
+                            <li class="nav-item"><a class="nav-link active" data-toggle="tab"
+                                    href="#GroupChat-file">File
+                                    Manager</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#GroupChat-Details">Group
+                                    Details</a></li>
+                        </ul>
+                        <div class="tab-content py-3" id="myTabContent">
+                            <div class="tab-pane fade show active" id="GroupChat-file" role="tabpanel">
+                                <ul class="list-unstyled list-group list-group-flush">
+                                    <li class="list-group-item attachment mb-1">
+                                        <div class="media mr-0">
+                                            <div class="avatar me-3">
+                                                <div class="avatar rounded no-image orange">
+                                                    <i class="zmdi zmdi-collection-pdf"></i>
+                                                </div>
+                                            </div>
+                                            <div class="media-body overflow-hidden">
+                                                <h6 class="text-truncate mb-0">Design file.pdf</h6>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="file-size">2.7 mb</span>
+                                                    <span class="small">Martin, 7:19 PM</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item attachment mb-1">
+                                        <div class="media mr-0">
+                                            <div class="avatar me-3">
+                                                <div class="avatar rounded no-image cyan">
+                                                    <i class="zmdi zmdi-file"></i>
+                                                </div>
+                                            </div>
+                                            <div class="media-body overflow-hidden">
+                                                <h6 class="text-truncate mb-0">Design file.psd</h6>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="file-size">25.7 mb</span>
+                                                    <span class="small">Terry, 12:19 PM</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item attachment mb-1">
+                                        <div class="media mr-0">
+                                            <div class="avatar me-3">
+                                                <div class="avatar rounded no-image green">
+                                                    <i class="zmdi zmdi-file-text"></i>
+                                                </div>
+                                            </div>
+                                            <div class="media-body overflow-hidden">
+                                                <h6 class="text-truncate mb-0">Project detail.doc</h6>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="file-size">3.7 mb</span>
+                                                    <span class="small">Michelle, 11:05 AM</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane fade" id="GroupChat-Details" role="tabpanel">
+                                <div class="d-flex justify-content-center mt-3">
+                                    <div class="avatar xxl">
+                                        <div class="avatar xxl rounded-circle no-image timber">
+                                            <span>UD</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3 mb-5">
+                                    <h4>UI-Design Group</h4>
+                                    <span class="text-muted">the leap into electronic typesetting, remaining essentially
+                                        unchanged.</span>
+                                </div>
+
+                                <ul class="chat-list">
+                                    <li class="header d-flex justify-content-between ps-3 pe-3 mb-1">
+                                        <span>Members</span>
+                                        <div class="dropdown">
+                                            <a class="btn btn-link px-1 py-0 border-0 text-muted dropdown-toggle"
+                                                href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false"><i class="zmdi zmdi-filter-list"></i></a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="#">Action</a>
+                                                <a class="dropdown-item" href="#">Another action</a>
+                                                <a class="dropdown-item" href="#">Something else here</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="hover_action">
+                                            <button type="button" class="btn btn-link text-info"><i
+                                                    class="zmdi zmdi-eye"></i></button>
+                                            <button type="button" class="btn btn-link text-warning"><i
+                                                    class="zmdi zmdi-star"></i></button>
+                                            <button type="button" class="btn btn-link text-danger"><i
+                                                    class="zmdi zmdi-delete"></i></button>
+                                        </div>
+                                        <a href="#" class="card">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="avatar me-3">
+                                                        <img class="avatar rounded-circle"
+                                                            src="assets/images/xs/avatar5.jpg" alt="avatar">
+                                                    </div>
+                                                    <div class="media-body overflow-hidden">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <h6 class="text-truncate mb-0 me-auto">Jason Porter</h6>
+                                                        </div>
+                                                        <div class="text-truncate">last seen 2 hours ago</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="hover_action">
+                                            <button type="button" class="btn btn-link text-info"><i
+                                                    class="zmdi zmdi-eye"></i></button>
+                                            <button type="button" class="btn btn-link text-warning"><i
+                                                    class="zmdi zmdi-star"></i></button>
+                                            <button type="button" class="btn btn-link text-danger"><i
+                                                    class="zmdi zmdi-delete"></i></button>
+                                        </div>
+                                        <a href="#" class="card">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="avatar me-3">
+                                                        <img class="avatar rounded-circle"
+                                                            src="assets/images/xs/avatar6.jpg" alt="avatar">
+                                                    </div>
+                                                    <div class="media-body overflow-hidden">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <h6 class="text-truncate mb-0 me-auto">Martin Green</h6>
+                                                        </div>
+                                                        <div class="text-truncate">last seen 7 hours ago</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="hover_action">
+                                            <button type="button" class="btn btn-link text-info"><i
+                                                    class="zmdi zmdi-eye"></i></button>
+                                            <button type="button" class="btn btn-link text-warning"><i
+                                                    class="zmdi zmdi-star"></i></button>
+                                            <button type="button" class="btn btn-link text-danger"><i
+                                                    class="zmdi zmdi-delete"></i></button>
+                                        </div>
+                                        <a href="#" class="card">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="avatar me-3">
+                                                        <img class="avatar rounded-circle"
+                                                            src="assets/images/xs/avatar1.jpg" alt="avatar">
+                                                    </div>
+                                                    <div class="media-body overflow-hidden">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <h6 class="text-truncate mb-0 me-auto">Terry Carter</h6>
+                                                        </div>
+                                                        <div class="text-truncate">last seen 3 hours ago</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="hover_action">
+                                            <button type="button" class="btn btn-link text-info"><i
+                                                    class="zmdi zmdi-eye"></i></button>
+                                            <button type="button" class="btn btn-link text-warning"><i
+                                                    class="zmdi zmdi-star"></i></button>
+                                            <button type="button" class="btn btn-link text-danger"><i
+                                                    class="zmdi zmdi-delete"></i></button>
+                                        </div>
+                                        <a href="#" class="card">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="avatar me-3">
+                                                        <img class="avatar rounded-circle"
+                                                            src="assets/images/xs/avatar4.jpg" alt="avatar">
+                                                    </div>
+                                                    <div class="media-body overflow-hidden">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <h6 class="text-truncate mb-0 me-auto">Michelle Martin</h6>
+                                                        </div>
+                                                        <div class="text-truncate">last seen 5 hours ago</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 笔记列表 -->
+            <div class="user-note-sidebar py-xl-4 py-3 px-xl-4 px-3">
+                <div class="d-flex flex-column">
+                    <div class="header border-bottom pb-4 d-flex justify-content-between">
+                        <div>
+                            <h6 class="mb-0 font-weight-bold">笔记</h6>
+                            <span>笔记</span>
+                        </div>
+                        <div>
+                            <button class="btn btn-link text-muted close-note-sidebar" type="button"><i
+                                    class="zmdi zmdi-close"></i></button>
+                        </div>
+                    </div>
+                    <div class="body mt-4">
+                        <div class="add-note">
+                            <form>
+                                <div class="input-group mb-2">
+                                    <textarea rows="3" class="form-control"
+                                        placeholder="Enter a note here.."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary addnote">Add</button>
+                            </form>
+                            <ul class="list-unstyled mt-4">
+                                <li class="card border-0 mb-2">
+                                    <span>It is a long established fact that a reader will be distracted by the readable
+                                        content of a page when looking at its layout.</span>
+                                    <button class="btn btn-sm btn-link"><i
+                                            class="zmdi zmdi-delete text-danger"></i></button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="//static.sunanzhi.com/js/layui/layui.js"></script>
+    <script src="//static.sunanzhi.com/js/jquery-3.5.1.js"></script>
+    <script src="//static.sunanzhi.com/js/protobuf/protobuf.js"></script>
+    <script type="text/javascript" src="./static/round/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="./static/round/template.js"></script>
+    <script type="text/javascript">
+        document.write('<script src="static/game2.js?timestamp=' + new Date().getTime() + '" type="text/javascript" charset="utf-8">	<\/script>');
+    </script>
+    <script>
+        // 监听页面刷新
+        window.onload = function (event) {
+            // 对浏览器的UserAgent进行正则匹配，不含有微信独有标识的则为其他浏览器
+            var useragent = navigator.userAgent;
+            if (useragent.match(/MicroMessenger/i) == 'MicroMessenger') {
+                // 这里警告框会阻塞当前页面继续加载
+                $("#weixin-broswer").find(".close").remove()
+                window.location = "/index.html#weixin-broswer"
+            }
+        }
+        var host = window.location.host
+        if (host == "test.develop") {
+            var API_DOMAIN = "http://localhost:8899"
+            var WSS_DOMAIN = "ws://localhost:8898/wss"
+        } else {
+            var API_DOMAIN = "https://api.sunanzhi.com"
+            var WSS_DOMAIN = "wss://api.sunanzhi.com/wss"
+        }
+        // layer 初始化
+        layui.use(['layer'], function () {
+            var layer = layui.layer
+        });
+        // websocket 对象
+        var WEBSOCKET_OBJ
+        // websocket是否连接
+        var WEBSOCKET_CONNECT = false
+        // 是否准备
+        var IS_PREPARE = false
+        // 是否mc
+        var IS_MC = false
+        // 是否房主
+        var IS_OWNER = false
+        // 房间状态
+        var ROOM_IS_GAMING = false
+        // 是否查看别人笔记
+        var VIEW_OTHER_NOTE_USERNAME = ''
+
+        if (localStorage.getItem("token")) {
+            if (WEBSOCKET_CONNECT == false) {
+                gameServer(localStorage.getItem("token"))
+            }
+            $("#show-logout-button").css('display', "block")
+        } else {
+            $("#show-logout-button").hide()
+        }
+    </script>
+
+</body>
+
+</html>
