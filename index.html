@@ -321,16 +321,6 @@
     document.write('<script src="static/game.js?timestamp=' + new Date().getTime() + '" type="text/javascript" charset="utf-8">	<\/script>');
 </script>
 <script>
-    // 监听页面刷新
-    window.onload = function (event) {
-        // 对浏览器的UserAgent进行正则匹配，不含有微信独有标识的则为其他浏览器
-        // var useragent = navigator.userAgent;
-        // if (useragent.match(/MicroMessenger/i) == 'MicroMessenger') {
-        //     // 这里警告框会阻塞当前页面继续加载
-        //     $("#weixin-broswer").find(".close").remove()
-        //     window.location = "/index.html#weixin-broswer"
-        // }
-    }
     var host = window.location.host
     if (host == "test.develop") {
         var API_DOMAIN = "http://localhost:8899"
