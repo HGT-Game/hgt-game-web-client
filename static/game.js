@@ -151,7 +151,7 @@ function gameServer(authorization, username, password) {
                                 window.location = '/round.html'
                                 break;
                             case -2003: // 加入房间返回
-                                if(window.location.pathname == '/index.html') {
+                                if(window.location.pathname != '/round.html') {
                                     window.location = '/round.html'
                                 }
                                 var resChildMessage = root.lookupType("SoupMessage.JoinRoomRes");
@@ -225,7 +225,7 @@ function gameServer(authorization, username, password) {
                                 var resChildMessage = root.lookupType("SoupMessage.LoadRes");
                                 resMessage = resChildMessage.decode(baseMessage.data)
                                 if (resMessage.reconnect == true) {
-                                    if(window.location.pathname == '/index.html') {
+                                    if(window.location.pathname != '/round.html') {
                                         window.location = '/round.html'
                                     } else {
                                         // 触发重连 直接请求加入房间
