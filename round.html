@@ -236,9 +236,9 @@
                 gameServer(localStorage.getItem("token"))
             }
         } else {
-            window.location = "/index.html"
+            layer.msg("错误信息")
+            // window.location = "/index.html"
         }
-
         // 显示用户头像
         $("#user-avatar-img").attr("src", localStorage.getItem("avatar"))
     </script>

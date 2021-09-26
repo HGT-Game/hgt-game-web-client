@@ -90,13 +90,13 @@ function gameServer(authorization, username, password) {
         }
     }
     WEBSOCKET_OBJ.error = function () {
-        console.log('连接错误')
+        layer.msg("连接错误")
         resetFlag();
         // 清空localStorage
         localStorage.clear()
     }
     WEBSOCKET_OBJ.onclose = function () {
-        console.log('断开');
+        layer.msg("断开")
         resetFlag();
     }
     WEBSOCKET_OBJ.onmessage = function (e) {
@@ -232,9 +232,10 @@ function gameServer(authorization, username, password) {
                                         joinRoomInternal(resMessage.roomId, resMessage.password)
                                     }
                                 } else {
-                                    if(window.location.pathname != '/index.html') {
-                                        window.location = '/index.html'
-                                    }
+                                    layer.msg("非重连，即将回到首页")
+                                    // if(window.location.pathname != '/index.html') {
+                                    //     window.location = '/index.html'
+                                    // }
                                 }
                                 break;
                             case -2013: // 加入笔记
